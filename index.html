@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Online Test System</title>
+    <title>Monthly Test System</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; }
@@ -15,34 +15,65 @@
         h2 { color: #333; margin-bottom: 20px; text-align: center; }
         input { width: 100%; padding: 15px; margin: 10px 0; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; }
         input:focus { outline: none; border-color: #667eea; }
-        button { width: 100%; padding: 15px; margin: 10px 0; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; }
+        button { width: 100%; padding: 15px; margin: 10px 0; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: transform 0.2s; }
         button:hover { transform: translateY(-2px); }
         .error { color: #e74c3c; margin-top: 10px; text-align: center; }
-        .test-header { background: white; padding: 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .test-header { background: white; padding: 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); flex-wrap: wrap; gap: 10px; }
         .timer { font-size: 24px; font-weight: bold; color: #e74c3c; padding: 10px 20px; background: #fff3cd; border-radius: 8px; }
+        .month-badge { background: #667eea; color: white; padding: 8px 15px; border-radius: 20px; font-weight: bold; }
         .test-container { max-width: 900px; margin: 30px auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); }
         .progress-bar { width: 100%; height: 8px; background: #e0e0e0; border-radius: 10px; margin-bottom: 30px; }
         .progress { height: 100%; background: linear-gradient(90deg, #667eea 0%, #764ba2 100%); transition: width 0.3s; }
-        .option { padding: 15px; margin: 10px 0; border: 2px solid #ddd; border-radius: 8px; cursor: pointer; display: flex; align-items: center; }
+        .option { padding: 15px; margin: 10px 0; border: 2px solid #ddd; border-radius: 8px; cursor: pointer; display: flex; align-items: center; transition: all 0.3s; }
         .option:hover { border-color: #667eea; background: #f8f9ff; }
         .option.selected { border-color: #667eea; background: #667eea; color: white; }
         .navigation { display: flex; justify-content: space-between; align-items: center; margin-top: 30px; }
         .navigation button { width: auto; padding: 12px 30px; }
         .result-details { margin: 30px 0; padding: 20px; background: #f8f9fa; border-radius: 8px; }
         .result-details p { margin: 15px 0; font-size: 18px; }
-        table { width: 100%; background: white; border-collapse: collapse; margin-top: 20px; }
-        th, td { padding: 15px; text-align: left; border-bottom: 1px solid #ddd; }
-        th { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+        table { width: 100%; background: white; border-collapse: collapse; margin-top: 20px; border-radius: 8px; overflow: hidden; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+        th { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; font-weight: bold; }
+        tr:hover { background: #f8f9ff; }
+        .month-select { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0; }
+        .month-btn { padding: 20px; background: #f8f9fa; border: 2px solid #ddd; border-radius: 10px; cursor: pointer; text-align: center; font-weight: bold; transition: all 0.3s; }
+        .month-btn:hover { border-color: #667eea; background: #f8f9ff; }
+        .month-btn.selected { border-color: #667eea; background: #667eea; color: white; }
     </style>
 </head>
 <body>
     <div id="loginScreen" class="screen active">
         <div class="container">
-            <h1>📚 Online Test System</h1>
+            <h1>📚 Monthly Test System</h1>
             <div class="login-box">
                 <h2>Student Login</h2>
                 <input type="text" id="studentName" placeholder="Enter Your Name">
                 <input type="text" id="studentId" placeholder="Enter Your ID Number">
+                
+                <h3 style="margin-top: 20px; color: #333; font-size: 16px;">Select Test Month:</h3>
+                <div class="month-select">
+                    <div class="month-btn" onclick="selectMonth(1)">
+                        <div style="font-size: 24px;">📅</div>
+                        <div>Month 1</div>
+                        <small style="color: #666;">10 Questions</small>
+                    </div>
+                    <div class="month-btn" onclick="selectMonth(2)">
+                        <div style="font-size: 24px;">📅</div>
+                        <div>Month 2</div>
+                        <small style="color: #666;">10 Questions</small>
+                    </div>
+                    <div class="month-btn" onclick="selectMonth(3)">
+                        <div style="font-size: 24px;">📅</div>
+                        <div>Month 3</div>
+                        <small style="color: #666;">10 Questions</small>
+                    </div>
+                    <div class="month-btn" onclick="selectMonth(4)">
+                        <div style="font-size: 24px;">📅</div>
+                        <div>Month 4</div>
+                        <small style="color: #666;">20 Questions</small>
+                    </div>
+                </div>
+                
                 <button onclick="startTest()">Start Test</button>
                 <div id="loginError" class="error"></div>
             </div>
@@ -52,6 +83,7 @@
     <div id="testScreen" class="screen">
         <div class="test-header">
             <div><span id="displayName"></span> | <span id="displayId"></span></div>
+            <div class="month-badge" id="monthBadge">Month 1</div>
             <div class="timer" id="timer">30:00</div>
         </div>
         <div class="test-container">
@@ -73,6 +105,7 @@
                 <div class="result-details">
                     <p><strong>Name:</strong> <span id="resultName"></span></p>
                     <p><strong>ID:</strong> <span id="resultId"></span></p>
+                    <p><strong>Month:</strong> <span id="resultMonth"></span></p>
                     <p><strong>Score:</strong> <span id="resultScore"></span></p>
                     <p><strong>Percentage:</strong> <span id="resultPercentage"></span></p>
                     <p><strong>Time:</strong> <span id="timeTaken"></span></p>
@@ -85,38 +118,102 @@
     </div>
 
     <div id="adminPanel" class="screen">
-        <div class="container">
-            <h1 style="color: white;">📊 All Results</h1>
-            <button onclick="backToResult()">← Back</button>
-            <button onclick="exportToCSV()">📥 Export CSV</button>
-            <div id="resultsTable"></div>
+        <div class="container" style="max-width: 1200px;">
+            <h1 style="color: white;">📊 All Test Results</h1>
+            <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+                <button onclick="backToResult()">← Back</button>
+                <button onclick="exportToCSV()">📥 Export to Excel (CSV)</button>
+            </div>
+            <div id="resultsTable" style="background: white; padding: 20px; border-radius: 15px; overflow-x: auto;"></div>
         </div>
     </div>
 
     <script>
-        const questions = [
-            { question: "What is the capital of Pakistan?", options: ["Karachi", "Lahore", "Islamabad", "Peshawar"], correct: 2 },
-            { question: "Which language is known as 'language of the web'?", options: ["Python", "JavaScript", "Java", "C++"], correct: 1 },
-            { question: "What does HTML stand for?", options: ["Hyper Text Markup Language", "High Tech Modern Language", "Home Tool Markup Language", "Hyperlinks Text Markup"], correct: 0 },
-            { question: "Which planet is the Red Planet?", options: ["Venus", "Mars", "Jupiter", "Saturn"], correct: 1 },
-            { question: "What is 15 × 8?", options: ["120", "125", "130", "115"], correct: 0 },
-            { question: "Who wrote 'Romeo and Juliet'?", options: ["Charles Dickens", "William Shakespeare", "Jane Austen", "Mark Twain"], correct: 1 },
-            { question: "Largest ocean on Earth?", options: ["Atlantic", "Indian", "Arctic", "Pacific"], correct: 3 },
-            { question: "World War II ended in?", options: ["1943", "1944", "1945", "1946"], correct: 2 },
-            { question: "Chemical symbol for Gold?", options: ["Go", "Gd", "Au", "Ag"], correct: 2 },
-            { question: "How many continents?", options: ["5", "6", "7", "8"], correct: 2 }
-        ];
+        const questionsByMonth = {
+            1: [
+                { question: "What is 5 + 3?", options: ["6", "7", "8", "9"], correct: 2 },
+                { question: "Capital of Pakistan?", options: ["Karachi", "Lahore", "Islamabad", "Peshawar"], correct: 2 },
+                { question: "How many days in a week?", options: ["5", "6", "7", "8"], correct: 2 },
+                { question: "Color of the sky?", options: ["Red", "Blue", "Green", "Yellow"], correct: 1 },
+                { question: "What is 10 - 4?", options: ["4", "5", "6", "7"], correct: 2 },
+                { question: "How many fingers on one hand?", options: ["4", "5", "6", "7"], correct: 1 },
+                { question: "What comes after Monday?", options: ["Sunday", "Tuesday", "Wednesday", "Thursday"], correct: 1 },
+                { question: "What is 2 × 3?", options: ["5", "6", "7", "8"], correct: 1 },
+                { question: "How many months in a year?", options: ["10", "11", "12", "13"], correct: 2 },
+                { question: "What is 15 ÷ 3?", options: ["3", "4", "5", "6"], correct: 2 }
+            ],
+            2: [
+                { question: "What does HTML stand for?", options: ["Hyper Text Markup Language", "High Tech Modern Language", "Home Tool Markup", "Hyperlinks Text"], correct: 0 },
+                { question: "Which is a programming language?", options: ["HTML", "CSS", "JavaScript", "All"], correct: 3 },
+                { question: "What is 12 × 5?", options: ["50", "55", "60", "65"], correct: 2 },
+                { question: "Largest planet?", options: ["Earth", "Mars", "Jupiter", "Saturn"], correct: 2 },
+                { question: "Who invented the telephone?", options: ["Edison", "Bell", "Tesla", "Newton"], correct: 1 },
+                { question: "What is the square root of 64?", options: ["6", "7", "8", "9"], correct: 2 },
+                { question: "How many continents?", options: ["5", "6", "7", "8"], correct: 2 },
+                { question: "Chemical symbol for water?", options: ["H2O", "O2", "CO2", "H2"], correct: 0 },
+                { question: "Speed of light?", options: ["300,000 km/s", "150,000 km/s", "500,000 km/s", "100,000 km/s"], correct: 0 },
+                { question: "Year Pakistan was founded?", options: ["1945", "1946", "1947", "1948"], correct: 2 }
+            ],
+            3: [
+                { question: "What is AI?", options: ["Artificial Intelligence", "Automatic Intelligence", "Advanced Intelligence", "None"], correct: 0 },
+                { question: "Binary of 10?", options: ["1010", "1100", "1001", "1111"], correct: 0 },
+                { question: "What is 25% of 200?", options: ["25", "50", "75", "100"], correct: 1 },
+                { question: "Who wrote Hamlet?", options: ["Dickens", "Shakespeare", "Austen", "Twain"], correct: 1 },
+                { question: "Smallest prime number?", options: ["0", "1", "2", "3"], correct: 2 },
+                { question: "What is JSON?", options: ["JavaScript Object Notation", "Java Standard Object Notation", "JavaScript Oriented Notation", "None"], correct: 0 },
+                { question: "Boiling point of water?", options: ["90°C", "100°C", "110°C", "120°C"], correct: 1 },
+                { question: "What is CPU?", options: ["Central Processing Unit", "Computer Processing Unit", "Central Program Unit", "None"], correct: 0 },
+                { question: "How many bits in a byte?", options: ["4", "8", "16", "32"], correct: 1 },
+                { question: "What is RAM?", options: ["Random Access Memory", "Read Access Memory", "Rapid Access Memory", "None"], correct: 0 }
+            ],
+            4: [
+                { question: "What is Machine Learning?", options: ["AI subset", "Programming language", "Database", "Operating system"], correct: 0 },
+                { question: "What is Python used for?", options: ["Web dev", "Data science", "AI/ML", "All of these"], correct: 3 },
+                { question: "What is Git?", options: ["Version control", "Programming language", "Database", "Framework"], correct: 0 },
+                { question: "What is API?", options: ["Application Programming Interface", "Advanced Programming Interface", "Automatic Programming Interface", "None"], correct: 0 },
+                { question: "What is SQL?", options: ["Structured Query Language", "Simple Query Language", "Standard Query Language", "None"], correct: 0 },
+                { question: "What is Cloud Computing?", options: ["Internet-based computing", "Local computing", "Mobile computing", "None"], correct: 0 },
+                { question: "What is React?", options: ["JavaScript library", "Programming language", "Database", "Operating system"], correct: 0 },
+                { question: "What is Node.js?", options: ["JavaScript runtime", "Framework", "Database", "Language"], correct: 0 },
+                { question: "What is MongoDB?", options: ["NoSQL database", "SQL database", "Programming language", "Framework"], correct: 0 },
+                { question: "What is Docker?", options: ["Containerization platform", "Programming language", "Database", "Framework"], correct: 0 },
+                { question: "What is Kubernetes?", options: ["Container orchestration", "Programming language", "Database", "IDE"], correct: 0 },
+                { question: "What is REST API?", options: ["Representational State Transfer", "Random State Transfer", "Rapid State Transfer", "None"], correct: 0 },
+                { question: "What is CSS?", options: ["Cascading Style Sheets", "Computer Style Sheets", "Creative Style Sheets", "None"], correct: 0 },
+                { question: "What is Bootstrap?", options: ["CSS framework", "JavaScript library", "Programming language", "Database"], correct: 0 },
+                { question: "What is GitHub?", options: ["Code hosting platform", "Programming language", "Database", "Operating system"], correct: 0 },
+                { question: "What is TypeScript?", options: ["JavaScript superset", "Programming language", "Framework", "Database"], correct: 0 },
+                { question: "What is Vue.js?", options: ["JavaScript framework", "Programming language", "Database", "Operating system"], correct: 0 },
+                { question: "What is Firebase?", options: ["Backend platform", "Programming language", "Framework", "Database only"], correct: 0 },
+                { question: "What is Redux?", options: ["State management library", "Programming language", "Database", "Framework"], correct: 0 },
+                { question: "What is Webpack?", options: ["Module bundler", "Programming language", "Database", "Framework"], correct: 0 }
+            ]
+        };
 
-        let currentQuestion = 0, answers = [], studentData = {}, timeLeft = 1800, timerInterval, startTime;
+        let currentQuestion = 0, answers = [], studentData = {}, timeLeft = 1800, timerInterval, startTime, selectedMonth = null, currentQuestions = [];
+
+        function selectMonth(month) {
+            selectedMonth = month;
+            document.querySelectorAll('.month-btn').forEach(btn => btn.classList.remove('selected'));
+            event.target.closest('.month-btn').classList.add('selected');
+        }
 
         function startTest() {
             const name = document.getElementById('studentName').value.trim();
             const id = document.getElementById('studentId').value.trim();
-            if (!name || !id) { document.getElementById('loginError').textContent = 'Please enter both fields'; return; }
-            studentData = { name, id, startTime: new Date().toISOString() };
+            const errorDiv = document.getElementById('loginError');
+            
+            if (!name || !id) { errorDiv.textContent = 'Please enter name and ID'; return; }
+            if (!selectedMonth) { errorDiv.textContent = 'Please select a month'; return; }
+            
+            studentData = { name, id, month: selectedMonth, startTime: new Date().toISOString() };
+            currentQuestions = questionsByMonth[selectedMonth];
             startTime = Date.now();
+            
             document.getElementById('displayName').textContent = name;
             document.getElementById('displayId').textContent = id;
+            document.getElementById('monthBadge').textContent = `Month ${selectedMonth}`;
+            
             showScreen('testScreen');
             startTimer();
             loadQuestion();
@@ -132,42 +229,46 @@
                 timeLeft--;
                 const m = Math.floor(timeLeft / 60), s = timeLeft % 60;
                 document.getElementById('timer').textContent = `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+                if (timeLeft <= 300) document.getElementById('timer').style.color = '#e74c3c';
                 if (timeLeft <= 0) { clearInterval(timerInterval); endTest(); }
             }, 1000);
         }
 
         function loadQuestion() {
-            const q = questions[currentQuestion];
-            let html = `<h3>Question ${currentQuestion + 1} of ${questions.length}</h3><p style="font-size:18px;margin:20px 0">${q.question}</p><div>`;
+            const q = currentQuestions[currentQuestion];
+            let html = `<h3>Question ${currentQuestion + 1} of ${currentQuestions.length}</h3><p style="font-size:18px;margin:20px 0">${q.question}</p><div>`;
             q.options.forEach((opt, i) => {
                 const sel = answers[currentQuestion] === i;
                 html += `<div class="option ${sel?'selected':''}" onclick="selectOption(${i})"><input type="radio" ${sel?'checked':''}> ${opt}</div>`;
             });
             html += '</div>';
             document.getElementById('questionContainer').innerHTML = html;
-            document.getElementById('progress').style.width = ((currentQuestion + 1) / questions.length * 100) + '%';
-            document.getElementById('questionCounter').textContent = `${currentQuestion + 1} / ${questions.length}`;
+            document.getElementById('progress').style.width = ((currentQuestion + 1) / currentQuestions.length * 100) + '%';
+            document.getElementById('questionCounter').textContent = `${currentQuestion + 1} / ${currentQuestions.length}`;
             document.getElementById('prevBtn').disabled = currentQuestion === 0;
-            document.getElementById('nextBtn').textContent = currentQuestion === questions.length - 1 ? 'Finish' : 'Next →';
+            document.getElementById('nextBtn').textContent = currentQuestion === currentQuestions.length - 1 ? 'Finish' : 'Next →';
         }
 
         function selectOption(i) { answers[currentQuestion] = i; loadQuestion(); }
         function previousQuestion() { if (currentQuestion > 0) { currentQuestion--; loadQuestion(); } }
-        function nextQuestion() { if (currentQuestion < questions.length - 1) { currentQuestion++; loadQuestion(); } else endTest(); }
+        function nextQuestion() { if (currentQuestion < currentQuestions.length - 1) { currentQuestion++; loadQuestion(); } else endTest(); }
 
         function endTest() {
             clearInterval(timerInterval);
             const t = Math.floor((Date.now() - startTime) / 1000), m = Math.floor(t / 60), s = t % 60;
             let score = 0;
-            answers.forEach((a, i) => { if (a === questions[i].correct) score++; });
-            const pct = ((score / questions.length) * 100).toFixed(2);
-            const result = { ...studentData, score, total: questions.length, percentage: pct, time: `${m}:${s.toString().padStart(2,'0')}`, endTime: new Date().toISOString() };
+            answers.forEach((a, i) => { if (a === currentQuestions[i].correct) score++; });
+            const pct = ((score / currentQuestions.length) * 100).toFixed(2);
+            const result = { ...studentData, score, total: currentQuestions.length, percentage: pct, time: `${m}:${s.toString().padStart(2,'0')}`, endTime: new Date().toISOString() };
+            
             let results = JSON.parse(localStorage.getItem('testResults') || '[]');
             results.push(result);
             localStorage.setItem('testResults', JSON.stringify(results));
+            
             document.getElementById('resultName').textContent = studentData.name;
             document.getElementById('resultId').textContent = studentData.id;
-            document.getElementById('resultScore').textContent = `${score} / ${questions.length}`;
+            document.getElementById('resultMonth').textContent = `Month ${studentData.month}`;
+            document.getElementById('resultScore').textContent = `${score} / ${currentQuestions.length}`;
             document.getElementById('resultPercentage').textContent = pct + '%';
             document.getElementById('timeTaken').textContent = `${m}:${s.toString().padStart(2,'0')}`;
             showScreen('resultScreen');
@@ -176,19 +277,19 @@
         function downloadResults() {
             const results = JSON.parse(localStorage.getItem('testResults') || '[]');
             const r = results[results.length - 1];
-            const txt = `Student Result\n=============\nName: ${r.name}\nID: ${r.id}\nScore: ${r.score}/${r.total}\nPercentage: ${r.percentage}%\nTime: ${r.time}\nDate: ${new Date(r.endTime).toLocaleString()}`;
+            const txt = `Student Test Result\n==================\nName: ${r.name}\nID: ${r.id}\nMonth: ${r.month}\nScore: ${r.score}/${r.total}\nPercentage: ${r.percentage}%\nTime: ${r.time}\nDate: ${new Date(r.endTime).toLocaleString()}`;
             const blob = new Blob([txt], { type: 'text/plain' });
             const a = document.createElement('a');
             a.href = URL.createObjectURL(blob);
-            a.download = `Result_${r.id}_${Date.now()}.txt`;
+            a.download = `Result_${r.id}_Month${r.month}_${Date.now()}.txt`;
             a.click();
         }
 
         function viewAllResults() {
             const results = JSON.parse(localStorage.getItem('testResults') || '[]');
-            let html = '<table><tr><th>Name</th><th>ID</th><th>Score</th><th>%</th><th>Time</th><th>Date</th></tr>';
+            let html = '<table><tr><th>Name</th><th>ID</th><th>Month</th><th>Score</th><th>Percentage</th><th>Time</th><th>Date</th></tr>';
             results.forEach(r => {
-                html += `<tr><td>${r.name}</td><td>${r.id}</td><td>${r.score}/${r.total}</td><td>${r.percentage}%</td><td>${r.time}</td><td>${new Date(r.endTime).toLocaleString()}</td></tr>`;
+                html += `<tr><td>${r.name}</td><td>${r.id}</td><td>Month ${r.month}</td><td>${r.score}/${r.total}</td><td>${r.percentage}%</td><td>${r.time}</td><td>${new Date(r.endTime).toLocaleString()}</td></tr>`;
             });
             html += '</table>';
             document.getElementById('resultsTable').innerHTML = html;
@@ -197,17 +298,24 @@
 
         function exportToCSV() {
             const results = JSON.parse(localStorage.getItem('testResults') || '[]');
-            let csv = 'Name,ID,Score,Total,Percentage,Time,Date\n';
-            results.forEach(r => csv += `${r.name},${r.id},${r.score},${r.total},${r.percentage},${r.time},${new Date(r.endTime).toLocaleString()}\n`);
+            let csv = 'Name,ID,Month,Score,Total Questions,Percentage,Time Taken,Date\n';
+            results.forEach(r => csv += `${r.name},${r.id},Month ${r.month},${r.score},${r.total},${r.percentage}%,${r.time},"${new Date(r.endTime).toLocaleString()}"\n`);
             const blob = new Blob([csv], { type: 'text/csv' });
             const a = document.createElement('a');
             a.href = URL.createObjectURL(blob);
-            a.download = `All_Results_${Date.now()}.csv`;
+            a.download = `All_Test_Results_${Date.now()}.csv`;
             a.click();
         }
 
         function backToResult() { showScreen('resultScreen'); }
-        function resetTest() { currentQuestion = 0; answers = []; studentData = {}; timeLeft = 1800; showScreen('loginScreen'); document.getElementById('studentName').value = ''; document.getElementById('studentId').value = ''; }
+        function resetTest() { 
+            currentQuestion = 0; answers = []; studentData = {}; timeLeft = 1800; selectedMonth = null; currentQuestions = [];
+            showScreen('loginScreen'); 
+            document.getElementById('studentName').value = ''; 
+            document.getElementById('studentId').value = ''; 
+            document.getElementById('loginError').textContent = '';
+            document.querySelectorAll('.month-btn').forEach(btn => btn.classList.remove('selected'));
+        }
     </script>
 </body>
 </html>
