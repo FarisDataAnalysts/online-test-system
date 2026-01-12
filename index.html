@@ -3,42 +3,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Monthly Test System</title>
+    <title>Monthly Test System - Sir Faris</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); min-height: 100vh; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); min-height: 100vh; color: #fff; }
         .screen { display: none; }
         .screen.active { display: block; }
         .container { max-width: 800px; margin: 0 auto; padding: 20px; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-        .login-box, .result-box { background: white; padding: 40px; border-radius: 15px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); width: 100%; max-width: 500px; }
-        h1 { color: white; text-align: center; margin-bottom: 30px; font-size: 2.5em; }
-        h2 { color: #333; margin-bottom: 20px; text-align: center; }
-        input { width: 100%; padding: 15px; margin: 10px 0; border: 2px solid #ddd; border-radius: 8px; font-size: 16px; }
-        input:focus { outline: none; border-color: #667eea; }
-        button { width: 100%; padding: 15px; margin: 10px 0; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: transform 0.2s; }
-        button:hover { transform: translateY(-2px); }
-        .error { color: #e74c3c; margin-top: 10px; text-align: center; }
-        .test-header { background: white; padding: 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); flex-wrap: wrap; gap: 10px; }
-        .timer { font-size: 24px; font-weight: bold; color: #e74c3c; padding: 10px 20px; background: #fff3cd; border-radius: 8px; }
-        .month-badge { background: #667eea; color: white; padding: 8px 15px; border-radius: 20px; font-weight: bold; }
-        .test-container { max-width: 900px; margin: 30px auto; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); }
-        .progress-bar { width: 100%; height: 8px; background: #e0e0e0; border-radius: 10px; margin-bottom: 30px; }
-        .progress { height: 100%; background: linear-gradient(90deg, #667eea 0%, #764ba2 100%); transition: width 0.3s; }
-        .option { padding: 15px; margin: 10px 0; border: 2px solid #ddd; border-radius: 8px; cursor: pointer; display: flex; align-items: center; transition: all 0.3s; }
-        .option:hover { border-color: #667eea; background: #f8f9ff; }
-        .option.selected { border-color: #667eea; background: #667eea; color: white; }
+        .login-box, .result-box { background: #2d2d2d; padding: 40px; border-radius: 15px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); width: 100%; max-width: 500px; border: 1px solid #444; }
+        h1 { color: #fff; text-align: center; margin-bottom: 30px; font-size: 2.5em; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
+        h2 { color: #fff; margin-bottom: 20px; text-align: center; }
+        input, select { width: 100%; padding: 15px; margin: 10px 0; border: 2px solid #444; border-radius: 8px; font-size: 16px; background: #1a1a1a; color: #fff; }
+        input:focus, select:focus { outline: none; border-color: #4CAF50; }
+        select option { background: #1a1a1a; color: #fff; }
+        button { width: 100%; padding: 15px; margin: 10px 0; background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%); color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: transform 0.2s; }
+        button:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4); }
+        .error { color: #ff6b6b; margin-top: 10px; text-align: center; }
+        .test-header { background: #2d2d2d; padding: 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.5); flex-wrap: wrap; gap: 10px; border-bottom: 2px solid #4CAF50; }
+        .timer { font-size: 24px; font-weight: bold; color: #ff6b6b; padding: 10px 20px; background: #1a1a1a; border-radius: 8px; border: 2px solid #ff6b6b; }
+        .month-badge { background: #4CAF50; color: white; padding: 8px 15px; border-radius: 20px; font-weight: bold; }
+        .trade-badge { background: #2196F3; color: white; padding: 8px 15px; border-radius: 20px; font-weight: bold; font-size: 12px; }
+        .test-container { max-width: 900px; margin: 30px auto; background: #2d2d2d; padding: 30px; border-radius: 15px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); border: 1px solid #444; }
+        .progress-bar { width: 100%; height: 8px; background: #1a1a1a; border-radius: 10px; margin-bottom: 30px; border: 1px solid #444; }
+        .progress { height: 100%; background: linear-gradient(90deg, #4CAF50 0%, #45a049 100%); transition: width 0.3s; border-radius: 10px; }
+        .option { padding: 15px; margin: 10px 0; border: 2px solid #444; border-radius: 8px; cursor: pointer; display: flex; align-items: center; transition: all 0.3s; background: #1a1a1a; }
+        .option:hover { border-color: #4CAF50; background: #2d2d2d; }
+        .option.selected { border-color: #4CAF50; background: #4CAF50; color: white; }
         .navigation { display: flex; justify-content: space-between; align-items: center; margin-top: 30px; }
         .navigation button { width: auto; padding: 12px 30px; }
-        .result-details { margin: 30px 0; padding: 20px; background: #f8f9fa; border-radius: 8px; }
-        .result-details p { margin: 15px 0; font-size: 18px; }
-        table { width: 100%; background: white; border-collapse: collapse; margin-top: 20px; border-radius: 8px; overflow: hidden; }
-        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
-        th { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; font-weight: bold; }
-        tr:hover { background: #f8f9ff; }
+        .result-details { margin: 30px 0; padding: 20px; background: #1a1a1a; border-radius: 8px; border: 1px solid #444; }
+        .result-details p { margin: 15px 0; font-size: 18px; color: #fff; }
+        .result-details span { color: #4CAF50; font-weight: bold; }
+        table { width: 100%; background: #2d2d2d; border-collapse: collapse; margin-top: 20px; border-radius: 8px; overflow: hidden; border: 1px solid #444; }
+        th, td { padding: 12px; text-align: left; border-bottom: 1px solid #444; color: #fff; }
+        th { background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%); color: white; font-weight: bold; }
+        tr:hover { background: #1a1a1a; }
         .month-select { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0; }
-        .month-btn { padding: 20px; background: #f8f9fa; border: 2px solid #ddd; border-radius: 10px; cursor: pointer; text-align: center; font-weight: bold; transition: all 0.3s; }
-        .month-btn:hover { border-color: #667eea; background: #f8f9ff; }
-        .month-btn.selected { border-color: #667eea; background: #667eea; color: white; }
+        .month-btn { padding: 20px; background: #1a1a1a; border: 2px solid #444; border-radius: 10px; cursor: pointer; text-align: center; font-weight: bold; transition: all 0.3s; color: #fff; }
+        .month-btn:hover { border-color: #4CAF50; background: #2d2d2d; }
+        .month-btn.selected { border-color: #4CAF50; background: #4CAF50; color: white; }
+        .footer { position: fixed; bottom: 10px; right: 20px; color: #888; font-size: 14px; font-style: italic; }
+        .question h3 { color: #fff; margin-bottom: 20px; }
+        .question p { color: #ddd; }
+        #questionCounter { color: #4CAF50; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -50,27 +57,33 @@
                 <input type="text" id="studentName" placeholder="Enter Your Name">
                 <input type="text" id="studentId" placeholder="Enter Your ID Number">
                 
-                <h3 style="margin-top: 20px; color: #333; font-size: 16px;">Select Test Month:</h3>
+                <select id="tradeSelect">
+                    <option value="">-- Select Your Trade --</option>
+                    <option value="Computerized Accounting">Computerized Accounting</option>
+                    <option value="Data Analytics with AI">Data Analytics with AI</option>
+                </select>
+                
+                <h3 style="margin-top: 20px; color: #fff; font-size: 16px;">Select Test Month:</h3>
                 <div class="month-select">
                     <div class="month-btn" onclick="selectMonth(1)">
                         <div style="font-size: 24px;">📅</div>
                         <div>Month 1</div>
-                        <small style="color: #666;">10 Questions</small>
+                        <small style="color: #888;">10 Questions</small>
                     </div>
                     <div class="month-btn" onclick="selectMonth(2)">
                         <div style="font-size: 24px;">📅</div>
                         <div>Month 2</div>
-                        <small style="color: #666;">10 Questions</small>
+                        <small style="color: #888;">10 Questions</small>
                     </div>
                     <div class="month-btn" onclick="selectMonth(3)">
                         <div style="font-size: 24px;">📅</div>
                         <div>Month 3</div>
-                        <small style="color: #666;">10 Questions</small>
+                        <small style="color: #888;">10 Questions</small>
                     </div>
                     <div class="month-btn" onclick="selectMonth(4)">
                         <div style="font-size: 24px;">📅</div>
                         <div>Month 4</div>
-                        <small style="color: #666;">20 Questions</small>
+                        <small style="color: #888;">20 Questions</small>
                     </div>
                 </div>
                 
@@ -83,7 +96,10 @@
     <div id="testScreen" class="screen">
         <div class="test-header">
             <div><span id="displayName"></span> | <span id="displayId"></span></div>
-            <div class="month-badge" id="monthBadge">Month 1</div>
+            <div style="display: flex; gap: 10px; align-items: center;">
+                <div class="trade-badge" id="tradeBadge">Trade</div>
+                <div class="month-badge" id="monthBadge">Month 1</div>
+            </div>
             <div class="timer" id="timer">30:00</div>
         </div>
         <div class="test-container">
@@ -94,7 +110,7 @@
                 <span id="questionCounter"></span>
                 <button onclick="nextQuestion()" id="nextBtn">Next →</button>
             </div>
-            <button onclick="endTest()" style="background: #e74c3c; margin-top: 20px;">End Test</button>
+            <button onclick="endTest()" style="background: #ff6b6b; margin-top: 20px;">End Test</button>
         </div>
     </div>
 
@@ -105,6 +121,7 @@
                 <div class="result-details">
                     <p><strong>Name:</strong> <span id="resultName"></span></p>
                     <p><strong>ID:</strong> <span id="resultId"></span></p>
+                    <p><strong>Trade:</strong> <span id="resultTrade"></span></p>
                     <p><strong>Month:</strong> <span id="resultMonth"></span></p>
                     <p><strong>Score:</strong> <span id="resultScore"></span></p>
                     <p><strong>Percentage:</strong> <span id="resultPercentage"></span></p>
@@ -124,73 +141,137 @@
                 <button onclick="backToResult()">← Back</button>
                 <button onclick="exportToCSV()">📥 Export to Excel (CSV)</button>
             </div>
-            <div id="resultsTable" style="background: white; padding: 20px; border-radius: 15px; overflow-x: auto;"></div>
+            <div id="resultsTable" style="background: #2d2d2d; padding: 20px; border-radius: 15px; overflow-x: auto; border: 1px solid #444;"></div>
         </div>
     </div>
 
+    <div class="footer">Prepared by Sir Faris</div>
+
     <script>
-        const questionsByMonth = {
-            1: [
-                { question: "What is 5 + 3?", options: ["6", "7", "8", "9"], correct: 2 },
-                { question: "Capital of Pakistan?", options: ["Karachi", "Lahore", "Islamabad", "Peshawar"], correct: 2 },
-                { question: "How many days in a week?", options: ["5", "6", "7", "8"], correct: 2 },
-                { question: "Color of the sky?", options: ["Red", "Blue", "Green", "Yellow"], correct: 1 },
-                { question: "What is 10 - 4?", options: ["4", "5", "6", "7"], correct: 2 },
-                { question: "How many fingers on one hand?", options: ["4", "5", "6", "7"], correct: 1 },
-                { question: "What comes after Monday?", options: ["Sunday", "Tuesday", "Wednesday", "Thursday"], correct: 1 },
-                { question: "What is 2 × 3?", options: ["5", "6", "7", "8"], correct: 1 },
-                { question: "How many months in a year?", options: ["10", "11", "12", "13"], correct: 2 },
-                { question: "What is 15 ÷ 3?", options: ["3", "4", "5", "6"], correct: 2 }
-            ],
-            2: [
-                { question: "What does HTML stand for?", options: ["Hyper Text Markup Language", "High Tech Modern Language", "Home Tool Markup", "Hyperlinks Text"], correct: 0 },
-                { question: "Which is a programming language?", options: ["HTML", "CSS", "JavaScript", "All"], correct: 3 },
-                { question: "What is 12 × 5?", options: ["50", "55", "60", "65"], correct: 2 },
-                { question: "Largest planet?", options: ["Earth", "Mars", "Jupiter", "Saturn"], correct: 2 },
-                { question: "Who invented the telephone?", options: ["Edison", "Bell", "Tesla", "Newton"], correct: 1 },
-                { question: "What is the square root of 64?", options: ["6", "7", "8", "9"], correct: 2 },
-                { question: "How many continents?", options: ["5", "6", "7", "8"], correct: 2 },
-                { question: "Chemical symbol for water?", options: ["H2O", "O2", "CO2", "H2"], correct: 0 },
-                { question: "Speed of light?", options: ["300,000 km/s", "150,000 km/s", "500,000 km/s", "100,000 km/s"], correct: 0 },
-                { question: "Year Pakistan was founded?", options: ["1945", "1946", "1947", "1948"], correct: 2 }
-            ],
-            3: [
-                { question: "What is AI?", options: ["Artificial Intelligence", "Automatic Intelligence", "Advanced Intelligence", "None"], correct: 0 },
-                { question: "Binary of 10?", options: ["1010", "1100", "1001", "1111"], correct: 0 },
-                { question: "What is 25% of 200?", options: ["25", "50", "75", "100"], correct: 1 },
-                { question: "Who wrote Hamlet?", options: ["Dickens", "Shakespeare", "Austen", "Twain"], correct: 1 },
-                { question: "Smallest prime number?", options: ["0", "1", "2", "3"], correct: 2 },
-                { question: "What is JSON?", options: ["JavaScript Object Notation", "Java Standard Object Notation", "JavaScript Oriented Notation", "None"], correct: 0 },
-                { question: "Boiling point of water?", options: ["90°C", "100°C", "110°C", "120°C"], correct: 1 },
-                { question: "What is CPU?", options: ["Central Processing Unit", "Computer Processing Unit", "Central Program Unit", "None"], correct: 0 },
-                { question: "How many bits in a byte?", options: ["4", "8", "16", "32"], correct: 1 },
-                { question: "What is RAM?", options: ["Random Access Memory", "Read Access Memory", "Rapid Access Memory", "None"], correct: 0 }
-            ],
-            4: [
-                { question: "What is Machine Learning?", options: ["AI subset", "Programming language", "Database", "Operating system"], correct: 0 },
-                { question: "What is Python used for?", options: ["Web dev", "Data science", "AI/ML", "All of these"], correct: 3 },
-                { question: "What is Git?", options: ["Version control", "Programming language", "Database", "Framework"], correct: 0 },
-                { question: "What is API?", options: ["Application Programming Interface", "Advanced Programming Interface", "Automatic Programming Interface", "None"], correct: 0 },
-                { question: "What is SQL?", options: ["Structured Query Language", "Simple Query Language", "Standard Query Language", "None"], correct: 0 },
-                { question: "What is Cloud Computing?", options: ["Internet-based computing", "Local computing", "Mobile computing", "None"], correct: 0 },
-                { question: "What is React?", options: ["JavaScript library", "Programming language", "Database", "Operating system"], correct: 0 },
-                { question: "What is Node.js?", options: ["JavaScript runtime", "Framework", "Database", "Language"], correct: 0 },
-                { question: "What is MongoDB?", options: ["NoSQL database", "SQL database", "Programming language", "Framework"], correct: 0 },
-                { question: "What is Docker?", options: ["Containerization platform", "Programming language", "Database", "Framework"], correct: 0 },
-                { question: "What is Kubernetes?", options: ["Container orchestration", "Programming language", "Database", "IDE"], correct: 0 },
-                { question: "What is REST API?", options: ["Representational State Transfer", "Random State Transfer", "Rapid State Transfer", "None"], correct: 0 },
-                { question: "What is CSS?", options: ["Cascading Style Sheets", "Computer Style Sheets", "Creative Style Sheets", "None"], correct: 0 },
-                { question: "What is Bootstrap?", options: ["CSS framework", "JavaScript library", "Programming language", "Database"], correct: 0 },
-                { question: "What is GitHub?", options: ["Code hosting platform", "Programming language", "Database", "Operating system"], correct: 0 },
-                { question: "What is TypeScript?", options: ["JavaScript superset", "Programming language", "Framework", "Database"], correct: 0 },
-                { question: "What is Vue.js?", options: ["JavaScript framework", "Programming language", "Database", "Operating system"], correct: 0 },
-                { question: "What is Firebase?", options: ["Backend platform", "Programming language", "Framework", "Database only"], correct: 0 },
-                { question: "What is Redux?", options: ["State management library", "Programming language", "Database", "Framework"], correct: 0 },
-                { question: "What is Webpack?", options: ["Module bundler", "Programming language", "Database", "Framework"], correct: 0 }
-            ]
+        const questionsByTradeAndMonth = {
+            "Computerized Accounting": {
+                1: [
+                    { question: "What is accounting?", options: ["Recording transactions", "Selling products", "Marketing", "None"], correct: 0 },
+                    { question: "What is a debit?", options: ["Increase in asset", "Decrease in asset", "Increase in liability", "None"], correct: 0 },
+                    { question: "What is a credit?", options: ["Decrease in asset", "Increase in asset", "Decrease in liability", "None"], correct: 0 },
+                    { question: "What is a journal?", options: ["Book of original entry", "Final accounts", "Balance sheet", "None"], correct: 0 },
+                    { question: "What is a ledger?", options: ["Book of final entry", "Book of original entry", "Cash book", "None"], correct: 0 },
+                    { question: "What is double entry?", options: ["Two entries for each transaction", "One entry", "Three entries", "None"], correct: 0 },
+                    { question: "What is trial balance?", options: ["List of all balances", "Final accounts", "Journal", "None"], correct: 0 },
+                    { question: "What is balance sheet?", options: ["Statement of financial position", "Income statement", "Cash flow", "None"], correct: 0 },
+                    { question: "What is income statement?", options: ["Profit and loss", "Balance sheet", "Cash flow", "None"], correct: 0 },
+                    { question: "What is cash flow?", options: ["Movement of cash", "Profit", "Loss", "None"], correct: 0 }
+                ],
+                2: [
+                    { question: "What is QuickBooks?", options: ["Accounting software", "Database", "Programming language", "None"], correct: 0 },
+                    { question: "What is Tally?", options: ["Accounting software", "Spreadsheet", "Word processor", "None"], correct: 0 },
+                    { question: "What is depreciation?", options: ["Decrease in asset value", "Increase in asset", "Liability", "None"], correct: 0 },
+                    { question: "What is GST?", options: ["Goods and Services Tax", "Income tax", "Sales tax", "None"], correct: 0 },
+                    { question: "What is invoice?", options: ["Bill for goods/services", "Receipt", "Voucher", "None"], correct: 0 },
+                    { question: "What is voucher?", options: ["Document for transaction", "Invoice", "Receipt", "None"], correct: 0 },
+                    { question: "What is bank reconciliation?", options: ["Matching bank and book balances", "Closing accounts", "Opening accounts", "None"], correct: 0 },
+                    { question: "What is petty cash?", options: ["Small cash expenses", "Large expenses", "Bank balance", "None"], correct: 0 },
+                    { question: "What is accounts payable?", options: ["Money owed to suppliers", "Money owed by customers", "Assets", "None"], correct: 0 },
+                    { question: "What is accounts receivable?", options: ["Money owed by customers", "Money owed to suppliers", "Liabilities", "None"], correct: 0 }
+                ],
+                3: [
+                    { question: "What is financial statement?", options: ["Summary of financial activities", "Journal", "Ledger", "None"], correct: 0 },
+                    { question: "What is audit?", options: ["Examination of accounts", "Recording", "Posting", "None"], correct: 0 },
+                    { question: "What is budget?", options: ["Financial plan", "Actual expenses", "Invoice", "None"], correct: 0 },
+                    { question: "What is variance?", options: ["Difference between budget and actual", "Budget only", "Actual only", "None"], correct: 0 },
+                    { question: "What is cost accounting?", options: ["Recording and analyzing costs", "Financial accounting", "Tax accounting", "None"], correct: 0 },
+                    { question: "What is management accounting?", options: ["Internal reporting", "External reporting", "Tax reporting", "None"], correct: 0 },
+                    { question: "What is ratio analysis?", options: ["Analyzing financial ratios", "Recording transactions", "Posting", "None"], correct: 0 },
+                    { question: "What is working capital?", options: ["Current assets minus current liabilities", "Fixed assets", "Long term debt", "None"], correct: 0 },
+                    { question: "What is equity?", options: ["Owner's capital", "Liabilities", "Assets", "None"], correct: 0 },
+                    { question: "What is liability?", options: ["Obligations to pay", "Assets", "Equity", "None"], correct: 0 }
+                ],
+                4: [
+                    { question: "What is ERP?", options: ["Enterprise Resource Planning", "Accounting software", "Database", "None"], correct: 0 },
+                    { question: "What is SAP?", options: ["ERP software", "Accounting only", "Database", "None"], correct: 0 },
+                    { question: "What is Oracle Financials?", options: ["Financial management software", "Database only", "Programming language", "None"], correct: 0 },
+                    { question: "What is IFRS?", options: ["International Financial Reporting Standards", "Local standards", "Tax standards", "None"], correct: 0 },
+                    { question: "What is GAAP?", options: ["Generally Accepted Accounting Principles", "Tax principles", "Audit principles", "None"], correct: 0 },
+                    { question: "What is consolidated financial statement?", options: ["Combined statements of group companies", "Single company", "Branch only", "None"], correct: 0 },
+                    { question: "What is goodwill?", options: ["Intangible asset", "Tangible asset", "Liability", "None"], correct: 0 },
+                    { question: "What is amortization?", options: ["Spreading cost of intangible asset", "Depreciation", "Appreciation", "None"], correct: 0 },
+                    { question: "What is provision?", options: ["Amount set aside for liability", "Asset", "Equity", "None"], correct: 0 },
+                    { question: "What is reserve?", options: ["Retained earnings", "Liability", "Expense", "None"], correct: 0 },
+                    { question: "What is capital expenditure?", options: ["Long term asset purchase", "Daily expenses", "Revenue expense", "None"], correct: 0 },
+                    { question: "What is revenue expenditure?", options: ["Daily operational expenses", "Asset purchase", "Capital expense", "None"], correct: 0 },
+                    { question: "What is accrual accounting?", options: ["Recording when earned/incurred", "Cash basis", "Hybrid", "None"], correct: 0 },
+                    { question: "What is cash accounting?", options: ["Recording when cash received/paid", "Accrual basis", "Hybrid", "None"], correct: 0 },
+                    { question: "What is materiality?", options: ["Significance of information", "Quantity", "Quality", "None"], correct: 0 },
+                    { question: "What is consistency?", options: ["Using same methods", "Changing methods", "Random methods", "None"], correct: 0 },
+                    { question: "What is going concern?", options: ["Business will continue", "Business will close", "Temporary", "None"], correct: 0 },
+                    { question: "What is matching principle?", options: ["Match expenses with revenues", "Random matching", "No matching", "None"], correct: 0 },
+                    { question: "What is conservatism?", options: ["Anticipate losses not gains", "Anticipate gains", "Neutral", "None"], correct: 0 },
+                    { question: "What is full disclosure?", options: ["Reveal all material information", "Hide information", "Partial disclosure", "None"], correct: 0 }
+                ]
+            },
+            "Data Analytics with AI": {
+                1: [
+                    { question: "What is data?", options: ["Raw facts", "Information", "Knowledge", "None"], correct: 0 },
+                    { question: "What is analytics?", options: ["Analysis of data", "Collection", "Storage", "None"], correct: 0 },
+                    { question: "What is AI?", options: ["Artificial Intelligence", "Automatic Intelligence", "Advanced Intelligence", "None"], correct: 0 },
+                    { question: "What is machine learning?", options: ["AI subset", "Programming", "Database", "None"], correct: 0 },
+                    { question: "What is Python?", options: ["Programming language", "Database", "Framework", "None"], correct: 0 },
+                    { question: "What is Excel?", options: ["Spreadsheet software", "Database", "Programming language", "None"], correct: 0 },
+                    { question: "What is data visualization?", options: ["Graphical representation", "Text only", "Audio", "None"], correct: 0 },
+                    { question: "What is a dataset?", options: ["Collection of data", "Single data point", "Database", "None"], correct: 0 },
+                    { question: "What is a variable?", options: ["Data attribute", "Constant", "Function", "None"], correct: 0 },
+                    { question: "What is statistics?", options: ["Study of data", "Programming", "Database", "None"], correct: 0 }
+                ],
+                2: [
+                    { question: "What is pandas?", options: ["Python library for data", "Database", "Framework", "None"], correct: 0 },
+                    { question: "What is NumPy?", options: ["Numerical Python library", "Database", "Framework", "None"], correct: 0 },
+                    { question: "What is matplotlib?", options: ["Visualization library", "Database", "Framework", "None"], correct: 0 },
+                    { question: "What is mean?", options: ["Average", "Median", "Mode", "None"], correct: 0 },
+                    { question: "What is median?", options: ["Middle value", "Average", "Mode", "None"], correct: 0 },
+                    { question: "What is mode?", options: ["Most frequent value", "Average", "Median", "None"], correct: 0 },
+                    { question: "What is standard deviation?", options: ["Measure of spread", "Average", "Median", "None"], correct: 0 },
+                    { question: "What is correlation?", options: ["Relationship between variables", "Causation", "Independence", "None"], correct: 0 },
+                    { question: "What is regression?", options: ["Predictive modeling", "Classification", "Clustering", "None"], correct: 0 },
+                    { question: "What is classification?", options: ["Categorizing data", "Prediction", "Clustering", "None"], correct: 0 }
+                ],
+                3: [
+                    { question: "What is deep learning?", options: ["Neural networks", "Machine learning", "AI", "None"], correct: 0 },
+                    { question: "What is neural network?", options: ["Brain-inspired model", "Database", "Framework", "None"], correct: 0 },
+                    { question: "What is supervised learning?", options: ["Learning with labels", "Without labels", "Reinforcement", "None"], correct: 0 },
+                    { question: "What is unsupervised learning?", options: ["Learning without labels", "With labels", "Reinforcement", "None"], correct: 0 },
+                    { question: "What is clustering?", options: ["Grouping similar data", "Classification", "Regression", "None"], correct: 0 },
+                    { question: "What is feature engineering?", options: ["Creating new features", "Data collection", "Visualization", "None"], correct: 0 },
+                    { question: "What is overfitting?", options: ["Model too complex", "Too simple", "Perfect fit", "None"], correct: 0 },
+                    { question: "What is underfitting?", options: ["Model too simple", "Too complex", "Perfect fit", "None"], correct: 0 },
+                    { question: "What is cross-validation?", options: ["Model evaluation technique", "Training", "Testing", "None"], correct: 0 },
+                    { question: "What is accuracy?", options: ["Correct predictions ratio", "Error rate", "Precision", "None"], correct: 0 }
+                ],
+                4: [
+                    { question: "What is TensorFlow?", options: ["Deep learning framework", "Database", "Language", "None"], correct: 0 },
+                    { question: "What is Keras?", options: ["High-level neural network API", "Database", "Language", "None"], correct: 0 },
+                    { question: "What is scikit-learn?", options: ["Machine learning library", "Database", "Framework", "None"], correct: 0 },
+                    { question: "What is NLP?", options: ["Natural Language Processing", "Network Protocol", "Database", "None"], correct: 0 },
+                    { question: "What is computer vision?", options: ["Image processing AI", "Text processing", "Audio processing", "None"], correct: 0 },
+                    { question: "What is CNN?", options: ["Convolutional Neural Network", "Database", "Framework", "None"], correct: 0 },
+                    { question: "What is RNN?", options: ["Recurrent Neural Network", "Database", "Framework", "None"], correct: 0 },
+                    { question: "What is LSTM?", options: ["Long Short-Term Memory", "Database", "Framework", "None"], correct: 0 },
+                    { question: "What is GAN?", options: ["Generative Adversarial Network", "Database", "Framework", "None"], correct: 0 },
+                    { question: "What is reinforcement learning?", options: ["Learning through rewards", "Supervised", "Unsupervised", "None"], correct: 0 },
+                    { question: "What is transfer learning?", options: ["Using pre-trained models", "Training from scratch", "No training", "None"], correct: 0 },
+                    { question: "What is ensemble learning?", options: ["Combining multiple models", "Single model", "No model", "None"], correct: 0 },
+                    { question: "What is gradient descent?", options: ["Optimization algorithm", "Classification", "Clustering", "None"], correct: 0 },
+                    { question: "What is backpropagation?", options: ["Training neural networks", "Forward pass", "Testing", "None"], correct: 0 },
+                    { question: "What is activation function?", options: ["Non-linear transformation", "Linear only", "No transformation", "None"], correct: 0 },
+                    { question: "What is dropout?", options: ["Regularization technique", "Overfitting", "Underfitting", "None"], correct: 0 },
+                    { question: "What is batch normalization?", options: ["Normalizing layer inputs", "Data normalization", "No normalization", "None"], correct: 0 },
+                    { question: "What is hyperparameter tuning?", options: ["Optimizing model parameters", "Training", "Testing", "None"], correct: 0 },
+                    { question: "What is A/B testing?", options: ["Comparing two versions", "Single version", "No testing", "None"], correct: 0 },
+                    { question: "What is big data?", options: ["Large volume of data", "Small data", "Medium data", "None"], correct: 0 }
+                ]
+            }
         };
 
-        let currentQuestion = 0, answers = [], studentData = {}, timeLeft = 1800, timerInterval, startTime, selectedMonth = null, currentQuestions = [];
+        let currentQuestion = 0, answers = [], studentData = {}, timeLeft = 1800, timerInterval, startTime, selectedMonth = null, selectedTrade = null, currentQuestions = [];
 
         function selectMonth(month) {
             selectedMonth = month;
@@ -201,17 +282,21 @@
         function startTest() {
             const name = document.getElementById('studentName').value.trim();
             const id = document.getElementById('studentId').value.trim();
+            const trade = document.getElementById('tradeSelect').value;
             const errorDiv = document.getElementById('loginError');
             
             if (!name || !id) { errorDiv.textContent = 'Please enter name and ID'; return; }
+            if (!trade) { errorDiv.textContent = 'Please select your trade'; return; }
             if (!selectedMonth) { errorDiv.textContent = 'Please select a month'; return; }
             
-            studentData = { name, id, month: selectedMonth, startTime: new Date().toISOString() };
-            currentQuestions = questionsByMonth[selectedMonth];
+            selectedTrade = trade;
+            studentData = { name, id, trade, month: selectedMonth, startTime: new Date().toISOString() };
+            currentQuestions = questionsByTradeAndMonth[trade][selectedMonth];
             startTime = Date.now();
             
             document.getElementById('displayName').textContent = name;
             document.getElementById('displayId').textContent = id;
+            document.getElementById('tradeBadge').textContent = trade;
             document.getElementById('monthBadge').textContent = `Month ${selectedMonth}`;
             
             showScreen('testScreen');
@@ -229,19 +314,18 @@
                 timeLeft--;
                 const m = Math.floor(timeLeft / 60), s = timeLeft % 60;
                 document.getElementById('timer').textContent = `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
-                if (timeLeft <= 300) document.getElementById('timer').style.color = '#e74c3c';
                 if (timeLeft <= 0) { clearInterval(timerInterval); endTest(); }
             }, 1000);
         }
 
         function loadQuestion() {
             const q = currentQuestions[currentQuestion];
-            let html = `<h3>Question ${currentQuestion + 1} of ${currentQuestions.length}</h3><p style="font-size:18px;margin:20px 0">${q.question}</p><div>`;
+            let html = `<div class="question"><h3>Question ${currentQuestion + 1} of ${currentQuestions.length}</h3><p style="font-size:18px;margin:20px 0">${q.question}</p><div>`;
             q.options.forEach((opt, i) => {
                 const sel = answers[currentQuestion] === i;
                 html += `<div class="option ${sel?'selected':''}" onclick="selectOption(${i})"><input type="radio" ${sel?'checked':''}> ${opt}</div>`;
             });
-            html += '</div>';
+            html += '</div></div>';
             document.getElementById('questionContainer').innerHTML = html;
             document.getElementById('progress').style.width = ((currentQuestion + 1) / currentQuestions.length * 100) + '%';
             document.getElementById('questionCounter').textContent = `${currentQuestion + 1} / ${currentQuestions.length}`;
@@ -267,6 +351,7 @@
             
             document.getElementById('resultName').textContent = studentData.name;
             document.getElementById('resultId').textContent = studentData.id;
+            document.getElementById('resultTrade').textContent = studentData.trade;
             document.getElementById('resultMonth').textContent = `Month ${studentData.month}`;
             document.getElementById('resultScore').textContent = `${score} / ${currentQuestions.length}`;
             document.getElementById('resultPercentage').textContent = pct + '%';
@@ -277,19 +362,19 @@
         function downloadResults() {
             const results = JSON.parse(localStorage.getItem('testResults') || '[]');
             const r = results[results.length - 1];
-            const txt = `Student Test Result\n==================\nName: ${r.name}\nID: ${r.id}\nMonth: ${r.month}\nScore: ${r.score}/${r.total}\nPercentage: ${r.percentage}%\nTime: ${r.time}\nDate: ${new Date(r.endTime).toLocaleString()}`;
+            const txt = `Student Test Result\n==================\nName: ${r.name}\nID: ${r.id}\nTrade: ${r.trade}\nMonth: ${r.month}\nScore: ${r.score}/${r.total}\nPercentage: ${r.percentage}%\nTime: ${r.time}\nDate: ${new Date(r.endTime).toLocaleString()}\n\nPrepared by Sir Faris`;
             const blob = new Blob([txt], { type: 'text/plain' });
             const a = document.createElement('a');
             a.href = URL.createObjectURL(blob);
-            a.download = `Result_${r.id}_Month${r.month}_${Date.now()}.txt`;
+            a.download = `Result_${r.id}_${r.trade}_Month${r.month}_${Date.now()}.txt`;
             a.click();
         }
 
         function viewAllResults() {
             const results = JSON.parse(localStorage.getItem('testResults') || '[]');
-            let html = '<table><tr><th>Name</th><th>ID</th><th>Month</th><th>Score</th><th>Percentage</th><th>Time</th><th>Date</th></tr>';
+            let html = '<table><tr><th>Name</th><th>ID</th><th>Trade</th><th>Month</th><th>Score</th><th>%</th><th>Time</th><th>Date</th></tr>';
             results.forEach(r => {
-                html += `<tr><td>${r.name}</td><td>${r.id}</td><td>Month ${r.month}</td><td>${r.score}/${r.total}</td><td>${r.percentage}%</td><td>${r.time}</td><td>${new Date(r.endTime).toLocaleString()}</td></tr>`;
+                html += `<tr><td>${r.name}</td><td>${r.id}</td><td>${r.trade}</td><td>Month ${r.month}</td><td>${r.score}/${r.total}</td><td>${r.percentage}%</td><td>${r.time}</td><td>${new Date(r.endTime).toLocaleString()}</td></tr>`;
             });
             html += '</table>';
             document.getElementById('resultsTable').innerHTML = html;
@@ -298,8 +383,8 @@
 
         function exportToCSV() {
             const results = JSON.parse(localStorage.getItem('testResults') || '[]');
-            let csv = 'Name,ID,Month,Score,Total Questions,Percentage,Time Taken,Date\n';
-            results.forEach(r => csv += `${r.name},${r.id},Month ${r.month},${r.score},${r.total},${r.percentage}%,${r.time},"${new Date(r.endTime).toLocaleString()}"\n`);
+            let csv = 'Name,ID,Trade,Month,Score,Total,Percentage,Time,Date\n';
+            results.forEach(r => csv += `${r.name},${r.id},${r.trade},Month ${r.month},${r.score},${r.total},${r.percentage}%,${r.time},"${new Date(r.endTime).toLocaleString()}"\n`);
             const blob = new Blob([csv], { type: 'text/csv' });
             const a = document.createElement('a');
             a.href = URL.createObjectURL(blob);
@@ -309,10 +394,11 @@
 
         function backToResult() { showScreen('resultScreen'); }
         function resetTest() { 
-            currentQuestion = 0; answers = []; studentData = {}; timeLeft = 1800; selectedMonth = null; currentQuestions = [];
+            currentQuestion = 0; answers = []; studentData = {}; timeLeft = 1800; selectedMonth = null; selectedTrade = null; currentQuestions = [];
             showScreen('loginScreen'); 
             document.getElementById('studentName').value = ''; 
             document.getElementById('studentId').value = ''; 
+            document.getElementById('tradeSelect').value = '';
             document.getElementById('loginError').textContent = '';
             document.querySelectorAll('.month-btn').forEach(btn => btn.classList.remove('selected'));
         }
