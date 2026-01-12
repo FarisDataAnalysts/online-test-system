@@ -42,10 +42,11 @@
         tr:hover { background: #1a1a1a; }
         .month-select { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0; }
         .month-btn { padding: 20px; background: #1a1a1a; border: 2px solid #444; border-radius: 10px; cursor: pointer; text-align: center; font-weight: bold; transition: all 0.3s; color: #fff; position: relative; }
-        .month-btn:hover:not(.locked) { border-color: #4CAF50; background: #2d2d2d; }
+        .month-btn:hover:not(.locked):not(.completed) { border-color: #4CAF50; background: #2d2d2d; }
         .month-btn.selected { border-color: #4CAF50; background: #4CAF50; color: white; }
         .month-btn.locked { opacity: 0.4; cursor: not-allowed; }
         .month-btn.locked::after { content: '🔒'; position: absolute; top: 10px; right: 10px; font-size: 20px; }
+        .month-btn.completed { border-color: #4CAF50; }
         .month-btn.completed::after { content: '✅'; position: absolute; top: 10px; right: 10px; font-size: 20px; }
         .footer { position: fixed; bottom: 10px; right: 20px; color: #888; font-size: 14px; font-style: italic; }
         .question h3 { color: #fff; margin-bottom: 20px; }
@@ -194,63 +195,42 @@
             },
             "Data Analytics with AI": {
                 1: [
-                    { question: "What is data?", options: ["Raw facts", "Information", "Knowledge", "None"], correct: 0 },
-                    { question: "What is analytics?", options: ["Analysis of data", "Collection", "Storage", "None"], correct: 0 },
-                    { question: "What is AI?", options: ["Artificial Intelligence", "Automatic Intelligence", "Advanced Intelligence", "None"], correct: 0 },
-                    { question: "What is machine learning?", options: ["AI subset", "Programming", "Database", "None"], correct: 0 },
-                    { question: "What is Python?", options: ["Programming language", "Database", "Framework", "None"], correct: 0 },
-                    { question: "What is Excel?", options: ["Spreadsheet software", "Database", "Programming language", "None"], correct: 0 },
-                    { question: "What is data visualization?", options: ["Graphical representation", "Text only", "Audio", "None"], correct: 0 },
-                    { question: "What is a dataset?", options: ["Collection of data", "Single data point", "Database", "None"], correct: 0 },
-                    { question: "What is a variable?", options: ["Data attribute", "Constant", "Function", "None"], correct: 0 },
-                    { question: "What is statistics?", options: ["Study of data", "Programming", "Database", "None"], correct: 0 }
+                    { question: "What is the correct syntax of IF() function?", options: ["=IF(logical test, value_if_true, value_if_false)", "=IF (logical test, TRUE([value_if_true]), FALSE([value_if_false]))", "None of these", "All of these"], correct: 0 },
+                    { question: "Which of the following formula enter is not correctly?", options: ["=B7*C7", "-1- + 50", "10+50", "=10+B7"], correct: 1 },
+                    { question: "Pivot table use for?", options: ["Analysis Data", "Find Data", "None of These", "Remove Data"], correct: 0 },
+                    { question: "How many types of option use in the timeline?", options: ["Years", "Days", "Quater", "All of Above"], correct: 3 },
+                    { question: "What is the purpose of $ sign in formula?", options: ["For currency Symbol", "For Fix Error", "For Fixing cell Address", "All of these"], correct: 2 },
+                    { question: "Except for the ...... function, a formula with a logical function shows the word \"TRUE\" or \"FALSE\" as a result", options: ["End", "OR", "Not", "IF"], correct: 3 },
+                    { question: "Which function is used to trap and handle errors?", options: ["IFERROR", "ERROR", "IFNA", "None of these"], correct: 0 },
+                    { question: "What is shortcut key of sum?", options: ["Alt+ Enter", "Alt + =", "Ctrl + +", "Ctrl + ="], correct: 1 },
+                    { question: "If we select 5 rows and 5 columns how many cells will be selected", options: ["25", "10", "15", "None of these"], correct: 0 },
+                    { question: "Which symbol must be with all formulas?", options: ["=", "@", "%", "#"], correct: 0 }
                 ],
                 2: [
-                    { question: "What is pandas?", options: ["Python library for data", "Database", "Framework", "None"], correct: 0 },
-                    { question: "What is NumPy?", options: ["Numerical Python library", "Database", "Framework", "None"], correct: 0 },
-                    { question: "What is matplotlib?", options: ["Visualization library", "Database", "Framework", "None"], correct: 0 },
-                    { question: "What is mean?", options: ["Average", "Median", "Mode", "None"], correct: 0 },
-                    { question: "What is median?", options: ["Middle value", "Average", "Mode", "None"], correct: 0 },
-                    { question: "What is mode?", options: ["Most frequent value", "Average", "Median", "None"], correct: 0 },
-                    { question: "What is standard deviation?", options: ["Measure of spread", "Average", "Median", "None"], correct: 0 },
-                    { question: "What is correlation?", options: ["Relationship between variables", "Causation", "Independence", "None"], correct: 0 },
-                    { question: "What is regression?", options: ["Predictive modeling", "Classification", "Clustering", "None"], correct: 0 },
-                    { question: "What is classification?", options: ["Categorizing data", "Prediction", "Clustering", "None"], correct: 0 }
+                    { question: "What is a Database in the context described?", options: ["A single table of data", "A collection of related tables", "A programming language", "A type of chart"], correct: 1 },
+                    { question: "Which SQL command is primarily used to retrieve data from a database?", options: ["INSERT", "UPDATE", "DELETE", "SELECT"], correct: 3 },
+                    { question: "Which SQL clause is used to filter records based on a specified condition?", options: ["LIMIT", "ORDER BY", "WHERE", "GROUP BY"], correct: 2 },
+                    { question: "What is a JOIN used for in SQL?", options: ["To combine rows from two or more tables based on a related column", "To insert new rows into a table", "To delete rows from a table", "To modify the structure of a table"], correct: 0 },
+                    { question: "Which command is used to add new rows of data into a table?", options: ["SELECT", "UPDATE", "INSERT", "ALTER"], correct: 2 },
+                    { question: "COUNT, SUM, and AVG are examples of what type of functions in SQL?", options: ["Logical Functions", "Lookup Functions", "String Functions", "Aggregate Functions"], correct: 3 },
+                    { question: "Which SQL clause is used to sort the result set in ascending or descending order?", options: ["WHERE", "LIMIT", "GROUP BY", "ORDER BY"], correct: 3 },
+                    { question: "What is a Key in the context of databases and tables?", options: ["A clause used in SELECT statements", "A constraint used to establish relationships or ensure data integrity", "A type of SQL command", "An aggregate function"], correct: 1 },
+                    { question: "Which command is used to modify existing records in a table?", options: ["INSERT", "UPDATE", "DELETE", "ALTER"], correct: 1 },
+                    { question: "What does the ALTER command in SQL allow you to do?", options: ["Select specific columns from a table", "Modify the structure of an existing table", "Delete all records from a table", "Combine results from multiple SELECT statements"], correct: 1 }
                 ],
                 3: [
-                    { question: "What is deep learning?", options: ["Neural networks", "Machine learning", "AI", "None"], correct: 0 },
-                    { question: "What is neural network?", options: ["Brain-inspired model", "Database", "Framework", "None"], correct: 0 },
-                    { question: "What is supervised learning?", options: ["Learning with labels", "Without labels", "Reinforcement", "None"], correct: 0 },
-                    { question: "What is unsupervised learning?", options: ["Learning without labels", "With labels", "Reinforcement", "None"], correct: 0 },
-                    { question: "What is clustering?", options: ["Grouping similar data", "Classification", "Regression", "None"], correct: 0 },
-                    { question: "What is feature engineering?", options: ["Creating new features", "Data collection", "Visualization", "None"], correct: 0 },
-                    { question: "What is overfitting?", options: ["Model too complex", "Too simple", "Perfect fit", "None"], correct: 0 },
-                    { question: "What is underfitting?", options: ["Model too simple", "Too complex", "Perfect fit", "None"], correct: 0 },
-                    { question: "What is cross-validation?", options: ["Model evaluation technique", "Training", "Testing", "None"], correct: 0 },
-                    { question: "What is accuracy?", options: ["Correct predictions ratio", "Error rate", "Precision", "None"], correct: 0 }
+                    { question: "In Python, what are int, float, str, and bool examples of?", options: ["Operators", "Variables", "Datatypes", "Functions"], correct: 2 },
+                    { question: "Which programming construct in Python is used to execute a block of code multiple times?", options: ["Conditional Statement", "Function", "Loop", "Module"], correct: 2 },
+                    { question: "Lists, Tuples, Dictionaries, and Sets are examples of what in Python?", options: ["Control Flow Structures", "Built-in Functions", "Data Structures", "Operators"], correct: 2 },
+                    { question: "What is a Lambda Function in Python?", options: ["A function used for looping", "A small, anonymous function", "A function for file handling", "A recursive function"], correct: 1 },
+                    { question: "Which Python libraries are specifically mentioned for data manipulation and working with arrays?", options: ["Matplotlib and Seaborn", "SQLite and REST APIs", "Pandas and NumPy", "JSON and XML"], correct: 2 },
+                    { question: "In the context of Python, what are Classes and Objects related to?", options: ["Data Visualization", "File Handling", "Database Operations", "Object-Oriented Programming (OOP) Basics"], correct: 3 },
+                    { question: "Which module type is mentioned as containing functions and definitions already available in Python?", options: ["Creation of Modules", "Project Random Module", "In-built Modules", "Lambda Functions"], correct: 2 },
+                    { question: "What operations are listed as part of SQL CRUD Operations in Python?", options: ["Charting and Plotting", "Create, Read, Update, Delete", "Sorting and Filtering", "Merging and Appending"], correct: 1 },
+                    { question: "Which concept is mentioned as being used with For Loops in Python?", options: ["Recursive Statement", "Conditional Statements", "Lambda Function", "File Handling"], correct: 1 },
+                    { question: "What is the term for accessing a specific part of a list or tuple in Python?", options: ["Iteration", "Function Calling", "Slicing", "Comprehension"], correct: 2 }
                 ],
-                4: [
-                    { question: "What is TensorFlow?", options: ["Deep learning framework", "Database", "Language", "None"], correct: 0 },
-                    { question: "What is Keras?", options: ["High-level neural network API", "Database", "Language", "None"], correct: 0 },
-                    { question: "What is scikit-learn?", options: ["Machine learning library", "Database", "Framework", "None"], correct: 0 },
-                    { question: "What is NLP?", options: ["Natural Language Processing", "Network Protocol", "Database", "None"], correct: 0 },
-                    { question: "What is computer vision?", options: ["Image processing AI", "Text processing", "Audio processing", "None"], correct: 0 },
-                    { question: "What is CNN?", options: ["Convolutional Neural Network", "Database", "Framework", "None"], correct: 0 },
-                    { question: "What is RNN?", options: ["Recurrent Neural Network", "Database", "Framework", "None"], correct: 0 },
-                    { question: "What is LSTM?", options: ["Long Short-Term Memory", "Database", "Framework", "None"], correct: 0 },
-                    { question: "What is GAN?", options: ["Generative Adversarial Network", "Database", "Framework", "None"], correct: 0 },
-                    { question: "What is reinforcement learning?", options: ["Learning through rewards", "Supervised", "Unsupervised", "None"], correct: 0 },
-                    { question: "What is transfer learning?", options: ["Using pre-trained models", "Training from scratch", "No training", "None"], correct: 0 },
-                    { question: "What is ensemble learning?", options: ["Combining multiple models", "Single model", "No model", "None"], correct: 0 },
-                    { question: "What is gradient descent?", options: ["Optimization algorithm", "Classification", "Clustering", "None"], correct: 0 },
-                    { question: "What is backpropagation?", options: ["Training neural networks", "Forward pass", "Testing", "None"], correct: 0 },
-                    { question: "What is activation function?", options: ["Non-linear transformation", "Linear only", "No transformation", "None"], correct: 0 },
-                    { question: "What is dropout?", options: ["Regularization technique", "Overfitting", "Underfitting", "None"], correct: 0 },
-                    { question: "What is batch normalization?", options: ["Normalizing layer inputs", "Data normalization", "No normalization", "None"], correct: 0 },
-                    { question: "What is hyperparameter tuning?", options: ["Optimizing model parameters", "Training", "Testing", "None"], correct: 0 },
-                    { question: "What is A/B testing?", options: ["Comparing two versions", "Single version", "No testing", "None"], correct: 0 },
-                    { question: "What is big data?", options: ["Large volume of data", "Small data", "Medium data", "None"], correct: 0 }
-                ]
+                4: []
             }
         };
 
@@ -258,6 +238,7 @@
 
         function loadMonthButtons() {
             const trade = document.getElementById('tradeSelect').value;
+            const studentId = document.getElementById('studentId').value.trim();
             const monthSelect = document.getElementById('monthSelect');
             
             if (!trade) {
@@ -265,7 +246,12 @@
                 return;
             }
             
-            const completedMonths = getCompletedMonths(trade);
+            if (!studentId) {
+                monthSelect.innerHTML = '<p style="color: #888; text-align: center;">Please enter your ID first</p>';
+                return;
+            }
+            
+            const completedMonths = getCompletedMonths(trade, studentId);
             let html = '';
             
             for (let i = 1; i <= 4; i++) {
@@ -277,7 +263,7 @@
                 if (isCompleted) classes += ' completed';
                 if (isLocked) classes += ' locked';
                 
-                html += `<div class="${classes}" onclick="selectMonth(${i}, ${isLocked})">
+                html += `<div class="${classes}" onclick="selectMonth(${i}, ${isLocked}, ${isCompleted})">
                     <div style="font-size: 24px;">📅</div>
                     <div>Month ${i}</div>
                     <small style="color: #888;">${questionCount} Questions</small>
@@ -287,19 +273,24 @@
             monthSelect.innerHTML = html;
         }
 
-        function getCompletedMonths(trade) {
+        function getCompletedMonths(trade, studentId) {
             const results = JSON.parse(localStorage.getItem('testResults') || '[]');
-            const studentId = document.getElementById('studentId').value.trim();
             return results
                 .filter(r => r.id === studentId && r.trade === trade)
                 .map(r => r.month);
         }
 
-        function selectMonth(month, isLocked) {
+        function selectMonth(month, isLocked, isCompleted) {
             if (isLocked) {
                 document.getElementById('loginError').textContent = `Please complete Month ${month - 1} first!`;
                 return;
             }
+            
+            if (isCompleted) {
+                document.getElementById('loginError').textContent = `You have already completed Month ${month} test! You cannot re-attempt.`;
+                return;
+            }
+            
             selectedMonth = month;
             document.querySelectorAll('.month-btn').forEach(btn => btn.classList.remove('selected'));
             event.target.closest('.month-btn').classList.add('selected');
@@ -319,9 +310,21 @@
             if (!trade) { errorDiv.textContent = 'Please select your trade'; return; }
             if (!selectedMonth) { errorDiv.textContent = 'Please select a month'; return; }
             
+            const completedMonths = getCompletedMonths(trade, id);
+            if (completedMonths.includes(selectedMonth)) {
+                errorDiv.textContent = `You have already completed Month ${selectedMonth} test! You cannot re-attempt.`;
+                return;
+            }
+            
             selectedTrade = trade;
             studentData = { name, id, trade, month: selectedMonth, startTime: new Date().toISOString() };
             currentQuestions = questionsByTradeAndMonth[trade][selectedMonth];
+            
+            if (!currentQuestions || currentQuestions.length === 0) {
+                errorDiv.textContent = `Month ${selectedMonth} questions are not available yet. Please contact Sir Faris.`;
+                return;
+            }
+            
             startTime = Date.now();
             
             document.getElementById('displayName').textContent = name;
