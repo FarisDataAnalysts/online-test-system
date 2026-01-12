@@ -17,7 +17,8 @@
         input:focus, select:focus { outline: none; border-color: #4CAF50; }
         select option { background: #1a1a1a; color: #fff; }
         button { width: 100%; padding: 15px; margin: 10px 0; background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%); color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: transform 0.2s; }
-        button:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4); }
+        button:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4); }
+        button:disabled { opacity: 0.5; cursor: not-allowed; }
         .error { color: #ff6b6b; margin-top: 10px; text-align: center; }
         .test-header { background: #2d2d2d; padding: 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.5); flex-wrap: wrap; gap: 10px; border-bottom: 2px solid #4CAF50; }
         .timer { font-size: 24px; font-weight: bold; color: #ff6b6b; padding: 10px 20px; background: #1a1a1a; border-radius: 8px; border: 2px solid #ff6b6b; }
@@ -34,18 +35,23 @@
         .result-details { margin: 30px 0; padding: 20px; background: #1a1a1a; border-radius: 8px; border: 1px solid #444; }
         .result-details p { margin: 15px 0; font-size: 18px; color: #fff; }
         .result-details span { color: #4CAF50; font-weight: bold; }
+        .score-display { font-size: 48px; text-align: center; color: #4CAF50; font-weight: bold; margin: 20px 0; }
         table { width: 100%; background: #2d2d2d; border-collapse: collapse; margin-top: 20px; border-radius: 8px; overflow: hidden; border: 1px solid #444; }
         th, td { padding: 12px; text-align: left; border-bottom: 1px solid #444; color: #fff; }
         th { background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%); color: white; font-weight: bold; }
         tr:hover { background: #1a1a1a; }
         .month-select { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0; }
-        .month-btn { padding: 20px; background: #1a1a1a; border: 2px solid #444; border-radius: 10px; cursor: pointer; text-align: center; font-weight: bold; transition: all 0.3s; color: #fff; }
-        .month-btn:hover { border-color: #4CAF50; background: #2d2d2d; }
+        .month-btn { padding: 20px; background: #1a1a1a; border: 2px solid #444; border-radius: 10px; cursor: pointer; text-align: center; font-weight: bold; transition: all 0.3s; color: #fff; position: relative; }
+        .month-btn:hover:not(.locked) { border-color: #4CAF50; background: #2d2d2d; }
         .month-btn.selected { border-color: #4CAF50; background: #4CAF50; color: white; }
+        .month-btn.locked { opacity: 0.4; cursor: not-allowed; }
+        .month-btn.locked::after { content: '🔒'; position: absolute; top: 10px; right: 10px; font-size: 20px; }
+        .month-btn.completed::after { content: '✅'; position: absolute; top: 10px; right: 10px; font-size: 20px; }
         .footer { position: fixed; bottom: 10px; right: 20px; color: #888; font-size: 14px; font-style: italic; }
         .question h3 { color: #fff; margin-bottom: 20px; }
         .question p { color: #ddd; }
         #questionCounter { color: #4CAF50; font-weight: bold; }
+        .admin-btn { background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%) !important; margin-top: 20px; }
     </style>
 </head>
 <body>
@@ -64,30 +70,10 @@
                 </select>
                 
                 <h3 style="margin-top: 20px; color: #fff; font-size: 16px;">Select Test Month:</h3>
-                <div class="month-select">
-                    <div class="month-btn" onclick="selectMonth(1)">
-                        <div style="font-size: 24px;">📅</div>
-                        <div>Month 1</div>
-                        <small style="color: #888;">10 Questions</small>
-                    </div>
-                    <div class="month-btn" onclick="selectMonth(2)">
-                        <div style="font-size: 24px;">📅</div>
-                        <div>Month 2</div>
-                        <small style="color: #888;">10 Questions</small>
-                    </div>
-                    <div class="month-btn" onclick="selectMonth(3)">
-                        <div style="font-size: 24px;">📅</div>
-                        <div>Month 3</div>
-                        <small style="color: #888;">10 Questions</small>
-                    </div>
-                    <div class="month-btn" onclick="selectMonth(4)">
-                        <div style="font-size: 24px;">📅</div>
-                        <div>Month 4</div>
-                        <small style="color: #888;">20 Questions</small>
-                    </div>
-                </div>
+                <div class="month-select" id="monthSelect"></div>
                 
                 <button onclick="startTest()">Start Test</button>
+                <button onclick="showAdminLogin()" class="admin-btn">Admin Panel</button>
                 <div id="loginError" class="error"></div>
             </div>
         </div>
@@ -118,28 +104,25 @@
         <div class="container">
             <div class="result-box">
                 <h1>🎉 Test Completed!</h1>
+                <div class="score-display" id="scoreDisplay">0/10</div>
                 <div class="result-details">
                     <p><strong>Name:</strong> <span id="resultName"></span></p>
                     <p><strong>ID:</strong> <span id="resultId"></span></p>
                     <p><strong>Trade:</strong> <span id="resultTrade"></span></p>
                     <p><strong>Month:</strong> <span id="resultMonth"></span></p>
-                    <p><strong>Score:</strong> <span id="resultScore"></span></p>
-                    <p><strong>Percentage:</strong> <span id="resultPercentage"></span></p>
-                    <p><strong>Time:</strong> <span id="timeTaken"></span></p>
                 </div>
-                <button onclick="downloadResults()">📥 Download Result</button>
-                <button onclick="viewAllResults()">📊 View All Results</button>
-                <button onclick="resetTest()">🔄 New Test</button>
+                <button onclick="resetTest()">🔄 Take Another Test</button>
             </div>
         </div>
     </div>
 
     <div id="adminPanel" class="screen">
         <div class="container" style="max-width: 1200px;">
-            <h1 style="color: white;">📊 All Test Results</h1>
+            <h1 style="color: white;">📊 Admin Panel - All Results</h1>
             <div style="display: flex; gap: 10px; margin-bottom: 20px;">
-                <button onclick="backToResult()">← Back</button>
+                <button onclick="backToLogin()">← Back to Login</button>
                 <button onclick="exportToCSV()">📥 Export to Excel (CSV)</button>
+                <button onclick="clearAllData()" style="background: #ff6b6b;">🗑️ Clear All Data</button>
             </div>
             <div id="resultsTable" style="background: #2d2d2d; padding: 20px; border-radius: 15px; overflow-x: auto; border: 1px solid #444;"></div>
         </div>
@@ -273,11 +256,58 @@
 
         let currentQuestion = 0, answers = [], studentData = {}, timeLeft = 1800, timerInterval, startTime, selectedMonth = null, selectedTrade = null, currentQuestions = [];
 
-        function selectMonth(month) {
+        function loadMonthButtons() {
+            const trade = document.getElementById('tradeSelect').value;
+            const monthSelect = document.getElementById('monthSelect');
+            
+            if (!trade) {
+                monthSelect.innerHTML = '<p style="color: #888; text-align: center;">Please select a trade first</p>';
+                return;
+            }
+            
+            const completedMonths = getCompletedMonths(trade);
+            let html = '';
+            
+            for (let i = 1; i <= 4; i++) {
+                const isCompleted = completedMonths.includes(i);
+                const isLocked = i > 1 && !completedMonths.includes(i - 1);
+                const questionCount = i === 4 ? 20 : 10;
+                
+                let classes = 'month-btn';
+                if (isCompleted) classes += ' completed';
+                if (isLocked) classes += ' locked';
+                
+                html += `<div class="${classes}" onclick="selectMonth(${i}, ${isLocked})">
+                    <div style="font-size: 24px;">📅</div>
+                    <div>Month ${i}</div>
+                    <small style="color: #888;">${questionCount} Questions</small>
+                </div>`;
+            }
+            
+            monthSelect.innerHTML = html;
+        }
+
+        function getCompletedMonths(trade) {
+            const results = JSON.parse(localStorage.getItem('testResults') || '[]');
+            const studentId = document.getElementById('studentId').value.trim();
+            return results
+                .filter(r => r.id === studentId && r.trade === trade)
+                .map(r => r.month);
+        }
+
+        function selectMonth(month, isLocked) {
+            if (isLocked) {
+                document.getElementById('loginError').textContent = `Please complete Month ${month - 1} first!`;
+                return;
+            }
             selectedMonth = month;
             document.querySelectorAll('.month-btn').forEach(btn => btn.classList.remove('selected'));
             event.target.closest('.month-btn').classList.add('selected');
+            document.getElementById('loginError').textContent = '';
         }
+
+        document.getElementById('tradeSelect').addEventListener('change', loadMonthButtons);
+        document.getElementById('studentId').addEventListener('input', loadMonthButtons);
 
         function startTest() {
             const name = document.getElementById('studentName').value.trim();
@@ -339,42 +369,42 @@
 
         function endTest() {
             clearInterval(timerInterval);
-            const t = Math.floor((Date.now() - startTime) / 1000), m = Math.floor(t / 60), s = t % 60;
             let score = 0;
             answers.forEach((a, i) => { if (a === currentQuestions[i].correct) score++; });
-            const pct = ((score / currentQuestions.length) * 100).toFixed(2);
-            const result = { ...studentData, score, total: currentQuestions.length, percentage: pct, time: `${m}:${s.toString().padStart(2,'0')}`, endTime: new Date().toISOString() };
+            
+            const result = { 
+                ...studentData, 
+                score, 
+                total: currentQuestions.length, 
+                endTime: new Date().toISOString() 
+            };
             
             let results = JSON.parse(localStorage.getItem('testResults') || '[]');
             results.push(result);
             localStorage.setItem('testResults', JSON.stringify(results));
             
+            document.getElementById('scoreDisplay').textContent = `${score}/${currentQuestions.length}`;
             document.getElementById('resultName').textContent = studentData.name;
             document.getElementById('resultId').textContent = studentData.id;
             document.getElementById('resultTrade').textContent = studentData.trade;
             document.getElementById('resultMonth').textContent = `Month ${studentData.month}`;
-            document.getElementById('resultScore').textContent = `${score} / ${currentQuestions.length}`;
-            document.getElementById('resultPercentage').textContent = pct + '%';
-            document.getElementById('timeTaken').textContent = `${m}:${s.toString().padStart(2,'0')}`;
             showScreen('resultScreen');
         }
 
-        function downloadResults() {
-            const results = JSON.parse(localStorage.getItem('testResults') || '[]');
-            const r = results[results.length - 1];
-            const txt = `Student Test Result\n==================\nName: ${r.name}\nID: ${r.id}\nTrade: ${r.trade}\nMonth: ${r.month}\nScore: ${r.score}/${r.total}\nPercentage: ${r.percentage}%\nTime: ${r.time}\nDate: ${new Date(r.endTime).toLocaleString()}\n\nPrepared by Sir Faris`;
-            const blob = new Blob([txt], { type: 'text/plain' });
-            const a = document.createElement('a');
-            a.href = URL.createObjectURL(blob);
-            a.download = `Result_${r.id}_${r.trade}_Month${r.month}_${Date.now()}.txt`;
-            a.click();
+        function showAdminLogin() {
+            const password = prompt('Enter Admin Password:');
+            if (password === 'admin123') {
+                viewAllResults();
+            } else if (password !== null) {
+                alert('Incorrect password!');
+            }
         }
 
         function viewAllResults() {
             const results = JSON.parse(localStorage.getItem('testResults') || '[]');
-            let html = '<table><tr><th>Name</th><th>ID</th><th>Trade</th><th>Month</th><th>Score</th><th>%</th><th>Time</th><th>Date</th></tr>';
+            let html = '<table><tr><th>Name</th><th>ID</th><th>Trade</th><th>Month</th><th>Score</th><th>Date</th></tr>';
             results.forEach(r => {
-                html += `<tr><td>${r.name}</td><td>${r.id}</td><td>${r.trade}</td><td>Month ${r.month}</td><td>${r.score}/${r.total}</td><td>${r.percentage}%</td><td>${r.time}</td><td>${new Date(r.endTime).toLocaleString()}</td></tr>`;
+                html += `<tr><td>${r.name}</td><td>${r.id}</td><td>${r.trade}</td><td>Month ${r.month}</td><td>${r.score}/${r.total}</td><td>${new Date(r.endTime).toLocaleString()}</td></tr>`;
             });
             html += '</table>';
             document.getElementById('resultsTable').innerHTML = html;
@@ -383,8 +413,8 @@
 
         function exportToCSV() {
             const results = JSON.parse(localStorage.getItem('testResults') || '[]');
-            let csv = 'Name,ID,Trade,Month,Score,Total,Percentage,Time,Date\n';
-            results.forEach(r => csv += `${r.name},${r.id},${r.trade},Month ${r.month},${r.score},${r.total},${r.percentage}%,${r.time},"${new Date(r.endTime).toLocaleString()}"\n`);
+            let csv = 'Name,ID,Trade,Month,Score,Total,Date\n';
+            results.forEach(r => csv += `${r.name},${r.id},${r.trade},Month ${r.month},${r.score},${r.total},"${new Date(r.endTime).toLocaleString()}"\n`);
             const blob = new Blob([csv], { type: 'text/csv' });
             const a = document.createElement('a');
             a.href = URL.createObjectURL(blob);
@@ -392,7 +422,16 @@
             a.click();
         }
 
-        function backToResult() { showScreen('resultScreen'); }
+        function clearAllData() {
+            if (confirm('Are you sure you want to delete ALL test results? This cannot be undone!')) {
+                localStorage.removeItem('testResults');
+                alert('All data cleared!');
+                viewAllResults();
+            }
+        }
+
+        function backToLogin() { showScreen('loginScreen'); loadMonthButtons(); }
+        
         function resetTest() { 
             currentQuestion = 0; answers = []; studentData = {}; timeLeft = 1800; selectedMonth = null; selectedTrade = null; currentQuestions = [];
             showScreen('loginScreen'); 
@@ -400,7 +439,7 @@
             document.getElementById('studentId').value = ''; 
             document.getElementById('tradeSelect').value = '';
             document.getElementById('loginError').textContent = '';
-            document.querySelectorAll('.month-btn').forEach(btn => btn.classList.remove('selected'));
+            loadMonthButtons();
         }
     </script>
 </body>
