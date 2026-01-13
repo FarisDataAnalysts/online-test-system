@@ -29,10 +29,11 @@
         .test-container { max-width: 900px; margin: 30px auto; background: #2d2d2d; padding: 30px; border-radius: 15px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); border: 1px solid #444; }
         .progress-bar { width: 100%; height: 8px; background: #1a1a1a; border-radius: 10px; margin-bottom: 30px; border: 1px solid #444; }
         .progress { height: 100%; background: linear-gradient(90deg, #4CAF50 0%, #45a049 100%); transition: width 0.3s; border-radius: 10px; }
-        .option { padding: 15px 15px 15px 20px; margin: 10px 0; border: 2px solid #444; border-radius: 8px; cursor: pointer; display: block; transition: all 0.3s; background: #1a1a1a; text-align: left; width: 100%; }
+        .option { padding: 15px; margin: 10px 0; border: 2px solid #444; border-radius: 8px; cursor: pointer; display: flex; align-items: center; transition: all 0.3s; background: #1a1a1a; text-align: left; width: 100%; }
         .option:hover { border-color: #4CAF50; background: #2d2d2d; }
         .option.selected { border-color: #4CAF50; background: #4CAF50; color: white; }
-        .option input[type="radio"] { margin-right: 12px; vertical-align: middle; }
+        .option input[type="radio"] { margin-right: 15px; width: 20px; height: 20px; cursor: pointer; flex-shrink: 0; }
+        .option-text { flex: 1; }
         .navigation { display: flex; justify-content: space-between; align-items: center; margin-top: 30px; }
         .navigation button { width: auto; padding: 12px 30px; }
         .result-details { margin: 30px 0; padding: 20px; background: #1a1a1a; border-radius: 8px; border: 1px solid #444; }
@@ -60,10 +61,7 @@
         .admin-panel-box { background: #2d2d2d; padding: 30px; border-radius: 15px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); border: 1px solid #444; margin: 20px 0; }
         .btn-group { display: flex; gap: 10px; flex-wrap: wrap; }
         .btn-group button { flex: 1; min-width: 200px; }
-        .question-editor { background: #1a1a1a; padding: 20px; border-radius: 8px; margin: 20px 0; border: 1px solid #444; }
-        .question-item { background: #2d2d2d; padding: 15px; margin: 10px 0; border-radius: 8px; border: 1px solid #444; }
-        .question-item input, .question-item textarea { margin: 5px 0; }
-        textarea { width: 100%; padding: 10px; background: #1a1a1a; color: #fff; border: 2px solid #444; border-radius: 8px; font-family: inherit; resize: vertical; min-height: 60px; }
+        .validation-error { color: #ff6b6b; font-size: 14px; margin-top: 10px; text-align: center; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -109,6 +107,7 @@
                 <div class="progress" id="progressBar"></div>
             </div>
             <div id="questionContainer" class="question"></div>
+            <div id="validationError" class="validation-error"></div>
             <div class="navigation">
                 <button onclick="previousQuestion()" id="prevBtn">← Previous</button>
                 <span id="questionCounter"></span>
@@ -168,127 +167,19 @@
     <div class="footer">Developed by Sir Muhammad Faris</div>
 
     <script>
-        // Question Bank
+        // Question Bank - EMPTY (Admin will add questions)
         const questionBank = {
             "Computerized Accounting": {
-                1: [
-                    {q: "Capital + Liabilities = ?", options: ["Revenue", "Assets", "Expense", "Voucher"], correct: 1},
-                    {q: "Owner's claim on total assets is?", options: ["Liability", "Assets", "Equity", "Cash"], correct: 2},
-                    {q: "Which of the following financial report show the profitable of a business?", options: ["Income Statement", "Balance Sheet", "Cash Flow Statement", "Statement of changes in equity"], correct: 0},
-                    {q: "A Cheque returned by bank marked 'NFS' means that?", options: ["Bank can't verify your identity", "There are Not sufficient Balance", "Cheque has been forged", "Cheque can't be cash being illegal"], correct: 1},
-                    {q: "Which of the following is fiscal year of Government of Pakistan?", options: ["1st January to 31st December", "1st June to 31st May", "1st July to 30th June", "1st October to 30th September"], correct: 2},
-                    {q: "How many companies open at the same time in QuickBooks?", options: ["One", "Two", "Both of above", "None of above"], correct: 0},
-                    {q: "Sales Tax charged on?", options: ["Vendor", "Customer", "Employee", "None of above"], correct: 1},
-                    {q: "Which person sales Tax Paid?", options: ["Vendor", "Customer", "Employee", "None of above"], correct: 0},
-                    {q: "U/M Stands for?", options: ["Unit Markup", "Unit of Measure"], correct: 1},
-                    {q: "How Sale returned transaction recorded in Peachtree?", options: ["Purchase Order→ Enter Bill→Pay Bill", "Purchase Order→Enter Bill", "Sale Order→create Invoice→Credit & Return→Received payment", "All of Above"], correct: 2}
-                ],
-                2: [
-                    {q: "What is MS EXCEL?", options: ["Spread sheets package", "Graphical software", "All of Above", "None of these"], correct: 0},
-                    {q: "What does The VLOOKUP function?", options: ["Lookup text that contains 'V'", "Check weather test is the same in one cell as in the text", "Find related values", "All of Above"], correct: 2},
-                    {q: "Which function calculates missing loan amount?", options: ["PV (Present Value)", "FV (Future Value)", "PMT (Payment)", "NPER (Number of periods)"], correct: 2},
-                    {q: "How many types of cursors in MS excel?", options: ["FIVE", "THREE", "FOUR"], correct: 1},
-                    {q: "Select the right purpose of 'COUNT'", options: ["Count Alphabets", "Count Numeric", "Count Alpha Numeric"], correct: 1},
-                    {q: "Which area shows the address of a cell?", options: ["Name Box", "Formula Bar", "Status Bar"], correct: 0},
-                    {q: "Circle the correct short key of edit cell.", options: ["F2", "F3", "F9", "F8"], correct: 0},
-                    {q: "To select another particular cell in work sheet", options: ["Ctrl + Click", "Ctrl + shift+ Click", "Ctrl + F7"], correct: 0},
-                    {q: "What is the meaning of this error #### in a cell?", options: ["Cell width is narrow", "Cell width is long", "None of these"], correct: 0},
-                    {q: "What is the File Extension of Excel?", options: [".xlsx", ".Xlx", ".xlsm"], correct: 0}
-                ],
-                3: [
-                    {q: "What is the correct syntax of IF() function?", options: ["=IF(logical test, value_if_true, value_if_false)", "=IF (logical test, TRUE([value_if_true]), FALSE([value_if_false]))", "None of these"], correct: 0},
-                    {q: "Which of the following formula enter is not correctly?", options: ["=B7*C7", "-1- + 50", "10+50", "=10+B7"], correct: 1},
-                    {q: "Select the right purpose of count.", options: ["Count specific value in our given rang", "Sum specific value in our given rang", "None of These"], correct: 0},
-                    {q: "How many conditions can we apply in conditional formatting on one range?", options: ["5", "10", "Unlimited", "3"], correct: 2},
-                    {q: "What is the purpose of $ sign in formula?", options: ["For currency Symbol", "For Fix Error", "For Fixing cell Address", "All of these"], correct: 2},
-                    {q: "Except for the ...... function, a formula with a logical function shows the word 'TRUE' or 'FALSE' as a result", options: ["End", "OR", "Not", "IF"], correct: 3},
-                    {q: "Which function is used to trap and handle errors?", options: ["IFERROR", "ERROR", "IFNA", "None of these"], correct: 0},
-                    {q: "What is shortcut key of sum?", options: ["Alt+ Enter", "Alt + =", "Ctrl + +", "Ctrl + ="], correct: 1},
-                    {q: "If we select 5 rows and 5 columns how many cells will be selected", options: ["25", "10", "15", "None of these"], correct: 0},
-                    {q: "Which symbol must be with all formulas?", options: ["=", "@", "%", "!"], correct: 0}
-                ],
-                4: [
-                    {q: "Circle the correct short key of debug formula and edit cell.", options: ["F2", "F3", "F9", "F8"], correct: 0},
-                    {q: "What is the meaning of this error #### in a cell?", options: ["Cell width is narrow", "Cell width is long", "None of these"], correct: 0},
-                    {q: "How can we insert a new row in a cell with keyboard?", options: ["Ctrl + Enter", "Ctrl + Alt + Enter", "Alt + Enter"], correct: 2},
-                    {q: "Which function in Excel tells how many numeric entries are there?", options: ["NUM", "COUNT", "SUM", "CHKNUM"], correct: 1},
-                    {q: "Circle the correct M-Language for insert a file or workbook name in power query.", options: ["Exce.CurrentWorkbook([Content],true)", "Excel.CurrentWorkbook([Content])", "Very Basic Applications", "Visual Basic Applied"], correct: 1},
-                    {q: "Why we use Charts and Graphs?", options: ["Graphical Representation", "Numerical Representation", "Immediate window", "Code window"], correct: 0},
-                    {q: "Why are purchase order used?", options: ["To post accounting information", "To place an order with a customer", "To request items from vendor"], correct: 2},
-                    {q: "Which window do you use to add a new vendor?", options: ["Purchase / Receive Inventory", "Menu Bar", "Maintain vendors"], correct: 2},
-                    {q: "Going from the ledger to the original entry window is called?", options: ["Lookup", "Drill down", "None of above"], correct: 1},
-                    {q: "Which of the following navigation bar vendor & purchase selection do you use to issue a return of merchandise to a vendor?", options: ["Credit memos", "Sales/invoicing", "Credit & Returns"], correct: 2},
-                    {q: "Which of the following choices is not used to modify the chart of accounts?", options: ["Deleting accounts with balances", "Adding new accounts", "Editing accounts", "Deleting unused accounts"], correct: 0},
-                    {q: "Which of the following is NOT an Item Type?", options: ["Inventory Part", "Service", "Non-inventory Part", "Income"], correct: 3},
-                    {q: "What transaction should you enter if a customer returns a damaged product or, in the case of a service, complains so much you decide to offer a refund?", options: ["Debit Memo", "Credit Memo", "Customer Return", "Check or Bill"], correct: 1},
-                    {q: "Which of these functions can only be performed by the Administrator?", options: ["Merge entries on lists", "Add new users and change their access privileges", "Memorize custom reports", "Back up the data file"], correct: 1},
-                    {q: "Tally package is developed by", options: ["Saga50", "Tally solution", "Intuit"], correct: 1},
-                    {q: "In general, the financial year from shall be from", options: ["1st July of any year", "31st march of any year", "All Answer is correct"], correct: 2},
-                    {q: "Which menu appears after starting tally for the first-time?", options: ["Gateway of tally", "Company info", "Display"], correct: 0},
-                    {q: "Which option is used in tally to make changes in the company?", options: ["Select company", "Shut company", "Alter"], correct: 2},
-                    {q: "Which option is used to copy company's data into pen-drive or CD?", options: ["Backup", "Restore", "Copy data"], correct: 0},
-                    {q: "NOTE: Question 1 was a fill-in-the-blank table for Debit/Credit rules (not included in MCQ format)", options: ["Acknowledged"], correct: 0}
-                ]
+                1: [],
+                2: [],
+                3: [],
+                4: []
             },
             "Data Analytics with AI": {
-                1: [
-                    {q: "What is the shortcut key to open a new workbook in Excel?", options: ["Ctrl+N", "Ctrl+O", "Ctrl+W", "Ctrl+S"], correct: 0},
-                    {q: "Which function is used to find the average of numbers in Excel?", options: ["SUM", "AVERAGE", "COUNT", "MAX"], correct: 1},
-                    {q: "What does VLOOKUP stand for?", options: ["Vertical Lookup", "Value Lookup", "Variable Lookup", "Vector Lookup"], correct: 0},
-                    {q: "Which chart type is best for showing trends over time?", options: ["Pie Chart", "Bar Chart", "Line Chart", "Scatter Plot"], correct: 2},
-                    {q: "What is the default file extension for Excel 2016 and later?", options: [".xls", ".xlsx", ".csv", ".xlsm"], correct: 1},
-                    {q: "Which key combination is used to insert a new row in Excel?", options: ["Ctrl+Shift++", "Alt+I+R", "Ctrl+R", "Shift+R"], correct: 0},
-                    {q: "What does the $ symbol do in an Excel formula?", options: ["Adds currency format", "Creates absolute reference", "Multiplies values", "None of the above"], correct: 1},
-                    {q: "Which function counts the number of cells containing numbers?", options: ["COUNT", "COUNTA", "COUNTIF", "SUM"], correct: 0},
-                    {q: "What is a Pivot Table used for?", options: ["Creating charts", "Summarizing data", "Formatting cells", "Printing data"], correct: 1},
-                    {q: "Which Excel feature allows you to apply the same formatting to multiple cells?", options: ["Format Painter", "Cell Styles", "Conditional Formatting", "Themes"], correct: 0}
-                ],
-                2: [
-                    {q: "What does SQL stand for?", options: ["Structured Query Language", "Simple Query Language", "Standard Query Language", "Sequential Query Language"], correct: 0},
-                    {q: "Which SQL command is used to retrieve data from a database?", options: ["GET", "SELECT", "FETCH", "RETRIEVE"], correct: 1},
-                    {q: "What is a primary key in a database?", options: ["A unique identifier for a record", "The first column in a table", "A foreign key reference", "An index"], correct: 0},
-                    {q: "Which clause is used to filter records in SQL?", options: ["FILTER", "WHERE", "HAVING", "SELECT"], correct: 1},
-                    {q: "What does the JOIN operation do in SQL?", options: ["Combines rows from two or more tables", "Adds new columns", "Deletes records", "Updates data"], correct: 0},
-                    {q: "Which SQL function returns the number of rows?", options: ["SUM()", "COUNT()", "AVG()", "MAX()"], correct: 1},
-                    {q: "What is the purpose of the GROUP BY clause?", options: ["To sort data", "To group rows with same values", "To filter data", "To join tables"], correct: 1},
-                    {q: "Which data type is used for storing text in MySQL?", options: ["INT", "VARCHAR", "DATE", "FLOAT"], correct: 1},
-                    {q: "What does DISTINCT keyword do in SQL?", options: ["Removes duplicate rows", "Sorts data", "Filters data", "Joins tables"], correct: 0},
-                    {q: "Which SQL command is used to modify existing data?", options: ["MODIFY", "CHANGE", "UPDATE", "ALTER"], correct: 2}
-                ],
-                3: [
-                    {q: "What is Python primarily used for?", options: ["Web Development", "Data Analysis", "Machine Learning", "All of the above"], correct: 3},
-                    {q: "Which library is commonly used for data manipulation in Python?", options: ["NumPy", "Pandas", "Matplotlib", "Scikit-learn"], correct: 1},
-                    {q: "What does the 'print()' function do in Python?", options: ["Saves data", "Displays output", "Reads input", "Deletes data"], correct: 1},
-                    {q: "Which data structure in Python is ordered and changeable?", options: ["Tuple", "Set", "List", "Dictionary"], correct: 2},
-                    {q: "What is the correct way to create a function in Python?", options: ["function myFunc():", "def myFunc():", "create myFunc():", "func myFunc():"], correct: 1},
-                    {q: "Which operator is used for exponentiation in Python?", options: ["^", "**", "exp", "pow"], correct: 1},
-                    {q: "What does 'len()' function return?", options: ["Length of an object", "Type of object", "Value of object", "None of the above"], correct: 0},
-                    {q: "Which library is used for creating visualizations in Python?", options: ["Pandas", "NumPy", "Matplotlib", "Requests"], correct: 2},
-                    {q: "What is a DataFrame in Pandas?", options: ["A 2D labeled data structure", "A 1D array", "A dictionary", "A list"], correct: 0},
-                    {q: "Which method is used to read a CSV file in Pandas?", options: ["read_csv()", "load_csv()", "import_csv()", "get_csv()"], correct: 0}
-                ],
-                4: [
-                    {q: "What is Power BI primarily used for?", options: ["Data Visualization", "Database Management", "Web Development", "Machine Learning"], correct: 0},
-                    {q: "Which Excel function finds the maximum value?", options: ["MAX()", "MAXIMUM()", "HIGHEST()", "TOP()"], correct: 0},
-                    {q: "In SQL, which command creates a new table?", options: ["NEW TABLE", "CREATE TABLE", "MAKE TABLE", "ADD TABLE"], correct: 1},
-                    {q: "What does API stand for?", options: ["Application Programming Interface", "Advanced Programming Interface", "Automated Programming Interface", "Application Process Interface"], correct: 0},
-                    {q: "Which Python library is used for machine learning?", options: ["Pandas", "NumPy", "Scikit-learn", "Matplotlib"], correct: 2},
-                    {q: "What is the purpose of data cleaning?", options: ["To remove errors and inconsistencies", "To visualize data", "To store data", "To encrypt data"], correct: 0},
-                    {q: "Which chart type shows the relationship between two variables?", options: ["Pie Chart", "Bar Chart", "Scatter Plot", "Line Chart"], correct: 2},
-                    {q: "What does ETL stand for in data processing?", options: ["Extract, Transform, Load", "Execute, Test, Launch", "Evaluate, Track, Log", "Export, Transfer, Link"], correct: 0},
-                    {q: "Which SQL clause is used to sort results?", options: ["SORT BY", "ORDER BY", "ARRANGE BY", "GROUP BY"], correct: 1},
-                    {q: "What is a dashboard in Power BI?", options: ["A single-page visualization", "A database", "A query", "A report"], correct: 0},
-                    {q: "Which function in Excel removes leading/trailing spaces?", options: ["CLEAN()", "TRIM()", "STRIP()", "REMOVE()"], correct: 1},
-                    {q: "What is normalization in databases?", options: ["Organizing data to reduce redundancy", "Backing up data", "Encrypting data", "Sorting data"], correct: 0},
-                    {q: "Which Python data type is immutable?", options: ["List", "Dictionary", "Tuple", "Set"], correct: 2},
-                    {q: "What does CSV stand for?", options: ["Comma Separated Values", "Character Separated Values", "Column Separated Values", "Cell Separated Values"], correct: 0},
-                    {q: "Which Power BI component connects to data sources?", options: ["Power Query", "Power Pivot", "Power View", "Power Map"], correct: 0},
-                    {q: "What is the purpose of indexing in databases?", options: ["To speed up data retrieval", "To backup data", "To encrypt data", "To delete data"], correct: 0},
-                    {q: "Which Excel feature allows 'what-if' analysis?", options: ["Goal Seek", "Solver", "Scenario Manager", "All of the above"], correct: 3},
-                    {q: "What is a foreign key in SQL?", options: ["A key from another table", "The primary key", "An index", "A unique constraint"], correct: 0},
-                    {q: "Which Python keyword is used for conditional statements?", options: ["if", "when", "check", "condition"], correct: 0},
-                    {q: "What is data mining?", options: ["Discovering patterns in large datasets", "Storing data", "Deleting data", "Encrypting data"], correct: 0}
-                ]
+                1: [],
+                2: [],
+                3: [],
+                4: []
             }
         };
 
@@ -389,6 +280,13 @@
 
             currentStudent = { name, id, trade, timing, month };
             currentQuestions = questionBank[trade][month];
+            
+            // Check if questions exist
+            if (!currentQuestions || currentQuestions.length === 0) {
+                document.getElementById('loginError').textContent = 'No questions available for this test yet!';
+                return;
+            }
+
             currentQuestionIndex = 0;
             userAnswers = new Array(currentQuestions.length).fill(null);
 
@@ -414,12 +312,13 @@
                 html += `
                     <label class="option ${isSelected ? 'selected' : ''}" onclick="selectAnswer(${index})">
                         <input type="radio" name="answer" value="${index}" ${isSelected ? 'checked' : ''}>
-                        ${option}
+                        <span class="option-text">${option}</span>
                     </label>
                 `;
             });
             
             container.innerHTML = html;
+            document.getElementById('validationError').textContent = '';
             updateProgress();
             updateNavigation();
         }
@@ -437,6 +336,12 @@
         }
 
         function nextQuestion() {
+            // Validate that an answer is selected
+            if (userAnswers[currentQuestionIndex] === null) {
+                document.getElementById('validationError').textContent = '⚠️ Please select an answer before proceeding!';
+                return;
+            }
+
             if (currentQuestionIndex < currentQuestions.length - 1) {
                 currentQuestionIndex++;
                 displayQuestion();
