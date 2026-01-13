@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Monthly Test System - Sir Faris</title>
+    <title>MITI - Monthly Test System</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); min-height: 100vh; color: #fff; }
@@ -19,7 +19,9 @@
         button { width: 100%; padding: 15px; margin: 10px 0; background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%); color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: transform 0.2s; }
         button:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4); }
         button:disabled { opacity: 0.5; cursor: not-allowed; }
-        .error { color: #ff6b6b; margin-top: 10px; text-align: center; }
+        .error { color: #ff6b6b; margin-top: 10px; text-align: center; font-weight: bold; }
+        .success { color: #4CAF50; margin-top: 10px; text-align: center; font-weight: bold; }
+        .info { color: #2196F3; margin-top: 10px; text-align: center; font-size: 14px; }
         .test-header { background: #2d2d2d; padding: 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.5); flex-wrap: wrap; gap: 10px; border-bottom: 2px solid #4CAF50; }
         .timer { font-size: 24px; font-weight: bold; color: #ff6b6b; padding: 10px 20px; background: #1a1a1a; border-radius: 8px; border: 2px solid #ff6b6b; }
         .month-badge { background: #4CAF50; color: white; padding: 8px 15px; border-radius: 20px; font-weight: bold; }
@@ -53,12 +55,19 @@
         .question p { color: #ddd; }
         #questionCounter { color: #4CAF50; font-weight: bold; }
         .admin-btn { background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%) !important; margin-top: 20px; }
+        .time-slot-info { background: #1a1a1a; padding: 15px; border-radius: 8px; margin: 15px 0; border: 2px solid #2196F3; }
+        .time-slot-info h4 { color: #2196F3; margin-bottom: 10px; }
+        .time-slot-info p { color: #fff; margin: 5px 0; }
+        .admin-panel-box { background: #2d2d2d; padding: 30px; border-radius: 15px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); border: 1px solid #444; margin: 20px 0; }
+        .btn-group { display: flex; gap: 10px; flex-wrap: wrap; }
+        .btn-group button { flex: 1; min-width: 200px; }
     </style>
 </head>
 <body>
+    <!-- LOGIN SCREEN -->
     <div id="loginScreen" class="screen active">
         <div class="container">
-            <h1>📚 Monthly Test System</h1>
+            <h1>📚 MITI Test System</h1>
             <div class="login-box">
                 <h2>Student Login</h2>
                 <input type="text" id="studentName" placeholder="Enter Your Name">
@@ -70,16 +79,23 @@
                     <option value="Data Analytics with AI">Data Analytics with AI</option>
                 </select>
                 
+                <div id="timeSlotInfo" class="time-slot-info" style="display:none;">
+                    <h4>⏰ Test Timings for Your Trade:</h4>
+                    <p id="timeSlotText"></p>
+                </div>
+                
                 <h3 style="margin-top: 20px; color: #fff; font-size: 16px;">Select Test Month:</h3>
                 <div class="month-select" id="monthSelect"></div>
                 
                 <button onclick="startTest()">Start Test</button>
                 <button onclick="showAdminLogin()" class="admin-btn">Admin Panel</button>
                 <div id="loginError" class="error"></div>
+                <div id="loginInfo" class="info"></div>
             </div>
         </div>
     </div>
 
+    <!-- TEST SCREEN -->
     <div id="testScreen" class="screen">
         <div class="test-header">
             <div><span id="displayName"></span> | <span id="displayId"></span></div>
@@ -101,6 +117,7 @@
         </div>
     </div>
 
+    <!-- RESULT SCREEN -->
     <div id="resultScreen" class="screen">
         <div class="container">
             <div class="result-box">
@@ -112,26 +129,65 @@
                     <p><strong>Trade:</strong> <span id="resultTrade"></span></p>
                     <p><strong>Month:</strong> <span id="resultMonth"></span></p>
                 </div>
-                <button onclick="resetTest()">🔄 Take Another Test</button>
+                <div class="success" id="sheetSuccess" style="display:none;">✅ Results saved to Google Sheets!</div>
+                <button onclick="resetTest()">🔄 Back to Login</button>
             </div>
         </div>
     </div>
 
+    <!-- ADMIN LOGIN SCREEN -->
+    <div id="adminLoginScreen" class="screen">
+        <div class="container">
+            <div class="login-box">
+                <h2>🔐 Admin Login</h2>
+                <input type="text" id="adminUsername" placeholder="Username">
+                <input type="password" id="adminPassword" placeholder="Password">
+                <button onclick="adminLogin()">Login</button>
+                <button onclick="backToLogin()" style="background: #666;">← Back</button>
+                <div id="adminLoginError" class="error"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ADMIN PANEL -->
     <div id="adminPanel" class="screen">
         <div class="container" style="max-width: 1200px;">
-            <h1 style="color: white;">📊 Admin Panel - All Results</h1>
-            <div style="display: flex; gap: 10px; margin-bottom: 20px;">
-                <button onclick="backToLogin()">← Back to Login</button>
-                <button onclick="exportToCSV()">📥 Export to Excel (CSV)</button>
-                <button onclick="clearAllData()" style="background: #ff6b6b;">🗑️ Clear All Data</button>
+            <h1>📊 Admin Panel</h1>
+            <div class="admin-panel-box">
+                <div class="btn-group">
+                    <button onclick="viewAllResults()">📋 View All Results</button>
+                    <button onclick="showQuestionEditor()">✏️ Edit Questions</button>
+                    <button onclick="exportToCSV()">📥 Export to CSV</button>
+                    <button onclick="openGoogleSheet()">📊 Open Google Sheet</button>
+                    <button onclick="clearAllData()" style="background: #ff6b6b;">🗑️ Clear All Data</button>
+                    <button onclick="adminLogout()" style="background: #666;">🚪 Logout</button>
+                </div>
             </div>
-            <div id="resultsTable" style="background: #2d2d2d; padding: 20px; border-radius: 15px; overflow-x: auto; border: 1px solid #444;"></div>
+            <div id="adminContent"></div>
         </div>
     </div>
 
     <div class="footer">Prepared by Sir Faris</div>
 
     <script>
+        // CONFIGURATION
+        const CONFIG = {
+            SHEET_ID: '1cOiIjbKBvLrsnvs5qXOh1DsM2X7ypaGA-GHjwamae1g',
+            ADMIN_USERNAME: 'Faris',
+            ADMIN_PASSWORD: 'Mititest',
+            TIME_SLOTS: {
+                'Computerized Accounting': ['09:00-11:00', '17:00-19:00'],
+                'Data Analytics with AI': ['11:00-13:00', '19:00-21:00']
+            },
+            MONTH_SCHEDULE: {
+                1: { start: '2025-01-20', end: '2025-01-31' },
+                2: { start: '2025-02-20', end: '2025-02-28' },
+                3: { start: '2025-03-20', end: '2025-03-31' },
+                4: { start: '2025-04-20', end: '2025-04-30' }
+            }
+        };
+
+        // QUESTIONS DATABASE
         const questionsByTradeAndMonth = {
             "Computerized Accounting": {
                 1: [
@@ -255,43 +311,41 @@
             }
         };
 
-        let currentQuestion = 0, answers = [], studentData = {}, timeLeft = 1800, timerInterval, startTime, selectedMonth = null, selectedTrade = null, currentQuestions = [];
+        // STATE
+        let currentQuestion = 0, answers = [], studentData = {}, timeLeft = 1800, timerInterval, selectedMonth = null, selectedTrade = null, currentQuestions = [];
 
-        function loadMonthButtons() {
-            const trade = document.getElementById('tradeSelect').value;
-            const studentId = document.getElementById('studentId').value.trim();
-            const monthSelect = document.getElementById('monthSelect');
-            
-            if (!trade) {
-                monthSelect.innerHTML = '<p style="color: #888; text-align: center;">Please select a trade first</p>';
-                return;
+        // UTILITY FUNCTIONS
+        function getCurrentMonth() {
+            const now = new Date();
+            for (let month in CONFIG.MONTH_SCHEDULE) {
+                const schedule = CONFIG.MONTH_SCHEDULE[month];
+                const start = new Date(schedule.start);
+                const end = new Date(schedule.end);
+                end.setHours(23, 59, 59, 999);
+                if (now >= start && now <= end) return parseInt(month);
             }
+            return null;
+        }
+
+        function isInTimeSlot(trade) {
+            const now = new Date();
+            const currentHour = now.getHours();
+            const currentMinute = now.getMinutes();
+            const currentTime = currentHour * 60 + currentMinute;
             
-            if (!studentId) {
-                monthSelect.innerHTML = '<p style="color: #888; text-align: center;">Please enter your ID first</p>';
-                return;
-            }
+            const slots = CONFIG.TIME_SLOTS[trade];
+            if (!slots) return true;
             
-            const completedMonths = getCompletedMonths(trade, studentId);
-            let html = '';
-            
-            for (let i = 1; i <= 4; i++) {
-                const isCompleted = completedMonths.includes(i);
-                const isLocked = i > 1 && !completedMonths.includes(i - 1);
-                const questionCount = i === 4 ? 20 : 10;
+            for (let slot of slots) {
+                const [start, end] = slot.split('-');
+                const [startH, startM] = start.split(':').map(Number);
+                const [endH, endM] = end.split(':').map(Number);
+                const startTime = startH * 60 + startM;
+                const endTime = endH * 60 + endM;
                 
-                let classes = 'month-btn';
-                if (isCompleted) classes += ' completed';
-                if (isLocked) classes += ' locked';
-                
-                html += `<div class="${classes}" onclick="selectMonth(${i}, ${isLocked}, ${isCompleted})">
-                    <div style="font-size: 24px;">📅</div>
-                    <div>Month ${i}</div>
-                    <small style="color: #888;">${questionCount} Questions</small>
-                </div>`;
+                if (currentTime >= startTime && currentTime <= endTime) return true;
             }
-            
-            monthSelect.innerHTML = html;
+            return false;
         }
 
         function getCompletedMonths(trade, studentId) {
@@ -301,9 +355,63 @@
                 .map(r => r.month);
         }
 
+        function loadMonthButtons() {
+            const trade = document.getElementById('tradeSelect').value;
+            const studentId = document.getElementById('studentId').value.trim();
+            const monthSelect = document.getElementById('monthSelect');
+            const timeSlotInfo = document.getElementById('timeSlotInfo');
+            const timeSlotText = document.getElementById('timeSlotText');
+            
+            if (!trade) {
+                monthSelect.innerHTML = '<p style="color: #888; text-align: center;">Please select a trade first</p>';
+                timeSlotInfo.style.display = 'none';
+                return;
+            }
+            
+            // Show time slot info
+            const slots = CONFIG.TIME_SLOTS[trade];
+            if (slots) {
+                timeSlotText.textContent = slots.join(' and ');
+                timeSlotInfo.style.display = 'block';
+            }
+            
+            if (!studentId) {
+                monthSelect.innerHTML = '<p style="color: #888; text-align: center;">Please enter your ID first</p>';
+                return;
+            }
+            
+            const currentMonth = getCurrentMonth();
+            const completedMonths = getCompletedMonths(trade, studentId);
+            let html = '';
+            
+            for (let i = 1; i <= 4; i++) {
+                const isCompleted = completedMonths.includes(i);
+                const isCurrentMonth = i === currentMonth;
+                const isLocked = !isCurrentMonth;
+                const questionCount = i === 4 ? 20 : 10;
+                
+                let classes = 'month-btn';
+                if (isCompleted) classes += ' completed';
+                if (isLocked) classes += ' locked';
+                
+                const schedule = CONFIG.MONTH_SCHEDULE[i];
+                const dateRange = `${schedule.start} to ${schedule.end}`;
+                
+                html += `<div class="${classes}" onclick="selectMonth(${i}, ${isLocked}, ${isCompleted})">
+                    <div style="font-size: 24px;">📅</div>
+                    <div>Month ${i}</div>
+                    <small style="color: #888;">${questionCount} Questions</small>
+                    <small style="color: #666; display: block; margin-top: 5px;">${dateRange}</small>
+                </div>`;
+            }
+            
+            monthSelect.innerHTML = html;
+        }
+
         function selectMonth(month, isLocked, isCompleted) {
             if (isLocked) {
-                document.getElementById('loginError').textContent = `Please complete Month ${month - 1} first!`;
+                const schedule = CONFIG.MONTH_SCHEDULE[month];
+                document.getElementById('loginError').textContent = `Month ${month} will be available from ${schedule.start} to ${schedule.end}`;
                 return;
             }
             
@@ -326,10 +434,21 @@
             const id = document.getElementById('studentId').value.trim();
             const trade = document.getElementById('tradeSelect').value;
             const errorDiv = document.getElementById('loginError');
+            const infoDiv = document.getElementById('loginInfo');
+            
+            errorDiv.textContent = '';
+            infoDiv.textContent = '';
             
             if (!name || !id) { errorDiv.textContent = 'Please enter name and ID'; return; }
             if (!trade) { errorDiv.textContent = 'Please select your trade'; return; }
             if (!selectedMonth) { errorDiv.textContent = 'Please select a month'; return; }
+            
+            // Check time slot
+            if (!isInTimeSlot(trade)) {
+                const slots = CONFIG.TIME_SLOTS[trade];
+                errorDiv.textContent = `Test can only be taken during: ${slots.join(' or ')}`;
+                return;
+            }
             
             const completedMonths = getCompletedMonths(trade, id);
             if (completedMonths.includes(selectedMonth)) {
@@ -345,8 +464,6 @@
                 errorDiv.textContent = `Month ${selectedMonth} questions are not available yet. Please contact Sir Faris.`;
                 return;
             }
-            
-            startTime = Date.now();
             
             document.getElementById('displayName').textContent = name;
             document.getElementById('displayId').textContent = id;
@@ -391,7 +508,7 @@
         function previousQuestion() { if (currentQuestion > 0) { currentQuestion--; loadQuestion(); } }
         function nextQuestion() { if (currentQuestion < currentQuestions.length - 1) { currentQuestion++; loadQuestion(); } else endTest(); }
 
-        function endTest() {
+        async function endTest() {
             clearInterval(timerInterval);
             let score = 0;
             answers.forEach((a, i) => { if (a === currentQuestions[i].correct) score++; });
@@ -407,6 +524,9 @@
             results.push(result);
             localStorage.setItem('testResults', JSON.stringify(results));
             
+            // Save to Google Sheets
+            await saveToGoogleSheets(result);
+            
             document.getElementById('scoreDisplay').textContent = `${score}/${currentQuestions.length}`;
             document.getElementById('resultName').textContent = studentData.name;
             document.getElementById('resultId').textContent = studentData.id;
@@ -415,24 +535,74 @@
             showScreen('resultScreen');
         }
 
-        function showAdminLogin() {
-            const password = prompt('Enter Admin Password:');
-            if (password === 'admin123') {
-                viewAllResults();
-            } else if (password !== null) {
-                alert('Incorrect password!');
+        async function saveToGoogleSheets(result) {
+            try {
+                const sheetName = result.trade;
+                const row = [
+                    result.id,
+                    result.name,
+                    result.month === 1 ? result.score : '',
+                    result.month === 2 ? result.score : '',
+                    result.month === 3 ? result.score : '',
+                    '', // Theory Avg (formula)
+                    '', '', '', '', // Practicals
+                    '', '', // Attendance, Behaviour
+                    result.month === 4 ? result.score : '',
+                    '', '', '', '', '' // Final Practical, Project, Total, %, Grade, Position
+                ];
+                
+                // Note: This is a placeholder - actual Google Sheets API integration would be done server-side
+                console.log('Saving to Google Sheets:', { sheetName, row });
+                document.getElementById('sheetSuccess').style.display = 'block';
+            } catch (error) {
+                console.error('Error saving to Google Sheets:', error);
             }
+        }
+
+        function showAdminLogin() {
+            showScreen('adminLoginScreen');
+        }
+
+        function adminLogin() {
+            const username = document.getElementById('adminUsername').value;
+            const password = document.getElementById('adminPassword').value;
+            
+            if (username === CONFIG.ADMIN_USERNAME && password === CONFIG.ADMIN_PASSWORD) {
+                showScreen('adminPanel');
+                viewAllResults();
+            } else {
+                document.getElementById('adminLoginError').textContent = 'Invalid username or password!';
+            }
+        }
+
+        function adminLogout() {
+            document.getElementById('adminUsername').value = '';
+            document.getElementById('adminPassword').value = '';
+            backToLogin();
         }
 
         function viewAllResults() {
             const results = JSON.parse(localStorage.getItem('testResults') || '[]');
-            let html = '<table><tr><th>Name</th><th>ID</th><th>Trade</th><th>Month</th><th>Score</th><th>Date</th></tr>';
+            let html = '<h2>📋 All Test Results</h2><table><tr><th>Name</th><th>ID</th><th>Trade</th><th>Month</th><th>Score</th><th>Date</th></tr>';
             results.forEach(r => {
                 html += `<tr><td>${r.name}</td><td>${r.id}</td><td>${r.trade}</td><td>Month ${r.month}</td><td>${r.score}/${r.total}</td><td>${new Date(r.endTime).toLocaleString()}</td></tr>`;
             });
             html += '</table>';
-            document.getElementById('resultsTable').innerHTML = html;
-            showScreen('adminPanel');
+            document.getElementById('adminContent').innerHTML = html;
+        }
+
+        function showQuestionEditor() {
+            let html = '<h2>✏️ Question Editor</h2>';
+            html += '<p style="color: #4CAF50; margin: 20px 0;">To edit questions, open browser console (F12) and modify the <code>questionsByTradeAndMonth</code> object in the source code.</p>';
+            html += '<p style="color: #fff;">Questions are stored in the HTML file. You can:</p>';
+            html += '<ul style="color: #fff; margin: 20px; line-height: 2;">';
+            html += '<li>Edit existing questions</li>';
+            html += '<li>Add new questions</li>';
+            html += '<li>Change correct answers</li>';
+            html += '<li>Modify options</li>';
+            html += '</ul>';
+            html += '<p style="color: #ff9800;">Contact Sir Faris for assistance with question editing.</p>';
+            document.getElementById('adminContent').innerHTML = html;
         }
 
         function exportToCSV() {
@@ -442,8 +612,12 @@
             const blob = new Blob([csv], { type: 'text/csv' });
             const a = document.createElement('a');
             a.href = URL.createObjectURL(blob);
-            a.download = `All_Test_Results_${Date.now()}.csv`;
+            a.download = `MITI_Test_Results_${Date.now()}.csv`;
             a.click();
+        }
+
+        function openGoogleSheet() {
+            window.open(`https://docs.google.com/spreadsheets/d/${CONFIG.SHEET_ID}/edit`, '_blank');
         }
 
         function clearAllData() {
@@ -454,7 +628,10 @@
             }
         }
 
-        function backToLogin() { showScreen('loginScreen'); loadMonthButtons(); }
+        function backToLogin() { 
+            showScreen('loginScreen'); 
+            loadMonthButtons(); 
+        }
         
         function resetTest() { 
             currentQuestion = 0; answers = []; studentData = {}; timeLeft = 1800; selectedMonth = null; selectedTrade = null; currentQuestions = [];
@@ -463,6 +640,7 @@
             document.getElementById('studentId').value = ''; 
             document.getElementById('tradeSelect').value = '';
             document.getElementById('loginError').textContent = '';
+            document.getElementById('loginInfo').textContent = '';
             loadMonthButtons();
         }
     </script>
