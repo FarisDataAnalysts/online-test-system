@@ -29,7 +29,7 @@
         .test-container { max-width: 900px; margin: 30px auto; background: #2d2d2d; padding: 30px; border-radius: 15px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); border: 1px solid #444; }
         .progress-bar { width: 100%; height: 8px; background: #1a1a1a; border-radius: 10px; margin-bottom: 30px; border: 1px solid #444; }
         .progress { height: 100%; background: linear-gradient(90deg, #4CAF50 0%, #45a049 100%); transition: width 0.3s; border-radius: 10px; }
-        .option { padding: 15px; margin: 10px 0; border: 2px solid #444; border-radius: 8px; cursor: pointer; display: flex; align-items: center; transition: all 0.3s; background: #1a1a1a; }
+        .option { padding: 15px; margin: 10px 0; border: 2px solid #444; border-radius: 8px; cursor: pointer; display: flex; align-items: center; transition: all 0.3s; background: #1a1a1a; text-align: left; }
         .option:hover { border-color: #4CAF50; background: #2d2d2d; }
         .option.selected { border-color: #4CAF50; background: #4CAF50; color: white; }
         .navigation { display: flex; justify-content: space-between; align-items: center; margin-top: 30px; }
@@ -44,15 +44,13 @@
         tr:hover { background: #1a1a1a; }
         .month-select { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0; }
         .month-btn { padding: 20px; background: #1a1a1a; border: 2px solid #444; border-radius: 10px; cursor: pointer; text-align: center; font-weight: bold; transition: all 0.3s; color: #fff; position: relative; }
-        .month-btn:hover:not(.locked):not(.completed) { border-color: #4CAF50; background: #2d2d2d; }
+        .month-btn:hover:not(.completed) { border-color: #4CAF50; background: #2d2d2d; }
         .month-btn.selected { border-color: #4CAF50; background: #4CAF50; color: white; }
-        .month-btn.locked { opacity: 0.4; cursor: not-allowed; }
-        .month-btn.locked::after { content: '🔒'; position: absolute; top: 10px; right: 10px; font-size: 20px; }
         .month-btn.completed { border-color: #4CAF50; }
         .month-btn.completed::after { content: '✅'; position: absolute; top: 10px; right: 10px; font-size: 20px; }
         .footer { position: fixed; bottom: 10px; right: 20px; color: #888; font-size: 14px; font-style: italic; }
-        .question h3 { color: #fff; margin-bottom: 20px; }
-        .question p { color: #ddd; }
+        .question h3 { color: #fff; margin-bottom: 20px; text-align: left; }
+        .question p { color: #ddd; text-align: left; }
         #questionCounter { color: #4CAF50; font-weight: bold; }
         .admin-btn { background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%) !important; margin-top: 20px; }
         .time-slot-info { background: #1a1a1a; padding: 15px; border-radius: 8px; margin: 15px 0; border: 2px solid #2196F3; }
@@ -61,6 +59,10 @@
         .admin-panel-box { background: #2d2d2d; padding: 30px; border-radius: 15px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); border: 1px solid #444; margin: 20px 0; }
         .btn-group { display: flex; gap: 10px; flex-wrap: wrap; }
         .btn-group button { flex: 1; min-width: 200px; }
+        .question-editor { background: #1a1a1a; padding: 20px; border-radius: 8px; margin: 20px 0; border: 1px solid #444; }
+        .question-item { background: #2d2d2d; padding: 15px; margin: 10px 0; border-radius: 8px; border: 1px solid #444; }
+        .question-item input, .question-item textarea { margin: 5px 0; }
+        textarea { width: 100%; padding: 10px; background: #1a1a1a; color: #fff; border: 2px solid #444; border-radius: 8px; font-family: inherit; resize: vertical; min-height: 60px; }
     </style>
 </head>
 <body>
@@ -78,11 +80,10 @@
                     <option value="Computerized Accounting">Computerized Accounting</option>
                     <option value="Data Analytics with AI">Data Analytics with AI</option>
                 </select>
-                
-                <div id="timeSlotInfo" class="time-slot-info" style="display:none;">
-                    <h4>⏰ Test Timings for Your Trade:</h4>
-                    <p id="timeSlotText"></p>
-                </div>
+
+                <select id="timingSelect" style="display:none;">
+                    <option value="">-- Select Timing --</option>
+                </select>
                 
                 <h3 style="margin-top: 20px; color: #fff; font-size: 16px;">Select Test Month:</h3>
                 <div class="month-select" id="monthSelect"></div>
@@ -176,14 +177,14 @@
             ADMIN_USERNAME: 'Faris',
             ADMIN_PASSWORD: 'Mititest',
             TIME_SLOTS: {
-                'Computerized Accounting': ['09:00-11:00', '17:00-19:00'],
-                'Data Analytics with AI': ['11:00-13:00', '19:00-21:00']
-            },
-            MONTH_SCHEDULE: {
-                1: { start: '2025-01-20', end: '2025-01-31' },
-                2: { start: '2025-02-20', end: '2025-02-28' },
-                3: { start: '2025-03-20', end: '2025-03-31' },
-                4: { start: '2025-04-20', end: '2025-04-30' }
+                'Computerized Accounting': [
+                    { label: 'Morning (9:00 AM - 11:00 AM)', value: '09:00-11:00' },
+                    { label: 'Evening (5:00 PM - 7:00 PM)', value: '17:00-19:00' }
+                ],
+                'Data Analytics with AI': [
+                    { label: 'Morning (11:00 AM - 1:00 PM)', value: '11:00-13:00' },
+                    { label: 'Evening (7:00 PM - 9:00 PM)', value: '19:00-21:00' }
+                ]
             }
         };
 
@@ -312,42 +313,9 @@
         };
 
         // STATE
-        let currentQuestion = 0, answers = [], studentData = {}, timeLeft = 1800, timerInterval, selectedMonth = null, selectedTrade = null, currentQuestions = [];
+        let currentQuestion = 0, answers = [], studentData = {}, timeLeft = 1800, timerInterval, selectedMonth = null, selectedTrade = null, selectedTiming = null, currentQuestions = [];
 
         // UTILITY FUNCTIONS
-        function getCurrentMonth() {
-            const now = new Date();
-            for (let month in CONFIG.MONTH_SCHEDULE) {
-                const schedule = CONFIG.MONTH_SCHEDULE[month];
-                const start = new Date(schedule.start);
-                const end = new Date(schedule.end);
-                end.setHours(23, 59, 59, 999);
-                if (now >= start && now <= end) return parseInt(month);
-            }
-            return null;
-        }
-
-        function isInTimeSlot(trade) {
-            const now = new Date();
-            const currentHour = now.getHours();
-            const currentMinute = now.getMinutes();
-            const currentTime = currentHour * 60 + currentMinute;
-            
-            const slots = CONFIG.TIME_SLOTS[trade];
-            if (!slots) return true;
-            
-            for (let slot of slots) {
-                const [start, end] = slot.split('-');
-                const [startH, startM] = start.split(':').map(Number);
-                const [endH, endM] = end.split(':').map(Number);
-                const startTime = startH * 60 + startM;
-                const endTime = endH * 60 + endM;
-                
-                if (currentTime >= startTime && currentTime <= endTime) return true;
-            }
-            return false;
-        }
-
         function getCompletedMonths(trade, studentId) {
             const results = JSON.parse(localStorage.getItem('testResults') || '[]');
             return results
@@ -355,24 +323,34 @@
                 .map(r => r.month);
         }
 
+        function loadTimingOptions() {
+            const trade = document.getElementById('tradeSelect').value;
+            const timingSelect = document.getElementById('timingSelect');
+            
+            if (!trade) {
+                timingSelect.style.display = 'none';
+                return;
+            }
+            
+            const slots = CONFIG.TIME_SLOTS[trade];
+            if (slots) {
+                let html = '<option value="">-- Select Timing --</option>';
+                slots.forEach(slot => {
+                    html += `<option value="${slot.value}">${slot.label}</option>`;
+                });
+                timingSelect.innerHTML = html;
+                timingSelect.style.display = 'block';
+            }
+        }
+
         function loadMonthButtons() {
             const trade = document.getElementById('tradeSelect').value;
             const studentId = document.getElementById('studentId').value.trim();
             const monthSelect = document.getElementById('monthSelect');
-            const timeSlotInfo = document.getElementById('timeSlotInfo');
-            const timeSlotText = document.getElementById('timeSlotText');
             
             if (!trade) {
                 monthSelect.innerHTML = '<p style="color: #888; text-align: center;">Please select a trade first</p>';
-                timeSlotInfo.style.display = 'none';
                 return;
-            }
-            
-            // Show time slot info
-            const slots = CONFIG.TIME_SLOTS[trade];
-            if (slots) {
-                timeSlotText.textContent = slots.join(' and ');
-                timeSlotInfo.style.display = 'block';
             }
             
             if (!studentId) {
@@ -380,41 +358,27 @@
                 return;
             }
             
-            const currentMonth = getCurrentMonth();
             const completedMonths = getCompletedMonths(trade, studentId);
             let html = '';
             
             for (let i = 1; i <= 4; i++) {
                 const isCompleted = completedMonths.includes(i);
-                const isCurrentMonth = i === currentMonth;
-                const isLocked = !isCurrentMonth;
                 const questionCount = i === 4 ? 20 : 10;
                 
                 let classes = 'month-btn';
                 if (isCompleted) classes += ' completed';
-                if (isLocked) classes += ' locked';
                 
-                const schedule = CONFIG.MONTH_SCHEDULE[i];
-                const dateRange = `${schedule.start} to ${schedule.end}`;
-                
-                html += `<div class="${classes}" onclick="selectMonth(${i}, ${isLocked}, ${isCompleted})">
+                html += `<div class="${classes}" onclick="selectMonth(${i}, ${isCompleted})">
                     <div style="font-size: 24px;">📅</div>
                     <div>Month ${i}</div>
                     <small style="color: #888;">${questionCount} Questions</small>
-                    <small style="color: #666; display: block; margin-top: 5px;">${dateRange}</small>
                 </div>`;
             }
             
             monthSelect.innerHTML = html;
         }
 
-        function selectMonth(month, isLocked, isCompleted) {
-            if (isLocked) {
-                const schedule = CONFIG.MONTH_SCHEDULE[month];
-                document.getElementById('loginError').textContent = `Month ${month} will be available from ${schedule.start} to ${schedule.end}`;
-                return;
-            }
-            
+        function selectMonth(month, isCompleted) {
             if (isCompleted) {
                 document.getElementById('loginError').textContent = `You have already completed Month ${month} test! You cannot re-attempt.`;
                 return;
@@ -426,29 +390,25 @@
             document.getElementById('loginError').textContent = '';
         }
 
-        document.getElementById('tradeSelect').addEventListener('change', loadMonthButtons);
+        document.getElementById('tradeSelect').addEventListener('change', function() {
+            loadTimingOptions();
+            loadMonthButtons();
+        });
         document.getElementById('studentId').addEventListener('input', loadMonthButtons);
 
         function startTest() {
             const name = document.getElementById('studentName').value.trim();
             const id = document.getElementById('studentId').value.trim();
             const trade = document.getElementById('tradeSelect').value;
+            const timing = document.getElementById('timingSelect').value;
             const errorDiv = document.getElementById('loginError');
-            const infoDiv = document.getElementById('loginInfo');
             
             errorDiv.textContent = '';
-            infoDiv.textContent = '';
             
             if (!name || !id) { errorDiv.textContent = 'Please enter name and ID'; return; }
             if (!trade) { errorDiv.textContent = 'Please select your trade'; return; }
+            if (!timing) { errorDiv.textContent = 'Please select timing'; return; }
             if (!selectedMonth) { errorDiv.textContent = 'Please select a month'; return; }
-            
-            // Check time slot
-            if (!isInTimeSlot(trade)) {
-                const slots = CONFIG.TIME_SLOTS[trade];
-                errorDiv.textContent = `Test can only be taken during: ${slots.join(' or ')}`;
-                return;
-            }
             
             const completedMonths = getCompletedMonths(trade, id);
             if (completedMonths.includes(selectedMonth)) {
@@ -457,7 +417,8 @@
             }
             
             selectedTrade = trade;
-            studentData = { name, id, trade, month: selectedMonth, startTime: new Date().toISOString() };
+            selectedTiming = timing;
+            studentData = { name, id, trade, timing, month: selectedMonth, startTime: new Date().toISOString() };
             currentQuestions = questionsByTradeAndMonth[trade][selectedMonth];
             
             if (!currentQuestions || currentQuestions.length === 0) {
@@ -524,39 +485,13 @@
             results.push(result);
             localStorage.setItem('testResults', JSON.stringify(results));
             
-            // Save to Google Sheets
-            await saveToGoogleSheets(result);
-            
             document.getElementById('scoreDisplay').textContent = `${score}/${currentQuestions.length}`;
             document.getElementById('resultName').textContent = studentData.name;
             document.getElementById('resultId').textContent = studentData.id;
             document.getElementById('resultTrade').textContent = studentData.trade;
             document.getElementById('resultMonth').textContent = `Month ${studentData.month}`;
+            document.getElementById('sheetSuccess').style.display = 'block';
             showScreen('resultScreen');
-        }
-
-        async function saveToGoogleSheets(result) {
-            try {
-                const sheetName = result.trade;
-                const row = [
-                    result.id,
-                    result.name,
-                    result.month === 1 ? result.score : '',
-                    result.month === 2 ? result.score : '',
-                    result.month === 3 ? result.score : '',
-                    '', // Theory Avg (formula)
-                    '', '', '', '', // Practicals
-                    '', '', // Attendance, Behaviour
-                    result.month === 4 ? result.score : '',
-                    '', '', '', '', '' // Final Practical, Project, Total, %, Grade, Position
-                ];
-                
-                // Note: This is a placeholder - actual Google Sheets API integration would be done server-side
-                console.log('Saving to Google Sheets:', { sheetName, row });
-                document.getElementById('sheetSuccess').style.display = 'block';
-            } catch (error) {
-                console.error('Error saving to Google Sheets:', error);
-            }
         }
 
         function showAdminLogin() {
@@ -593,16 +528,69 @@
 
         function showQuestionEditor() {
             let html = '<h2>✏️ Question Editor</h2>';
-            html += '<p style="color: #4CAF50; margin: 20px 0;">To edit questions, open browser console (F12) and modify the <code>questionsByTradeAndMonth</code> object in the source code.</p>';
-            html += '<p style="color: #fff;">Questions are stored in the HTML file. You can:</p>';
-            html += '<ul style="color: #fff; margin: 20px; line-height: 2;">';
-            html += '<li>Edit existing questions</li>';
-            html += '<li>Add new questions</li>';
-            html += '<li>Change correct answers</li>';
-            html += '<li>Modify options</li>';
-            html += '</ul>';
-            html += '<p style="color: #ff9800;">Contact Sir Faris for assistance with question editing.</p>';
+            html += '<select id="editorTrade" onchange="loadEditorMonths()"><option value="">Select Trade</option><option value="Computerized Accounting">Computerized Accounting</option><option value="Data Analytics with AI">Data Analytics with AI</option></select>';
+            html += '<select id="editorMonth" style="display:none;" onchange="loadQuestionsForEdit()"><option value="">Select Month</option></select>';
+            html += '<div id="questionEditorContent"></div>';
             document.getElementById('adminContent').innerHTML = html;
+        }
+
+        function loadEditorMonths() {
+            const trade = document.getElementById('editorTrade').value;
+            const monthSelect = document.getElementById('editorMonth');
+            if (!trade) {
+                monthSelect.style.display = 'none';
+                return;
+            }
+            let html = '<option value="">Select Month</option>';
+            for (let i = 1; i <= 4; i++) {
+                html += `<option value="${i}">Month ${i}</option>`;
+            }
+            monthSelect.innerHTML = html;
+            monthSelect.style.display = 'block';
+        }
+
+        function loadQuestionsForEdit() {
+            const trade = document.getElementById('editorTrade').value;
+            const month = parseInt(document.getElementById('editorMonth').value);
+            if (!trade || !month) return;
+            
+            const questions = questionsByTradeAndMonth[trade][month];
+            let html = '<div class="question-editor">';
+            html += `<h3>Editing: ${trade} - Month ${month}</h3>`;
+            
+            questions.forEach((q, idx) => {
+                html += `<div class="question-item">
+                    <h4>Question ${idx + 1}</h4>
+                    <textarea id="q_${idx}_text" placeholder="Question">${q.question}</textarea>
+                    <input type="text" id="q_${idx}_opt0" placeholder="Option A" value="${q.options[0]}">
+                    <input type="text" id="q_${idx}_opt1" placeholder="Option B" value="${q.options[1]}">
+                    <input type="text" id="q_${idx}_opt2" placeholder="Option C" value="${q.options[2]}">
+                    <input type="text" id="q_${idx}_opt3" placeholder="Option D" value="${q.options[3]}">
+                    <select id="q_${idx}_correct">
+                        <option value="0" ${q.correct===0?'selected':''}>A is correct</option>
+                        <option value="1" ${q.correct===1?'selected':''}>B is correct</option>
+                        <option value="2" ${q.correct===2?'selected':''}>C is correct</option>
+                        <option value="3" ${q.correct===3?'selected':''}>D is correct</option>
+                    </select>
+                </div>`;
+            });
+            
+            html += `<button onclick="saveQuestions('${trade}', ${month})">💾 Save All Changes</button>`;
+            html += '</div>';
+            document.getElementById('questionEditorContent').innerHTML = html;
+        }
+
+        function saveQuestions(trade, month) {
+            const questions = questionsByTradeAndMonth[trade][month];
+            questions.forEach((q, idx) => {
+                q.question = document.getElementById(`q_${idx}_text`).value;
+                q.options[0] = document.getElementById(`q_${idx}_opt0`).value;
+                q.options[1] = document.getElementById(`q_${idx}_opt1`).value;
+                q.options[2] = document.getElementById(`q_${idx}_opt2`).value;
+                q.options[3] = document.getElementById(`q_${idx}_opt3`).value;
+                q.correct = parseInt(document.getElementById(`q_${idx}_correct`).value);
+            });
+            alert('✅ Questions saved successfully! Note: Changes are temporary. To make permanent, download the HTML file and re-upload to GitHub.');
         }
 
         function exportToCSV() {
@@ -634,13 +622,14 @@
         }
         
         function resetTest() { 
-            currentQuestion = 0; answers = []; studentData = {}; timeLeft = 1800; selectedMonth = null; selectedTrade = null; currentQuestions = [];
+            currentQuestion = 0; answers = []; studentData = {}; timeLeft = 1800; selectedMonth = null; selectedTrade = null; selectedTiming = null; currentQuestions = [];
             showScreen('loginScreen'); 
             document.getElementById('studentName').value = ''; 
             document.getElementById('studentId').value = ''; 
             document.getElementById('tradeSelect').value = '';
+            document.getElementById('timingSelect').value = '';
+            document.getElementById('timingSelect').style.display = 'none';
             document.getElementById('loginError').textContent = '';
-            document.getElementById('loginInfo').textContent = '';
             loadMonthButtons();
         }
     </script>
