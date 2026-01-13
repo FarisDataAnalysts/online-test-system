@@ -25,7 +25,7 @@
         .test-header { background: #2d2d2d; padding: 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.5); flex-wrap: wrap; gap: 10px; border-bottom: 2px solid #4CAF50; }
         .timer { font-size: 24px; font-weight: bold; color: #ff6b6b; padding: 10px 20px; background: #1a1a1a; border-radius: 8px; border: 2px solid #ff6b6b; }
         .month-badge { background: #4CAF50; color: white; padding: 8px 15px; border-radius: 20px; font-weight: bold; }
-        .trade-badge { background: #2196F3; color: white; padding: 8px 15px; border-radius: 20px; font-weight: bold; font-size: 12px; }
+        .trade-badge { background: #2196F3; color: white; padding: 8px 15px; border-radius: 20px; font-size: 12px; }
         .test-container { max-width: 900px; margin: 30px auto; background: #2d2d2d; padding: 30px; border-radius: 15px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); border: 1px solid #444; }
         .progress-bar { width: 100%; height: 8px; background: #1a1a1a; border-radius: 10px; margin-bottom: 30px; border: 1px solid #444; }
         .progress { height: 100%; background: linear-gradient(90deg, #4CAF50 0%, #45a049 100%); transition: width 0.3s; border-radius: 10px; }
@@ -100,22 +100,20 @@
     <!-- TEST SCREEN -->
     <div id="testScreen" class="screen">
         <div class="test-header">
-            <div><span id="displayName"></span> | <span id="displayId"></span></div>
-            <div style="display: flex; gap: 10px; align-items: center;">
-                <div class="trade-badge" id="tradeBadge">Trade</div>
-                <div class="month-badge" id="monthBadge">Month 1</div>
-            </div>
+            <span class="trade-badge" id="tradeBadge"></span>
+            <span class="month-badge" id="monthBadge"></span>
             <div class="timer" id="timer">30:00</div>
         </div>
         <div class="test-container">
-            <div class="progress-bar"><div class="progress" id="progress"></div></div>
-            <div id="questionContainer"></div>
+            <div class="progress-bar">
+                <div class="progress" id="progressBar"></div>
+            </div>
+            <div id="questionContainer" class="question"></div>
             <div class="navigation">
                 <button onclick="previousQuestion()" id="prevBtn">← Previous</button>
                 <span id="questionCounter"></span>
                 <button onclick="nextQuestion()" id="nextBtn">Next →</button>
             </div>
-            <button onclick="endTest()" style="background: #ff6b6b; margin-top: 20px;">End Test</button>
         </div>
     </div>
 
@@ -123,30 +121,30 @@
     <div id="resultScreen" class="screen">
         <div class="container">
             <div class="result-box">
-                <h1>🎉 Test Completed!</h1>
-                <div class="score-display" id="scoreDisplay">0/10</div>
+                <h2>🎉 Test Completed!</h2>
+                <div class="score-display" id="scoreDisplay"></div>
                 <div class="result-details">
-                    <p><strong>Name:</strong> <span id="resultName"></span></p>
-                    <p><strong>ID:</strong> <span id="resultId"></span></p>
-                    <p><strong>Trade:</strong> <span id="resultTrade"></span></p>
-                    <p><strong>Month:</strong> <span id="resultMonth"></span></p>
+                    <p>Name: <span id="resultName"></span></p>
+                    <p>ID: <span id="resultId"></span></p>
+                    <p>Trade: <span id="resultTrade"></span></p>
+                    <p>Month: <span id="resultMonth"></span></p>
+                    <p>Score: <span id="resultScore"></span></p>
+                    <p>Percentage: <span id="resultPercentage"></span></p>
                 </div>
-                <div class="success" id="sheetSuccess" style="display:none;">✅ Results saved to Google Sheets!</div>
-                <button onclick="resetTest()">🔄 Back to Login</button>
+                <button onclick="location.reload()">Back to Home</button>
             </div>
         </div>
     </div>
 
-    <!-- ADMIN LOGIN SCREEN -->
+    <!-- ADMIN LOGIN -->
     <div id="adminLoginScreen" class="screen">
         <div class="container">
+            <h1>🔐 Admin Login</h1>
             <div class="login-box">
-                <h2>🔐 Admin Login</h2>
-                <input type="text" id="adminUsername" placeholder="Username">
-                <input type="password" id="adminPassword" placeholder="Password">
+                <input type="password" id="adminPassword" placeholder="Enter Admin Password">
                 <button onclick="adminLogin()">Login</button>
-                <button onclick="backToLogin()" style="background: #666;">← Back</button>
-                <div id="adminLoginError" class="error"></div>
+                <button onclick="backToLogin()">Back</button>
+                <div id="adminError" class="error"></div>
             </div>
         </div>
     </div>
@@ -156,408 +154,367 @@
         <div class="container" style="max-width: 1200px;">
             <h1>📊 Admin Panel</h1>
             <div class="admin-panel-box">
+                <h2>Test Results</h2>
                 <div class="btn-group">
-                    <button onclick="viewAllResults()">📋 View All Results</button>
-                    <button onclick="showQuestionEditor()">✏️ Edit Questions</button>
-                    <button onclick="exportToCSV()">📥 Export to CSV</button>
-                    <button onclick="openGoogleSheet()">📊 Open Google Sheet</button>
-                    <button onclick="clearAllData()" style="background: #ff6b6b;">🗑️ Clear All Data</button>
-                    <button onclick="adminLogout()" style="background: #666;">🚪 Logout</button>
+                    <button onclick="exportCSV()">📥 Export CSV</button>
+                    <button onclick="clearAllData()" style="background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);">🗑️ Clear All Data</button>
+                    <button onclick="backToLogin()">🏠 Back to Home</button>
                 </div>
+                <div id="resultsTable"></div>
             </div>
-            <div id="adminContent"></div>
         </div>
     </div>
 
-    <div class="footer">Prepared by Sir Faris</div>
+    <div class="footer">Developed by Sir Muhammad Faris</div>
 
     <script>
-        // CONFIGURATION
-        const CONFIG = {
-            SHEET_ID: '1cOiIjbKBvLrsnvs5qXOh1DsM2X7ypaGA-GHjwamae1g',
-            ADMIN_USERNAME: 'Faris',
-            ADMIN_PASSWORD: 'Mititest',
-            TIME_SLOTS: {
-                'Computerized Accounting': [
-                    { label: 'Morning (9:00 AM - 11:00 AM)', value: '09:00-11:00' },
-                    { label: 'Evening (5:00 PM - 7:00 PM)', value: '17:00-19:00' }
-                ],
-                'Data Analytics with AI': [
-                    { label: 'Morning (11:00 AM - 1:00 PM)', value: '11:00-13:00' },
-                    { label: 'Evening (7:00 PM - 9:00 PM)', value: '19:00-21:00' }
-                ]
-            }
-        };
-
-        // QUESTIONS DATABASE
-        const questionsByTradeAndMonth = {
+        // Question Bank
+        const questionBank = {
             "Computerized Accounting": {
                 1: [
-                    { question: "What is accounting?", options: ["Recording transactions", "Selling products", "Marketing", "None"], correct: 0 },
-                    { question: "What is a debit?", options: ["Increase in asset", "Decrease in asset", "Increase in liability", "None"], correct: 0 },
-                    { question: "What is a credit?", options: ["Decrease in asset", "Increase in asset", "Decrease in liability", "None"], correct: 0 },
-                    { question: "What is a journal?", options: ["Book of original entry", "Final accounts", "Balance sheet", "None"], correct: 0 },
-                    { question: "What is a ledger?", options: ["Book of final entry", "Book of original entry", "Cash book", "None"], correct: 0 },
-                    { question: "What is double entry?", options: ["Two entries for each transaction", "One entry", "Three entries", "None"], correct: 0 },
-                    { question: "What is trial balance?", options: ["List of all balances", "Final accounts", "Journal", "None"], correct: 0 },
-                    { question: "What is balance sheet?", options: ["Statement of financial position", "Income statement", "Cash flow", "None"], correct: 0 },
-                    { question: "What is income statement?", options: ["Profit and loss", "Balance sheet", "Cash flow", "None"], correct: 0 },
-                    { question: "What is cash flow?", options: ["Movement of cash", "Profit", "Loss", "None"], correct: 0 }
+                    {q: "Capital + Liabilities = ?", options: ["Revenue", "Assets", "Expense", "Voucher"], correct: 1},
+                    {q: "Owner's claim on total assets is?", options: ["Liability", "Assets", "Equity", "Cash"], correct: 2},
+                    {q: "Which of the following financial report show the profitable of a business?", options: ["Income Statement", "Balance Sheet", "Cash Flow Statement", "Statement of changes in equity"], correct: 0},
+                    {q: "A Cheque returned by bank marked 'NFS' means that?", options: ["Bank can't verify your identity", "There are Not sufficient Balance", "Cheque has been forged", "Cheque can't be cash being illegal"], correct: 1},
+                    {q: "Which of the following is fiscal year of Government of Pakistan?", options: ["1st January to 31st December", "1st June to 31st May", "1st July to 30th June", "1st October to 30th September"], correct: 2},
+                    {q: "How many companies open at the same time in QuickBooks?", options: ["One", "Two", "Both of above", "None of above"], correct: 0},
+                    {q: "Sales Tax charged on?", options: ["Vendor", "Customer", "Employee", "None of above"], correct: 1},
+                    {q: "Which person sales Tax Paid?", options: ["Vendor", "Customer", "Employee", "None of above"], correct: 0},
+                    {q: "U/M Stands for?", options: ["Unit Markup", "Unit of Measure"], correct: 1},
+                    {q: "How Sale returned transaction recorded in Peachtree?", options: ["Purchase Order→ Enter Bill→Pay Bill", "Purchase Order→Enter Bill", "Sale Order→create Invoice→Credit & Return→Received payment", "All of Above"], correct: 2}
                 ],
                 2: [
-                    { question: "What is QuickBooks?", options: ["Accounting software", "Database", "Programming language", "None"], correct: 0 },
-                    { question: "What is Tally?", options: ["Accounting software", "Spreadsheet", "Word processor", "None"], correct: 0 },
-                    { question: "What is depreciation?", options: ["Decrease in asset value", "Increase in asset", "Liability", "None"], correct: 0 },
-                    { question: "What is GST?", options: ["Goods and Services Tax", "Income tax", "Sales tax", "None"], correct: 0 },
-                    { question: "What is invoice?", options: ["Bill for goods/services", "Receipt", "Voucher", "None"], correct: 0 },
-                    { question: "What is voucher?", options: ["Document for transaction", "Invoice", "Receipt", "None"], correct: 0 },
-                    { question: "What is bank reconciliation?", options: ["Matching bank and book balances", "Closing accounts", "Opening accounts", "None"], correct: 0 },
-                    { question: "What is petty cash?", options: ["Small cash expenses", "Large expenses", "Bank balance", "None"], correct: 0 },
-                    { question: "What is accounts payable?", options: ["Money owed to suppliers", "Money owed by customers", "Assets", "None"], correct: 0 },
-                    { question: "What is accounts receivable?", options: ["Money owed by customers", "Money owed to suppliers", "Liabilities", "None"], correct: 0 }
+                    {q: "What is MS EXCEL?", options: ["Spread sheets package", "Graphical software", "All of Above", "None of these"], correct: 0},
+                    {q: "What does The VLOOKUP function?", options: ["Lookup text that contains 'V'", "Check weather test is the same in one cell as in the text", "Find related values", "All of Above"], correct: 2},
+                    {q: "Which function calculates missing loan amount?", options: ["PV (Present Value)", "FV (Future Value)", "PMT (Payment)", "NPER (Number of periods)"], correct: 2},
+                    {q: "How many types of cursors in MS excel?", options: ["FIVE", "THREE", "FOUR"], correct: 1},
+                    {q: "Select the right purpose of 'COUNT'", options: ["Count Alphabets", "Count Numeric", "Count Alpha Numeric"], correct: 1},
+                    {q: "Which area shows the address of a cell?", options: ["Name Box", "Formula Bar", "Status Bar"], correct: 0},
+                    {q: "Circle the correct short key of edit cell.", options: ["F2", "F3", "F9", "F8"], correct: 0},
+                    {q: "To select another particular cell in work sheet", options: ["Ctrl + Click", "Ctrl + shift+ Click", "Ctrl + F7"], correct: 0},
+                    {q: "What is the meaning of this error #### in a cell?", options: ["Cell width is narrow", "Cell width is long", "None of these"], correct: 0},
+                    {q: "What is the File Extension of Excel?", options: [".xlsx", ".Xlx", ".xlsm"], correct: 0}
                 ],
                 3: [
-                    { question: "What is financial statement?", options: ["Summary of financial activities", "Journal", "Ledger", "None"], correct: 0 },
-                    { question: "What is audit?", options: ["Examination of accounts", "Recording", "Posting", "None"], correct: 0 },
-                    { question: "What is budget?", options: ["Financial plan", "Actual expenses", "Invoice", "None"], correct: 0 },
-                    { question: "What is variance?", options: ["Difference between budget and actual", "Budget only", "Actual only", "None"], correct: 0 },
-                    { question: "What is cost accounting?", options: ["Recording and analyzing costs", "Financial accounting", "Tax accounting", "None"], correct: 0 },
-                    { question: "What is management accounting?", options: ["Internal reporting", "External reporting", "Tax reporting", "None"], correct: 0 },
-                    { question: "What is ratio analysis?", options: ["Analyzing financial ratios", "Recording transactions", "Posting", "None"], correct: 0 },
-                    { question: "What is working capital?", options: ["Current assets minus current liabilities", "Fixed assets", "Long term debt", "None"], correct: 0 },
-                    { question: "What is equity?", options: ["Owner's capital", "Liabilities", "Assets", "None"], correct: 0 },
-                    { question: "What is liability?", options: ["Obligations to pay", "Assets", "Equity", "None"], correct: 0 }
+                    {q: "What is the correct syntax of IF() function?", options: ["=IF(logical test, value_if_true, value_if_false)", "=IF (logical test, TRUE([value_if_true]), FALSE([value_if_false]))", "None of these"], correct: 0},
+                    {q: "Which of the following formula enter is not correctly?", options: ["=B7*C7", "-1- + 50", "10+50", "=10+B7"], correct: 1},
+                    {q: "Select the right purpose of count.", options: ["Count specific value in our given rang", "Sum specific value in our given rang", "None of These"], correct: 0},
+                    {q: "How many conditions can we apply in conditional formatting on one range?", options: ["5", "10", "Unlimited", "3"], correct: 2},
+                    {q: "What is the purpose of $ sign in formula?", options: ["For currency Symbol", "For Fix Error", "For Fixing cell Address", "All of these"], correct: 2},
+                    {q: "Except for the ...... function, a formula with a logical function shows the word 'TRUE' or 'FALSE' as a result", options: ["End", "OR", "Not", "IF"], correct: 3},
+                    {q: "Which function is used to trap and handle errors?", options: ["IFERROR", "ERROR", "IFNA", "None of these"], correct: 0},
+                    {q: "What is shortcut key of sum?", options: ["Alt+ Enter", "Alt + =", "Ctrl + +", "Ctrl + ="], correct: 1},
+                    {q: "If we select 5 rows and 5 columns how many cells will be selected", options: ["25", "10", "15", "None of these"], correct: 0},
+                    {q: "Which symbol must be with all formulas?", options: ["=", "@", "%", "!"], correct: 0}
                 ],
                 4: [
-                    { question: "What is ERP?", options: ["Enterprise Resource Planning", "Accounting software", "Database", "None"], correct: 0 },
-                    { question: "What is SAP?", options: ["ERP software", "Accounting only", "Database", "None"], correct: 0 },
-                    { question: "What is Oracle Financials?", options: ["Financial management software", "Database only", "Programming language", "None"], correct: 0 },
-                    { question: "What is IFRS?", options: ["International Financial Reporting Standards", "Local standards", "Tax standards", "None"], correct: 0 },
-                    { question: "What is GAAP?", options: ["Generally Accepted Accounting Principles", "Tax principles", "Audit principles", "None"], correct: 0 },
-                    { question: "What is consolidated financial statement?", options: ["Combined statements of group companies", "Single company", "Branch only", "None"], correct: 0 },
-                    { question: "What is goodwill?", options: ["Intangible asset", "Tangible asset", "Liability", "None"], correct: 0 },
-                    { question: "What is amortization?", options: ["Spreading cost of intangible asset", "Depreciation", "Appreciation", "None"], correct: 0 },
-                    { question: "What is provision?", options: ["Amount set aside for liability", "Asset", "Equity", "None"], correct: 0 },
-                    { question: "What is reserve?", options: ["Retained earnings", "Liability", "Expense", "None"], correct: 0 },
-                    { question: "What is capital expenditure?", options: ["Long term asset purchase", "Daily expenses", "Revenue expense", "None"], correct: 0 },
-                    { question: "What is revenue expenditure?", options: ["Daily operational expenses", "Asset purchase", "Capital expense", "None"], correct: 0 },
-                    { question: "What is accrual accounting?", options: ["Recording when earned/incurred", "Cash basis", "Hybrid", "None"], correct: 0 },
-                    { question: "What is cash accounting?", options: ["Recording when cash received/paid", "Accrual basis", "Hybrid", "None"], correct: 0 },
-                    { question: "What is materiality?", options: ["Significance of information", "Quantity", "Quality", "None"], correct: 0 },
-                    { question: "What is consistency?", options: ["Using same methods", "Changing methods", "Random methods", "None"], correct: 0 },
-                    { question: "What is going concern?", options: ["Business will continue", "Business will close", "Temporary", "None"], correct: 0 },
-                    { question: "What is matching principle?", options: ["Match expenses with revenues", "Random matching", "No matching", "None"], correct: 0 },
-                    { question: "What is conservatism?", options: ["Anticipate losses not gains", "Anticipate gains", "Neutral", "None"], correct: 0 },
-                    { question: "What is full disclosure?", options: ["Reveal all material information", "Hide information", "Partial disclosure", "None"], correct: 0 }
+                    {q: "Circle the correct short key of debug formula and edit cell.", options: ["F2", "F3", "F9", "F8"], correct: 0},
+                    {q: "What is the meaning of this error #### in a cell?", options: ["Cell width is narrow", "Cell width is long", "None of these"], correct: 0},
+                    {q: "How can we insert a new row in a cell with keyboard?", options: ["Ctrl + Enter", "Ctrl + Alt + Enter", "Alt + Enter"], correct: 2},
+                    {q: "Which function in Excel tells how many numeric entries are there?", options: ["NUM", "COUNT", "SUM", "CHKNUM"], correct: 1},
+                    {q: "Circle the correct M-Language for insert a file or workbook name in power query.", options: ["Exce.CurrentWorkbook([Content],true)", "Excel.CurrentWorkbook([Content])", "Very Basic Applications", "Visual Basic Applied"], correct: 1},
+                    {q: "Why we use Charts and Graphs?", options: ["Graphical Representation", "Numerical Representation", "Immediate window", "Code window"], correct: 0},
+                    {q: "Why are purchase order used?", options: ["To post accounting information", "To place an order with a customer", "To request items from vendor"], correct: 2},
+                    {q: "Which window do you use to add a new vendor?", options: ["Purchase / Receive Inventory", "Menu Bar", "Maintain vendors"], correct: 2},
+                    {q: "Going from the ledger to the original entry window is called?", options: ["Lookup", "Drill down", "None of above"], correct: 1},
+                    {q: "Which of the following navigation bar vendor & purchase selection do you use to issue a return of merchandise to a vendor?", options: ["Credit memos", "Sales/invoicing", "Credit & Returns"], correct: 2},
+                    {q: "Which of the following choices is not used to modify the chart of accounts?", options: ["Deleting accounts with balances", "Adding new accounts", "Editing accounts", "Deleting unused accounts"], correct: 0},
+                    {q: "Which of the following is NOT an Item Type?", options: ["Inventory Part", "Service", "Non-inventory Part", "Income"], correct: 3},
+                    {q: "What transaction should you enter if a customer returns a damaged product or, in the case of a service, complains so much you decide to offer a refund?", options: ["Debit Memo", "Credit Memo", "Customer Return", "Check or Bill"], correct: 1},
+                    {q: "Which of these functions can only be performed by the Administrator?", options: ["Merge entries on lists", "Add new users and change their access privileges", "Memorize custom reports", "Back up the data file"], correct: 1},
+                    {q: "Tally package is developed by", options: ["Saga50", "Tally solution", "Intuit"], correct: 1},
+                    {q: "In general, the financial year from shall be from", options: ["1st July of any year", "31st march of any year", "All Answer is correct"], correct: 2},
+                    {q: "Which menu appears after starting tally for the first-time?", options: ["Gateway of tally", "Company info", "Display"], correct: 0},
+                    {q: "Which option is used in tally to make changes in the company?", options: ["Select company", "Shut company", "Alter"], correct: 2},
+                    {q: "Which option is used to copy company's data into pen-drive or CD?", options: ["Backup", "Restore", "Copy data"], correct: 0},
+                    {q: "NOTE: Question 1 was a fill-in-the-blank table for Debit/Credit rules (not included in MCQ format)", options: ["Acknowledged"], correct: 0}
                 ]
             },
             "Data Analytics with AI": {
                 1: [
-                    { question: "What is the correct syntax of IF() function?", options: ["=IF(logical test, value_if_true, value_if_false)", "=IF (logical test, TRUE([value_if_true]), FALSE([value_if_false]))", "None of these", "All of these"], correct: 0 },
-                    { question: "Which of the following formula enter is not correctly?", options: ["=B7*C7", "-1- + 50", "10+50", "=10+B7"], correct: 1 },
-                    { question: "Pivot table use for?", options: ["Analysis Data", "Find Data", "None of These", "Remove Data"], correct: 0 },
-                    { question: "How many types of option use in the timeline?", options: ["Years", "Days", "Quater", "All of Above"], correct: 3 },
-                    { question: "What is the purpose of $ sign in formula?", options: ["For currency Symbol", "For Fix Error", "For Fixing cell Address", "All of these"], correct: 2 },
-                    { question: "Except for the ...... function, a formula with a logical function shows the word \"TRUE\" or \"FALSE\" as a result", options: ["End", "OR", "Not", "IF"], correct: 3 },
-                    { question: "Which function is used to trap and handle errors?", options: ["IFERROR", "ERROR", "IFNA", "None of these"], correct: 0 },
-                    { question: "What is shortcut key of sum?", options: ["Alt+ Enter", "Alt + =", "Ctrl + +", "Ctrl + ="], correct: 1 },
-                    { question: "If we select 5 rows and 5 columns how many cells will be selected", options: ["25", "10", "15", "None of these"], correct: 0 },
-                    { question: "Which symbol must be with all formulas?", options: ["=", "@", "%", "#"], correct: 0 }
+                    {q: "What is the shortcut key to open a new workbook in Excel?", options: ["Ctrl+N", "Ctrl+O", "Ctrl+W", "Ctrl+S"], correct: 0},
+                    {q: "Which function is used to find the average of numbers in Excel?", options: ["SUM", "AVERAGE", "COUNT", "MAX"], correct: 1},
+                    {q: "What does VLOOKUP stand for?", options: ["Vertical Lookup", "Value Lookup", "Variable Lookup", "Vector Lookup"], correct: 0},
+                    {q: "Which chart type is best for showing trends over time?", options: ["Pie Chart", "Bar Chart", "Line Chart", "Scatter Plot"], correct: 2},
+                    {q: "What is the default file extension for Excel 2016 and later?", options: [".xls", ".xlsx", ".csv", ".xlsm"], correct: 1},
+                    {q: "Which key combination is used to insert a new row in Excel?", options: ["Ctrl+Shift++", "Alt+I+R", "Ctrl+R", "Shift+R"], correct: 0},
+                    {q: "What does the $ symbol do in an Excel formula?", options: ["Adds currency format", "Creates absolute reference", "Multiplies values", "None of the above"], correct: 1},
+                    {q: "Which function counts the number of cells containing numbers?", options: ["COUNT", "COUNTA", "COUNTIF", "SUM"], correct: 0},
+                    {q: "What is a Pivot Table used for?", options: ["Creating charts", "Summarizing data", "Formatting cells", "Printing data"], correct: 1},
+                    {q: "Which Excel feature allows you to apply the same formatting to multiple cells?", options: ["Format Painter", "Cell Styles", "Conditional Formatting", "Themes"], correct: 0}
                 ],
                 2: [
-                    { question: "What is a Database in the context described?", options: ["A single table of data", "A collection of related tables", "A programming language", "A type of chart"], correct: 1 },
-                    { question: "Which SQL command is primarily used to retrieve data from a database?", options: ["INSERT", "UPDATE", "DELETE", "SELECT"], correct: 3 },
-                    { question: "Which SQL clause is used to filter records based on a specified condition?", options: ["LIMIT", "ORDER BY", "WHERE", "GROUP BY"], correct: 2 },
-                    { question: "What is a JOIN used for in SQL?", options: ["To combine rows from two or more tables based on a related column", "To insert new rows into a table", "To delete rows from a table", "To modify the structure of a table"], correct: 0 },
-                    { question: "Which command is used to add new rows of data into a table?", options: ["SELECT", "UPDATE", "INSERT", "ALTER"], correct: 2 },
-                    { question: "COUNT, SUM, and AVG are examples of what type of functions in SQL?", options: ["Logical Functions", "Lookup Functions", "String Functions", "Aggregate Functions"], correct: 3 },
-                    { question: "Which SQL clause is used to sort the result set in ascending or descending order?", options: ["WHERE", "LIMIT", "GROUP BY", "ORDER BY"], correct: 3 },
-                    { question: "What is a Key in the context of databases and tables?", options: ["A clause used in SELECT statements", "A constraint used to establish relationships or ensure data integrity", "A type of SQL command", "An aggregate function"], correct: 1 },
-                    { question: "Which command is used to modify existing records in a table?", options: ["INSERT", "UPDATE", "DELETE", "ALTER"], correct: 1 },
-                    { question: "What does the ALTER command in SQL allow you to do?", options: ["Select specific columns from a table", "Modify the structure of an existing table", "Delete all records from a table", "Combine results from multiple SELECT statements"], correct: 1 }
+                    {q: "What does SQL stand for?", options: ["Structured Query Language", "Simple Query Language", "Standard Query Language", "Sequential Query Language"], correct: 0},
+                    {q: "Which SQL command is used to retrieve data from a database?", options: ["GET", "SELECT", "FETCH", "RETRIEVE"], correct: 1},
+                    {q: "What is a primary key in a database?", options: ["A unique identifier for a record", "The first column in a table", "A foreign key reference", "An index"], correct: 0},
+                    {q: "Which clause is used to filter records in SQL?", options: ["FILTER", "WHERE", "HAVING", "SELECT"], correct: 1},
+                    {q: "What does the JOIN operation do in SQL?", options: ["Combines rows from two or more tables", "Adds new columns", "Deletes records", "Updates data"], correct: 0},
+                    {q: "Which SQL function returns the number of rows?", options: ["SUM()", "COUNT()", "AVG()", "MAX()"], correct: 1},
+                    {q: "What is the purpose of the GROUP BY clause?", options: ["To sort data", "To group rows with same values", "To filter data", "To join tables"], correct: 1},
+                    {q: "Which data type is used for storing text in MySQL?", options: ["INT", "VARCHAR", "DATE", "FLOAT"], correct: 1},
+                    {q: "What does DISTINCT keyword do in SQL?", options: ["Removes duplicate rows", "Sorts data", "Filters data", "Joins tables"], correct: 0},
+                    {q: "Which SQL command is used to modify existing data?", options: ["MODIFY", "CHANGE", "UPDATE", "ALTER"], correct: 2}
                 ],
                 3: [
-                    { question: "In Python, what are int, float, str, and bool examples of?", options: ["Operators", "Variables", "Datatypes", "Functions"], correct: 2 },
-                    { question: "Which programming construct in Python is used to execute a block of code multiple times?", options: ["Conditional Statement", "Function", "Loop", "Module"], correct: 2 },
-                    { question: "Lists, Tuples, Dictionaries, and Sets are examples of what in Python?", options: ["Control Flow Structures", "Built-in Functions", "Data Structures", "Operators"], correct: 2 },
-                    { question: "What is a Lambda Function in Python?", options: ["A function used for looping", "A small, anonymous function", "A function for file handling", "A recursive function"], correct: 1 },
-                    { question: "Which Python libraries are specifically mentioned for data manipulation and working with arrays?", options: ["Matplotlib and Seaborn", "SQLite and REST APIs", "Pandas and NumPy", "JSON and XML"], correct: 2 },
-                    { question: "In the context of Python, what are Classes and Objects related to?", options: ["Data Visualization", "File Handling", "Database Operations", "Object-Oriented Programming (OOP) Basics"], correct: 3 },
-                    { question: "Which module type is mentioned as containing functions and definitions already available in Python?", options: ["Creation of Modules", "Project Random Module", "In-built Modules", "Lambda Functions"], correct: 2 },
-                    { question: "What operations are listed as part of SQL CRUD Operations in Python?", options: ["Charting and Plotting", "Create, Read, Update, Delete", "Sorting and Filtering", "Merging and Appending"], correct: 1 },
-                    { question: "Which concept is mentioned as being used with For Loops in Python?", options: ["Recursive Statement", "Conditional Statements", "Lambda Function", "File Handling"], correct: 1 },
-                    { question: "What is the term for accessing a specific part of a list or tuple in Python?", options: ["Iteration", "Function Calling", "Slicing", "Comprehension"], correct: 2 }
+                    {q: "What is Python primarily used for?", options: ["Web Development", "Data Analysis", "Machine Learning", "All of the above"], correct: 3},
+                    {q: "Which library is commonly used for data manipulation in Python?", options: ["NumPy", "Pandas", "Matplotlib", "Scikit-learn"], correct: 1},
+                    {q: "What does the 'print()' function do in Python?", options: ["Saves data", "Displays output", "Reads input", "Deletes data"], correct: 1},
+                    {q: "Which data structure in Python is ordered and changeable?", options: ["Tuple", "Set", "List", "Dictionary"], correct: 2},
+                    {q: "What is the correct way to create a function in Python?", options: ["function myFunc():", "def myFunc():", "create myFunc():", "func myFunc():"], correct: 1},
+                    {q: "Which operator is used for exponentiation in Python?", options: ["^", "**", "exp", "pow"], correct: 1},
+                    {q: "What does 'len()' function return?", options: ["Length of an object", "Type of object", "Value of object", "None of the above"], correct: 0},
+                    {q: "Which library is used for creating visualizations in Python?", options: ["Pandas", "NumPy", "Matplotlib", "Requests"], correct: 2},
+                    {q: "What is a DataFrame in Pandas?", options: ["A 2D labeled data structure", "A 1D array", "A dictionary", "A list"], correct: 0},
+                    {q: "Which method is used to read a CSV file in Pandas?", options: ["read_csv()", "load_csv()", "import_csv()", "get_csv()"], correct: 0}
                 ],
                 4: [
-                    { question: "To apply formatting to cells based on their values meeting a specific condition, which tool would you use?", options: ["Basic Formatting Tools", "Conditional Formatting Basics", "Data Validation", "Text to Columns"], correct: 1 },
-                    { question: "Which Excel operation is used to arrange data in ascending or descending order?", options: ["Filtering Data", "Removing Duplicates", "Sorting Data", "Text to Columns"], correct: 2 },
-                    { question: "Which function is used in Excel to find the smallest value in a range of cells?", options: ["MIN", "AVERAGE", "SUM", "MAX"], correct: 0 },
-                    { question: "Which Excel tool allows you to summarize and analyze large amounts of data in a table format?", options: ["Pivot Tables", "Basic Charts", "Excel Tables", "Data Validation"], correct: 0 },
-                    { question: "VLOOKUP and INDEX-MATCH are examples of what type of functions in Excel?", options: ["Basic Math Functions", "Lookup Functions", "Logical Functions", "Aggregate Functions"], correct: 1 },
-                    { question: "What is a Database in the context described?", options: ["A single table of data", "A collection of related tables", "A programming language", "A type of chart"], correct: 1 },
-                    { question: "In the context of Python, what are Classes and Objects related to?", options: ["Data Visualization", "File Handling", "Database Operations", "Object-Oriented Programming (OOP) Basics"], correct: 3 },
-                    { question: "Which SQL clause is used to sort the result set in ascending or descending order?", options: ["WHERE", "LIMIT", "GROUP BY", "ORDER BY"], correct: 3 },
-                    { question: "What is a Key in the context of databases and tables?", options: ["A clause used in SELECT statements", "A constraint used to establish relationships or ensure data integrity", "A type of SQL command", "An aggregate function"], correct: 1 },
-                    { question: "What does the ALTER command in SQL allow you to do?", options: ["Select specific columns from a table", "Modify the structure of an existing table", "Delete all records from a table", "Combine results from multiple SELECT statements"], correct: 1 },
-                    { question: "Which module type is mentioned as containing functions and definitions already available in Python?", options: ["Creation of Modules", "Project Random Module", "In-built Modules", "Lambda Functions"], correct: 2 },
-                    { question: "Which concept is mentioned as being used with For Loops in Python?", options: ["Recursive Statement", "Conditional Statements", "Lambda Function", "File Handling"], correct: 1 },
-                    { question: "What does DAX stand for in the context of Power BI?", options: ["Data Analysis Exchange", "Database Access XML", "Data Analysis Expressions", "Digital Analytics Extensions"], correct: 2 },
-                    { question: "What is the purpose of Calculated Columns and Measures in Power BI, as described?", options: ["To connect to different data sources", "To perform data transformations", "To define calculations on data", "To format visualizations"], correct: 2 },
-                    { question: "Which action is specifically listed as a basic transformation in Power BI?", options: ["Creating Measures", "Publishing Reports", "Dealing with Unwanted Columns and Null Values", "Designing for Phone Viewers"], correct: 2 },
-                    { question: "What concept in Power BI relates to defining how tables are connected and filtered?", options: ["Data Visualization", "Data Model and Importance of Data Modeling", "DAX Functions", "Basic Transformations"], correct: 1 },
-                    { question: "Cardinality and Cross-Filter Direction are concepts related to what in Power BI?", options: ["DAX Syntax", "Managing Data Relationships", "Visualization Charts", "Text Tools"], correct: 1 },
-                    { question: "Which Power BI feature allows users to filter data interactively on a report page?", options: ["Matrix Visuals", "Slicers", "KPI Visuals", "Tool Tips"], correct: 1 },
-                    { question: "What type of visual is listed for displaying a single aggregate value clearly?", options: ["TreeMap", "Map Visuals", "Number Cards and Text Cards", "Stacked Bar Chart"], correct: 2 },
-                    { question: "What is the final step mentioned after creating a report in Power BI?", options: ["Creating DAX Functions", "Publishing Reports to Power BI Services", "Adding Conditional Columns", "Managing Data Relationships"], correct: 1 }
+                    {q: "What is Power BI primarily used for?", options: ["Data Visualization", "Database Management", "Web Development", "Machine Learning"], correct: 0},
+                    {q: "Which Excel function finds the maximum value?", options: ["MAX()", "MAXIMUM()", "HIGHEST()", "TOP()"], correct: 0},
+                    {q: "In SQL, which command creates a new table?", options: ["NEW TABLE", "CREATE TABLE", "MAKE TABLE", "ADD TABLE"], correct: 1},
+                    {q: "What does API stand for?", options: ["Application Programming Interface", "Advanced Programming Interface", "Automated Programming Interface", "Application Process Interface"], correct: 0},
+                    {q: "Which Python library is used for machine learning?", options: ["Pandas", "NumPy", "Scikit-learn", "Matplotlib"], correct: 2},
+                    {q: "What is the purpose of data cleaning?", options: ["To remove errors and inconsistencies", "To visualize data", "To store data", "To encrypt data"], correct: 0},
+                    {q: "Which chart type shows the relationship between two variables?", options: ["Pie Chart", "Bar Chart", "Scatter Plot", "Line Chart"], correct: 2},
+                    {q: "What does ETL stand for in data processing?", options: ["Extract, Transform, Load", "Execute, Test, Launch", "Evaluate, Track, Log", "Export, Transfer, Link"], correct: 0},
+                    {q: "Which SQL clause is used to sort results?", options: ["SORT BY", "ORDER BY", "ARRANGE BY", "GROUP BY"], correct: 1},
+                    {q: "What is a dashboard in Power BI?", options: ["A single-page visualization", "A database", "A query", "A report"], correct: 0},
+                    {q: "Which function in Excel removes leading/trailing spaces?", options: ["CLEAN()", "TRIM()", "STRIP()", "REMOVE()"], correct: 1},
+                    {q: "What is normalization in databases?", options: ["Organizing data to reduce redundancy", "Backing up data", "Encrypting data", "Sorting data"], correct: 0},
+                    {q: "Which Python data type is immutable?", options: ["List", "Dictionary", "Tuple", "Set"], correct: 2},
+                    {q: "What does CSV stand for?", options: ["Comma Separated Values", "Character Separated Values", "Column Separated Values", "Cell Separated Values"], correct: 0},
+                    {q: "Which Power BI component connects to data sources?", options: ["Power Query", "Power Pivot", "Power View", "Power Map"], correct: 0},
+                    {q: "What is the purpose of indexing in databases?", options: ["To speed up data retrieval", "To backup data", "To encrypt data", "To delete data"], correct: 0},
+                    {q: "Which Excel feature allows 'what-if' analysis?", options: ["Goal Seek", "Solver", "Scenario Manager", "All of the above"], correct: 3},
+                    {q: "What is a foreign key in SQL?", options: ["A key from another table", "The primary key", "An index", "A unique constraint"], correct: 0},
+                    {q: "Which Python keyword is used for conditional statements?", options: ["if", "when", "check", "condition"], correct: 0},
+                    {q: "What is data mining?", options: ["Discovering patterns in large datasets", "Storing data", "Deleting data", "Encrypting data"], correct: 0}
                 ]
             }
         };
 
-        // STATE
-        let currentQuestion = 0, answers = [], studentData = {}, timeLeft = 1800, timerInterval, selectedMonth = null, selectedTrade = null, selectedTiming = null, currentQuestions = [];
+        // Time slots configuration
+        const timeSlots = {
+            "Computerized Accounting": [
+                { label: "Morning (9:00 AM - 12:00 PM)", value: "Morning" },
+                { label: "Evening (2:00 PM - 5:00 PM)", value: "Evening" }
+            ],
+            "Data Analytics with AI": [
+                { label: "Morning (9:00 AM - 12:00 PM)", value: "Morning" },
+                { label: "Evening (2:00 PM - 5:00 PM)", value: "Evening" }
+            ]
+        };
 
-        // UTILITY FUNCTIONS
-        function getCompletedMonths(trade, studentId) {
-            const results = JSON.parse(localStorage.getItem('testResults') || '[]');
-            return results
-                .filter(r => r.id === studentId && r.trade === trade)
-                .map(r => r.month);
-        }
+        let currentStudent = {};
+        let currentQuestions = [];
+        let currentQuestionIndex = 0;
+        let userAnswers = [];
+        let timeLeft = 1800; // 30 minutes
+        let timerInterval;
 
-        function loadTimingOptions() {
-            const trade = document.getElementById('tradeSelect').value;
+        // Initialize
+        document.getElementById('tradeSelect').addEventListener('change', function() {
+            const trade = this.value;
             const timingSelect = document.getElementById('timingSelect');
             
-            if (!trade) {
-                timingSelect.style.display = 'none';
-                return;
-            }
-            
-            const slots = CONFIG.TIME_SLOTS[trade];
-            if (slots) {
-                let html = '<option value="">-- Select Timing --</option>';
-                slots.forEach(slot => {
-                    html += `<option value="${slot.value}">${slot.label}</option>`;
-                });
-                timingSelect.innerHTML = html;
+            if (trade && timeSlots[trade]) {
                 timingSelect.style.display = 'block';
+                timingSelect.innerHTML = '<option value="">-- Select Timing --</option>';
+                timeSlots[trade].forEach(slot => {
+                    timingSelect.innerHTML += `<option value="${slot.value}">${slot.label}</option>`;
+                });
+                updateMonthButtons();
+            } else {
+                timingSelect.style.display = 'none';
             }
-        }
+        });
 
-        function loadMonthButtons() {
+        function updateMonthButtons() {
             const trade = document.getElementById('tradeSelect').value;
-            const studentId = document.getElementById('studentId').value.trim();
+            const timing = document.getElementById('timingSelect').value;
             const monthSelect = document.getElementById('monthSelect');
             
-            if (!trade) {
-                monthSelect.innerHTML = '<p style="color: #888; text-align: center;">Please select a trade first</p>';
+            if (!trade || !timing) {
+                monthSelect.innerHTML = '<p style="color: #ff6b6b; text-align: center;">Please select trade and timing first</p>';
                 return;
             }
-            
-            if (!studentId) {
-                monthSelect.innerHTML = '<p style="color: #888; text-align: center;">Please enter your ID first</p>';
-                return;
-            }
-            
-            const completedMonths = getCompletedMonths(trade, studentId);
-            let html = '';
+
+            const completedTests = getCompletedTests();
+            monthSelect.innerHTML = '';
             
             for (let i = 1; i <= 4; i++) {
-                const isCompleted = completedMonths.includes(i);
-                const questionCount = i === 4 ? 20 : 10;
+                const isCompleted = completedTests.some(test => 
+                    test.trade === trade && 
+                    test.month === i && 
+                    test.timing === timing
+                );
                 
-                let classes = 'month-btn';
-                if (isCompleted) classes += ' completed';
-                
-                html += `<div class="${classes}" onclick="selectMonth(${i}, ${isCompleted})">
-                    <div style="font-size: 24px;">📅</div>
-                    <div>Month ${i}</div>
-                    <small style="color: #888;">${questionCount} Questions</small>
-                </div>`;
+                const btn = document.createElement('div');
+                btn.className = 'month-btn' + (isCompleted ? ' completed' : '');
+                btn.innerHTML = `Month ${i}${i === 4 ? ' (FINAL)' : ''}`;
+                btn.onclick = () => selectMonth(i);
+                monthSelect.appendChild(btn);
             }
-            
-            monthSelect.innerHTML = html;
         }
 
-        function selectMonth(month, isCompleted) {
-            if (isCompleted) {
-                document.getElementById('loginError').textContent = `You have already completed Month ${month} test! You cannot re-attempt.`;
-                return;
-            }
-            
-            selectedMonth = month;
+        function selectMonth(month) {
             document.querySelectorAll('.month-btn').forEach(btn => btn.classList.remove('selected'));
-            event.target.closest('.month-btn').classList.add('selected');
-            document.getElementById('loginError').textContent = '';
+            event.target.classList.add('selected');
+            currentStudent.month = month;
         }
-
-        document.getElementById('tradeSelect').addEventListener('change', function() {
-            loadTimingOptions();
-            loadMonthButtons();
-        });
-        document.getElementById('studentId').addEventListener('input', loadMonthButtons);
 
         function startTest() {
             const name = document.getElementById('studentName').value.trim();
             const id = document.getElementById('studentId').value.trim();
             const trade = document.getElementById('tradeSelect').value;
             const timing = document.getElementById('timingSelect').value;
-            const errorDiv = document.getElementById('loginError');
-            
-            errorDiv.textContent = '';
-            
-            if (!name || !id) { errorDiv.textContent = 'Please enter name and ID'; return; }
-            if (!trade) { errorDiv.textContent = 'Please select your trade'; return; }
-            if (!timing) { errorDiv.textContent = 'Please select timing'; return; }
-            if (!selectedMonth) { errorDiv.textContent = 'Please select a month'; return; }
-            
-            const completedMonths = getCompletedMonths(trade, id);
-            if (completedMonths.includes(selectedMonth)) {
-                errorDiv.textContent = `You have already completed Month ${selectedMonth} test! You cannot re-attempt.`;
+            const month = currentStudent.month;
+
+            if (!name || !id || !trade || !timing || !month) {
+                document.getElementById('loginError').textContent = 'Please fill all fields and select month!';
                 return;
             }
-            
-            selectedTrade = trade;
-            selectedTiming = timing;
-            studentData = { name, id, trade, timing, month: selectedMonth, startTime: new Date().toISOString() };
-            currentQuestions = questionsByTradeAndMonth[trade][selectedMonth];
-            
-            if (!currentQuestions || currentQuestions.length === 0) {
-                errorDiv.textContent = `Month ${selectedMonth} questions are not available yet. Please contact Sir Faris.`;
+
+            const completedTests = getCompletedTests();
+            const alreadyCompleted = completedTests.some(test => 
+                test.studentId === id && 
+                test.trade === trade && 
+                test.month === month &&
+                test.timing === timing
+            );
+
+            if (alreadyCompleted) {
+                document.getElementById('loginError').textContent = 'You have already completed this test!';
                 return;
             }
-            
-            document.getElementById('displayName').textContent = name;
-            document.getElementById('displayId').textContent = id;
+
+            currentStudent = { name, id, trade, timing, month };
+            currentQuestions = questionBank[trade][month];
+            currentQuestionIndex = 0;
+            userAnswers = new Array(currentQuestions.length).fill(null);
+
             document.getElementById('tradeBadge').textContent = trade;
-            document.getElementById('monthBadge').textContent = `Month ${selectedMonth}`;
+            document.getElementById('monthBadge').textContent = `Month ${month}${month === 4 ? ' - FINAL TEST' : ''}`;
             
             showScreen('testScreen');
+            displayQuestion();
             startTimer();
-            loadQuestion();
         }
 
-        function showScreen(id) {
-            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-            document.getElementById(id).classList.add('active');
+        function displayQuestion() {
+            const q = currentQuestions[currentQuestionIndex];
+            const container = document.getElementById('questionContainer');
+            
+            let html = `
+                <h3>Question ${currentQuestionIndex + 1} of ${currentQuestions.length}</h3>
+                <p>${q.q}</p>
+            `;
+            
+            q.options.forEach((option, index) => {
+                const isSelected = userAnswers[currentQuestionIndex] === index;
+                html += `
+                    <label class="option ${isSelected ? 'selected' : ''}" onclick="selectAnswer(${index})">
+                        <input type="radio" name="answer" value="${index}" ${isSelected ? 'checked' : ''}>
+                        ${option}
+                    </label>
+                `;
+            });
+            
+            container.innerHTML = html;
+            updateProgress();
+            updateNavigation();
+        }
+
+        function selectAnswer(index) {
+            userAnswers[currentQuestionIndex] = index;
+            displayQuestion();
+        }
+
+        function previousQuestion() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                displayQuestion();
+            }
+        }
+
+        function nextQuestion() {
+            if (currentQuestionIndex < currentQuestions.length - 1) {
+                currentQuestionIndex++;
+                displayQuestion();
+            } else {
+                submitTest();
+            }
+        }
+
+        function updateProgress() {
+            const progress = ((currentQuestionIndex + 1) / currentQuestions.length) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+            document.getElementById('questionCounter').textContent = `${currentQuestionIndex + 1} / ${currentQuestions.length}`;
+        }
+
+        function updateNavigation() {
+            document.getElementById('prevBtn').disabled = currentQuestionIndex === 0;
+            document.getElementById('nextBtn').textContent = currentQuestionIndex === currentQuestions.length - 1 ? 'Submit Test' : 'Next →';
         }
 
         function startTimer() {
+            timeLeft = 1800;
+            updateTimerDisplay();
             timerInterval = setInterval(() => {
                 timeLeft--;
-                const m = Math.floor(timeLeft / 60), s = timeLeft % 60;
-                document.getElementById('timer').textContent = `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
-                if (timeLeft <= 0) { clearInterval(timerInterval); endTest(); }
+                updateTimerDisplay();
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    submitTest();
+                }
             }, 1000);
         }
 
-        function loadQuestion() {
-            const q = currentQuestions[currentQuestion];
-            let html = `<div class="question">
-                <h3>Question ${currentQuestion + 1} of ${currentQuestions.length}</h3>
-                <p>${q.question}</p>
-                <div>`;
-            
-            q.options.forEach((opt, i) => {
-                const sel = answers[currentQuestion] === i;
-                html += `<div class="option ${sel?'selected':''}" onclick="selectOption(${i})">
-                    <input type="radio" name="q${currentQuestion}" ${sel?'checked':''}> ${opt}
-                </div>`;
-            });
-            
-            html += '</div></div>';
-            document.getElementById('questionContainer').innerHTML = html;
-            document.getElementById('progress').style.width = ((currentQuestion + 1) / currentQuestions.length * 100) + '%';
-            document.getElementById('questionCounter').textContent = `${currentQuestion + 1} / ${currentQuestions.length}`;
-            document.getElementById('prevBtn').disabled = currentQuestion === 0;
-            document.getElementById('nextBtn').textContent = currentQuestion === currentQuestions.length - 1 ? 'Finish' : 'Next →';
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            document.getElementById('timer').textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
         }
 
-        function selectOption(i) { answers[currentQuestion] = i; loadQuestion(); }
-        function previousQuestion() { if (currentQuestion > 0) { currentQuestion--; loadQuestion(); } }
-        function nextQuestion() { if (currentQuestion < currentQuestions.length - 1) { currentQuestion++; loadQuestion(); } else endTest(); }
-
-        async function endTest() {
+        function submitTest() {
             clearInterval(timerInterval);
+            
             let score = 0;
-            const detailedAnswers = [];
-            
-            answers.forEach((a, i) => {
-                const q = currentQuestions[i];
-                const isCorrect = a === q.correct;
-                if (isCorrect) score++;
-                
-                detailedAnswers.push({
-                    questionNum: i + 1,
-                    question: q.question,
-                    studentAnswer: q.options[a] || 'Not Answered',
-                    correctAnswer: q.options[q.correct],
-                    isCorrect: isCorrect
-                });
+            currentQuestions.forEach((q, index) => {
+                if (userAnswers[index] === q.correct) score++;
             });
-            
-            const result = { 
-                ...studentData, 
-                score, 
-                total: currentQuestions.length,
-                percentage: ((score / currentQuestions.length) * 100).toFixed(2),
-                detailedAnswers,
-                endTime: new Date().toISOString() 
+
+            const percentage = ((score / currentQuestions.length) * 100).toFixed(2);
+            const result = {
+                ...currentStudent,
+                score,
+                totalQuestions: currentQuestions.length,
+                percentage,
+                date: new Date().toLocaleString()
             };
-            
-            let results = JSON.parse(localStorage.getItem('testResults') || '[]');
-            results.push(result);
-            localStorage.setItem('testResults', JSON.stringify(results));
-            
-            // Save to Google Sheets
-            await saveToGoogleSheets(result);
-            
-            document.getElementById('scoreDisplay').textContent = `${score}/${currentQuestions.length}`;
-            document.getElementById('resultName').textContent = studentData.name;
-            document.getElementById('resultId').textContent = studentData.id;
-            document.getElementById('resultTrade').textContent = studentData.trade;
-            document.getElementById('resultMonth').textContent = `Month ${studentData.month}`;
-            document.getElementById('sheetSuccess').style.display = 'block';
+
+            saveResult(result);
+            displayResult(result);
+        }
+
+        function displayResult(result) {
+            document.getElementById('scoreDisplay').textContent = `${result.score}/${result.totalQuestions}`;
+            document.getElementById('resultName').textContent = result.name;
+            document.getElementById('resultId').textContent = result.id;
+            document.getElementById('resultTrade').textContent = result.trade;
+            document.getElementById('resultMonth').textContent = `Month ${result.month}`;
+            document.getElementById('resultScore').textContent = `${result.score}/${result.totalQuestions}`;
+            document.getElementById('resultPercentage').textContent = `${result.percentage}%`;
             showScreen('resultScreen');
         }
 
-        async function saveToGoogleSheets(result) {
-            try {
-                const sheetName = result.trade;
-                const timestamp = new Date(result.endTime).toLocaleString();
-                
-                // Prepare row data with 19 columns
-                const rowData = [
-                    result.name,                    // Column 1: Student Name
-                    result.id,                      // Column 2: Student ID
-                    result.trade,                   // Column 3: Trade
-                    `Month ${result.month}`,        // Column 4: Month
-                    result.timing,                  // Column 5: Timing
-                    result.score,                   // Column 6: Score
-                    result.total,                   // Column 7: Total Questions
-                    result.percentage + '%',        // Column 8: Percentage
-                    timestamp,                      // Column 9: Date & Time
-                    '', '', '', '', '', '', '', '', '', '' // Columns 10-19: Reserved for grading
-                ];
-                
-                // Use Google Sheets API via Apps Script Web App
-                const scriptUrl = 'https://script.google.com/macros/s/AKfycbwYourScriptIdHere/exec';
-                
-                await fetch(scriptUrl, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        sheetId: CONFIG.SHEET_ID,
-                        sheetName: sheetName,
-                        data: rowData
-                    })
-                });
-                
-                console.log('Data saved to Google Sheets');
-            } catch (error) {
-                console.error('Error saving to Google Sheets:', error);
-            }
+        function saveResult(result) {
+            const results = JSON.parse(localStorage.getItem('testResults') || '[]');
+            results.push(result);
+            localStorage.setItem('testResults', JSON.stringify(results));
+        }
+
+        function getCompletedTests() {
+            return JSON.parse(localStorage.getItem('testResults') || '[]');
         }
 
         function showAdminLogin() {
@@ -565,138 +522,68 @@
         }
 
         function adminLogin() {
-            const username = document.getElementById('adminUsername').value;
             const password = document.getElementById('adminPassword').value;
-            
-            if (username === CONFIG.ADMIN_USERNAME && password === CONFIG.ADMIN_PASSWORD) {
-                showScreen('adminPanel');
-                viewAllResults();
+            if (password === 'admin123') {
+                showAdminPanel();
             } else {
-                document.getElementById('adminLoginError').textContent = 'Invalid username or password!';
+                document.getElementById('adminError').textContent = 'Invalid password!';
             }
         }
 
-        function adminLogout() {
-            document.getElementById('adminUsername').value = '';
-            document.getElementById('adminPassword').value = '';
-            backToLogin();
-        }
-
-        function viewAllResults() {
-            const results = JSON.parse(localStorage.getItem('testResults') || '[]');
-            let html = '<h2>📋 All Test Results</h2><table><tr><th>Name</th><th>ID</th><th>Trade</th><th>Month</th><th>Timing</th><th>Score</th><th>Percentage</th><th>Date</th></tr>';
+        function showAdminPanel() {
+            const results = getCompletedTests();
+            let html = '<table><tr><th>Name</th><th>ID</th><th>Trade</th><th>Month</th><th>Timing</th><th>Score</th><th>%</th><th>Date</th></tr>';
+            
             results.forEach(r => {
-                html += `<tr><td>${r.name}</td><td>${r.id}</td><td>${r.trade}</td><td>Month ${r.month}</td><td>${r.timing || 'N/A'}</td><td>${r.score}/${r.total}</td><td>${r.percentage || 'N/A'}%</td><td>${new Date(r.endTime).toLocaleString()}</td></tr>`;
+                html += `<tr>
+                    <td>${r.name}</td>
+                    <td>${r.id}</td>
+                    <td>${r.trade}</td>
+                    <td>Month ${r.month}</td>
+                    <td>${r.timing}</td>
+                    <td>${r.score}/${r.totalQuestions}</td>
+                    <td>${r.percentage}%</td>
+                    <td>${r.date}</td>
+                </tr>`;
             });
+            
             html += '</table>';
-            document.getElementById('adminContent').innerHTML = html;
+            document.getElementById('resultsTable').innerHTML = html;
+            showScreen('adminPanel');
         }
 
-        function showQuestionEditor() {
-            let html = '<h2>✏️ Question Editor</h2>';
-            html += '<select id="editorTrade" onchange="loadEditorMonths()"><option value="">Select Trade</option><option value="Computerized Accounting">Computerized Accounting</option><option value="Data Analytics with AI">Data Analytics with AI</option></select>';
-            html += '<select id="editorMonth" style="display:none;" onchange="loadQuestionsForEdit()"><option value="">Select Month</option></select>';
-            html += '<div id="questionEditorContent"></div>';
-            document.getElementById('adminContent').innerHTML = html;
-        }
-
-        function loadEditorMonths() {
-            const trade = document.getElementById('editorTrade').value;
-            const monthSelect = document.getElementById('editorMonth');
-            if (!trade) {
-                monthSelect.style.display = 'none';
-                return;
-            }
-            let html = '<option value="">Select Month</option>';
-            for (let i = 1; i <= 4; i++) {
-                html += `<option value="${i}">Month ${i}</option>`;
-            }
-            monthSelect.innerHTML = html;
-            monthSelect.style.display = 'block';
-        }
-
-        function loadQuestionsForEdit() {
-            const trade = document.getElementById('editorTrade').value;
-            const month = parseInt(document.getElementById('editorMonth').value);
-            if (!trade || !month) return;
+        function exportCSV() {
+            const results = getCompletedTests();
+            let csv = 'Name,ID,Trade,Month,Timing,Score,Total Questions,Percentage,Date\n';
             
-            const questions = questionsByTradeAndMonth[trade][month];
-            let html = '<div class="question-editor">';
-            html += `<h3>Editing: ${trade} - Month ${month}</h3>`;
-            
-            questions.forEach((q, idx) => {
-                html += `<div class="question-item">
-                    <h4>Question ${idx + 1}</h4>
-                    <textarea id="q_${idx}_text" placeholder="Question">${q.question}</textarea>
-                    <input type="text" id="q_${idx}_opt0" placeholder="Option A" value="${q.options[0]}">
-                    <input type="text" id="q_${idx}_opt1" placeholder="Option B" value="${q.options[1]}">
-                    <input type="text" id="q_${idx}_opt2" placeholder="Option C" value="${q.options[2]}">
-                    <input type="text" id="q_${idx}_opt3" placeholder="Option D" value="${q.options[3]}">
-                    <select id="q_${idx}_correct">
-                        <option value="0" ${q.correct===0?'selected':''}>A is correct</option>
-                        <option value="1" ${q.correct===1?'selected':''}>B is correct</option>
-                        <option value="2" ${q.correct===2?'selected':''}>C is correct</option>
-                        <option value="3" ${q.correct===3?'selected':''}>D is correct</option>
-                    </select>
-                </div>`;
+            results.forEach(r => {
+                csv += `${r.name},${r.id},${r.trade},Month ${r.month},${r.timing},${r.score},${r.totalQuestions},${r.percentage}%,${r.date}\n`;
             });
-            
-            html += `<button onclick="saveQuestions('${trade}', ${month})">💾 Save All Changes</button>`;
-            html += '</div>';
-            document.getElementById('questionEditorContent').innerHTML = html;
-        }
 
-        function saveQuestions(trade, month) {
-            const questions = questionsByTradeAndMonth[trade][month];
-            questions.forEach((q, idx) => {
-                q.question = document.getElementById(`q_${idx}_text`).value;
-                q.options[0] = document.getElementById(`q_${idx}_opt0`).value;
-                q.options[1] = document.getElementById(`q_${idx}_opt1`).value;
-                q.options[2] = document.getElementById(`q_${idx}_opt2`).value;
-                q.options[3] = document.getElementById(`q_${idx}_opt3`).value;
-                q.correct = parseInt(document.getElementById(`q_${idx}_correct`).value);
-            });
-            alert('✅ Questions saved successfully! Note: Changes are temporary. To make permanent, download the HTML file and re-upload to GitHub.');
-        }
-
-        function exportToCSV() {
-            const results = JSON.parse(localStorage.getItem('testResults') || '[]');
-            let csv = 'Name,ID,Trade,Month,Timing,Score,Total,Percentage,Date\n';
-            results.forEach(r => csv += `${r.name},${r.id},${r.trade},Month ${r.month},${r.timing || 'N/A'},${r.score},${r.total},${r.percentage || 'N/A'}%,"${new Date(r.endTime).toLocaleString()}"\n`);
             const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
-            a.href = URL.createObjectURL(blob);
-            a.download = `MITI_Test_Results_${Date.now()}.csv`;
+            a.href = url;
+            a.download = 'test_results.csv';
             a.click();
         }
 
-        function openGoogleSheet() {
-            window.open(`https://docs.google.com/spreadsheets/d/${CONFIG.SHEET_ID}/edit`, '_blank');
-        }
-
         function clearAllData() {
-            if (confirm('Are you sure you want to delete ALL test results? This cannot be undone!')) {
+            if (confirm('Are you sure you want to delete all test results? This cannot be undone!')) {
                 localStorage.removeItem('testResults');
-                alert('All data cleared!');
-                viewAllResults();
+                showAdminPanel();
             }
         }
 
-        function backToLogin() { 
-            showScreen('loginScreen'); 
-            loadMonthButtons(); 
+        function backToLogin() {
+            showScreen('loginScreen');
+            document.getElementById('adminPassword').value = '';
+            document.getElementById('adminError').textContent = '';
         }
-        
-        function resetTest() { 
-            currentQuestion = 0; answers = []; studentData = {}; timeLeft = 1800; selectedMonth = null; selectedTrade = null; selectedTiming = null; currentQuestions = [];
-            showScreen('loginScreen'); 
-            document.getElementById('studentName').value = ''; 
-            document.getElementById('studentId').value = ''; 
-            document.getElementById('tradeSelect').value = '';
-            document.getElementById('timingSelect').value = '';
-            document.getElementById('timingSelect').style.display = 'none';
-            document.getElementById('loginError').textContent = '';
-            loadMonthButtons();
+
+        function showScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(screenId).classList.add('active');
         }
     </script>
 </body>
