@@ -29,9 +29,10 @@
         .test-container { max-width: 900px; margin: 30px auto; background: #2d2d2d; padding: 30px; border-radius: 15px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); border: 1px solid #444; }
         .progress-bar { width: 100%; height: 8px; background: #1a1a1a; border-radius: 10px; margin-bottom: 30px; border: 1px solid #444; }
         .progress { height: 100%; background: linear-gradient(90deg, #4CAF50 0%, #45a049 100%); transition: width 0.3s; border-radius: 10px; }
-        .option { padding: 15px; margin: 10px 0; border: 2px solid #444; border-radius: 8px; cursor: pointer; display: flex; align-items: center; transition: all 0.3s; background: #1a1a1a; text-align: left; }
+        .option { padding: 15px 15px 15px 20px; margin: 10px 0; border: 2px solid #444; border-radius: 8px; cursor: pointer; display: block; transition: all 0.3s; background: #1a1a1a; text-align: left; width: 100%; }
         .option:hover { border-color: #4CAF50; background: #2d2d2d; }
         .option.selected { border-color: #4CAF50; background: #4CAF50; color: white; }
+        .option input[type="radio"] { margin-right: 12px; vertical-align: middle; }
         .navigation { display: flex; justify-content: space-between; align-items: center; margin-top: 30px; }
         .navigation button { width: auto; padding: 12px 30px; }
         .result-details { margin: 30px 0; padding: 20px; background: #1a1a1a; border-radius: 8px; border: 1px solid #444; }
@@ -50,7 +51,7 @@
         .month-btn.completed::after { content: '✅'; position: absolute; top: 10px; right: 10px; font-size: 20px; }
         .footer { position: fixed; bottom: 10px; right: 20px; color: #888; font-size: 14px; font-style: italic; }
         .question h3 { color: #fff; margin-bottom: 20px; text-align: left; }
-        .question p { color: #ddd; text-align: left; }
+        .question p { color: #ddd; text-align: left; font-size: 18px; margin-bottom: 20px; }
         #questionCounter { color: #4CAF50; font-weight: bold; }
         .admin-btn { background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%) !important; margin-top: 20px; }
         .time-slot-info { background: #1a1a1a; padding: 15px; border-radius: 8px; margin: 15px 0; border: 2px solid #2196F3; }
@@ -452,11 +453,18 @@
 
         function loadQuestion() {
             const q = currentQuestions[currentQuestion];
-            let html = `<div class="question"><h3>Question ${currentQuestion + 1} of ${currentQuestions.length}</h3><p style="font-size:18px;margin:20px 0">${q.question}</p><div>`;
+            let html = `<div class="question">
+                <h3>Question ${currentQuestion + 1} of ${currentQuestions.length}</h3>
+                <p>${q.question}</p>
+                <div>`;
+            
             q.options.forEach((opt, i) => {
                 const sel = answers[currentQuestion] === i;
-                html += `<div class="option ${sel?'selected':''}" onclick="selectOption(${i})"><input type="radio" ${sel?'checked':''}> ${opt}</div>`;
+                html += `<div class="option ${sel?'selected':''}" onclick="selectOption(${i})">
+                    <input type="radio" name="q${currentQuestion}" ${sel?'checked':''}> ${opt}
+                </div>`;
             });
+            
             html += '</div></div>';
             document.getElementById('questionContainer').innerHTML = html;
             document.getElementById('progress').style.width = ((currentQuestion + 1) / currentQuestions.length * 100) + '%';
@@ -472,18 +480,37 @@
         async function endTest() {
             clearInterval(timerInterval);
             let score = 0;
-            answers.forEach((a, i) => { if (a === currentQuestions[i].correct) score++; });
+            const detailedAnswers = [];
+            
+            answers.forEach((a, i) => {
+                const q = currentQuestions[i];
+                const isCorrect = a === q.correct;
+                if (isCorrect) score++;
+                
+                detailedAnswers.push({
+                    questionNum: i + 1,
+                    question: q.question,
+                    studentAnswer: q.options[a] || 'Not Answered',
+                    correctAnswer: q.options[q.correct],
+                    isCorrect: isCorrect
+                });
+            });
             
             const result = { 
                 ...studentData, 
                 score, 
-                total: currentQuestions.length, 
+                total: currentQuestions.length,
+                percentage: ((score / currentQuestions.length) * 100).toFixed(2),
+                detailedAnswers,
                 endTime: new Date().toISOString() 
             };
             
             let results = JSON.parse(localStorage.getItem('testResults') || '[]');
             results.push(result);
             localStorage.setItem('testResults', JSON.stringify(results));
+            
+            // Save to Google Sheets
+            await saveToGoogleSheets(result);
             
             document.getElementById('scoreDisplay').textContent = `${score}/${currentQuestions.length}`;
             document.getElementById('resultName').textContent = studentData.name;
@@ -492,6 +519,45 @@
             document.getElementById('resultMonth').textContent = `Month ${studentData.month}`;
             document.getElementById('sheetSuccess').style.display = 'block';
             showScreen('resultScreen');
+        }
+
+        async function saveToGoogleSheets(result) {
+            try {
+                const sheetName = result.trade;
+                const timestamp = new Date(result.endTime).toLocaleString();
+                
+                // Prepare row data with 19 columns
+                const rowData = [
+                    result.name,                    // Column 1: Student Name
+                    result.id,                      // Column 2: Student ID
+                    result.trade,                   // Column 3: Trade
+                    `Month ${result.month}`,        // Column 4: Month
+                    result.timing,                  // Column 5: Timing
+                    result.score,                   // Column 6: Score
+                    result.total,                   // Column 7: Total Questions
+                    result.percentage + '%',        // Column 8: Percentage
+                    timestamp,                      // Column 9: Date & Time
+                    '', '', '', '', '', '', '', '', '', '' // Columns 10-19: Reserved for grading
+                ];
+                
+                // Use Google Sheets API via Apps Script Web App
+                const scriptUrl = 'https://script.google.com/macros/s/AKfycbwYourScriptIdHere/exec';
+                
+                await fetch(scriptUrl, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        sheetId: CONFIG.SHEET_ID,
+                        sheetName: sheetName,
+                        data: rowData
+                    })
+                });
+                
+                console.log('Data saved to Google Sheets');
+            } catch (error) {
+                console.error('Error saving to Google Sheets:', error);
+            }
         }
 
         function showAdminLogin() {
@@ -518,9 +584,9 @@
 
         function viewAllResults() {
             const results = JSON.parse(localStorage.getItem('testResults') || '[]');
-            let html = '<h2>📋 All Test Results</h2><table><tr><th>Name</th><th>ID</th><th>Trade</th><th>Month</th><th>Score</th><th>Date</th></tr>';
+            let html = '<h2>📋 All Test Results</h2><table><tr><th>Name</th><th>ID</th><th>Trade</th><th>Month</th><th>Timing</th><th>Score</th><th>Percentage</th><th>Date</th></tr>';
             results.forEach(r => {
-                html += `<tr><td>${r.name}</td><td>${r.id}</td><td>${r.trade}</td><td>Month ${r.month}</td><td>${r.score}/${r.total}</td><td>${new Date(r.endTime).toLocaleString()}</td></tr>`;
+                html += `<tr><td>${r.name}</td><td>${r.id}</td><td>${r.trade}</td><td>Month ${r.month}</td><td>${r.timing || 'N/A'}</td><td>${r.score}/${r.total}</td><td>${r.percentage || 'N/A'}%</td><td>${new Date(r.endTime).toLocaleString()}</td></tr>`;
             });
             html += '</table>';
             document.getElementById('adminContent').innerHTML = html;
@@ -595,8 +661,8 @@
 
         function exportToCSV() {
             const results = JSON.parse(localStorage.getItem('testResults') || '[]');
-            let csv = 'Name,ID,Trade,Month,Score,Total,Date\n';
-            results.forEach(r => csv += `${r.name},${r.id},${r.trade},Month ${r.month},${r.score},${r.total},"${new Date(r.endTime).toLocaleString()}"\n`);
+            let csv = 'Name,ID,Trade,Month,Timing,Score,Total,Percentage,Date\n';
+            results.forEach(r => csv += `${r.name},${r.id},${r.trade},Month ${r.month},${r.timing || 'N/A'},${r.score},${r.total},${r.percentage || 'N/A'}%,"${new Date(r.endTime).toLocaleString()}"\n`);
             const blob = new Blob([csv], { type: 'text/csv' });
             const a = document.createElement('a');
             a.href = URL.createObjectURL(blob);
