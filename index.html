@@ -71,8 +71,8 @@
             <h1>📚 MITI Test System</h1>
             <div class="login-box">
                 <h2>Student Login</h2>
-                <input type="value" id="studentName" placeholder="Enter Your GR Number">
-                <input type="value" id="studentId" placeholder="Enter Your Name">
+                <input type="text" id="studentName" placeholder="Enter Your Name">
+                <input type="text" id="studentId" placeholder="Enter Your ID Number">
                 
                 <select id="tradeSelect">
                     <option value="">-- Select Your Trade --</option>
@@ -206,7 +206,28 @@
                     {q: "U/M Stands for?", options: ["Unit Markup", "Unit of Measure", "Unit Management", "Universal Measure"], correct: 1},
                     {q: "How Sale returned transaction recorded in Peachtree?", options: ["Purchase Order→ Enter Bill→Pay Bill", "Purchase Order→Enter Bill", "Sale Order→create Invoice→Credit & Return→Received payment", "All of Above"], correct: 2}
                 ],
-                4: []
+                4: [
+                    {q: "Circle the correct short key of debug formula and edit cell.", options: ["F2", "F3", "F9", "F8"], correct: 0},
+                    {q: "What is the meaning of this error #### in a cell?", options: ["Cell width is narrow", "Cell width is long", "None of these"], correct: 0},
+                    {q: "How can we insert a new row in a cell with keyboard?", options: ["Ctrl + Enter", "Ctrl + Alt + Enter", "Alt + Enter"], correct: 2},
+                    {q: "Which function in Excel tells how many numeric entries are there?", options: ["NUM", "COUNT", "SUM", "CHKNUM"], correct: 1},
+                    {q: "Circle the correct M-Language for insert a file or workbook name in power query.", options: ["Exce.CurrentWorkbook([Content],true)", "Excel.CurrentWorkbook([Content])", "Very Basic Applications", "Visual Basic Applied"], correct: 1},
+                    {q: "Why we use Charts and Graphs?", options: ["Graphical Representation", "Numerical Representation", "Immediate window", "Code window"], correct: 0},
+                    {q: "Why are purchase order used?", options: ["To post accounting information", "To place an order with a customer", "To request items from vendor"], correct: 2},
+                    {q: "Which window do you use to add a new vendor?", options: ["Purchase / Receive Inventory", "Menu Bar", "Maintain vendors"], correct: 2},
+                    {q: "Going from the ledger to the original entry window is called?", options: ["Lookup", "Drill down", "None of above"], correct: 1},
+                    {q: "Which of the following navigation bar vendor & purchase selection do you use to issue a return of merchandise to a vendor?", options: ["Credit memos", "Sales/invoicing", "Credit & Returns"], correct: 2},
+                    {q: "Which of the following choices is not used to modify the chart of accounts?", options: ["Deleting accounts with balances", "Adding new accounts", "Editing accounts", "Deleting unused accounts"], correct: 0},
+                    {q: "Which of the following is NOT an Item Type?", options: ["Inventory Part", "Service", "Non-inventory Part", "Income"], correct: 3},
+                    {q: "What transaction should you enter if a customer returns a damaged product or, in the case of a service, complains so much you decide to offer a refund?", options: ["Debit Memo", "Credit Memo", "Customer Return", "Check or Bill"], correct: 1},
+                    {q: "Which of these functions can only be performed by the Administrator?", options: ["Merge entries on lists", "Add new users and change their access privileges", "Memorize custom reports", "Back up the data file"], correct: 1},
+                    {q: "Tally package is developed by", options: ["Saga50", "Tally solution", "Intuit"], correct: 1},
+                    {q: "In general, the financial year from shall be from", options: ["1st July of any year", "31st march of any year", "All Answer is correct"], correct: 2},
+                    {q: "Which menu appears after starting tally for the first-time", options: ["Gateway of tally", "Company info", "Display"], correct: 0},
+                    {q: "Which option is used in tally to make changes in the company", options: ["Select company", "Shut company", "Alter"], correct: 2},
+                    {q: "Which option is used to copy company's data into pen-drive or CD", options: ["Backup", "Restore", "Copy data"], correct: 0},
+                    {q: "What is VBA?", options: ["Very Basic Applications", "Visual Basic for Applications", "Visual Basic Applied", "None of these"], correct: 1}
+                ]
             },
             "Data Analytics with AI": {
                 1: [
@@ -273,12 +294,12 @@
         // Time slots configuration
         const timeSlots = {
             "Computerized Accounting": [
-                { label: "Morning (9:00 AM - 11:00 PM)", value: "Morning" },
-                { label: "Evening (5:00 PM - 7:00 PM)", value: "Evening" }
+                { label: "Morning (9:00 AM - 12:00 PM)", value: "Morning" },
+                { label: "Evening (2:00 PM - 5:00 PM)", value: "Evening" }
             ],
             "Data Analytics with AI": [
-                { label: "Morning (11:00 AM - 1:00 AM)", value: "Morning" },
-                { label: "Evening (7:00 AM - 9:00 AM)", value: "Evening" }
+                { label: "Morning (9:00 AM - 12:00 PM)", value: "Morning" },
+                { label: "Evening (2:00 PM - 5:00 PM)", value: "Evening" }
             ]
         };
 
@@ -306,7 +327,7 @@
             }
         });
 
-        // Timing Select Event Listener - THIS WAS MISSING!
+        // Timing Select Event Listener
         document.getElementById('timingSelect').addEventListener('change', function() {
             updateMonthButtons();
         });
