@@ -289,7 +289,7 @@
         let timeLeft = 1800; // 30 minutes
         let timerInterval;
 
-        // Initialize
+        // Initialize - Trade Select Event Listener
         document.getElementById('tradeSelect').addEventListener('change', function() {
             const trade = this.value;
             const timingSelect = document.getElementById('timingSelect');
@@ -304,6 +304,11 @@
             } else {
                 timingSelect.style.display = 'none';
             }
+        });
+
+        // Timing Select Event Listener - THIS WAS MISSING!
+        document.getElementById('timingSelect').addEventListener('change', function() {
+            updateMonthButtons();
         });
 
         function updateMonthButtons() {
