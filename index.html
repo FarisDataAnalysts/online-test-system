@@ -14,7 +14,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
             min-height: 100vh;
             padding: 20px;
         }
@@ -33,46 +33,61 @@
         }
 
         .login-box, .test-box, .result-box, .admin-box {
-            background: white;
+            background: #0f3460;
             padding: 40px;
             border-radius: 15px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            border: 1px solid #1a5490;
         }
 
         h1 {
-            color: white;
+            color: #e94560;
             text-align: center;
             margin-bottom: 30px;
             font-size: 2.5em;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
         }
 
         h2 {
-            color: #333;
+            color: #00d9ff;
             margin-bottom: 20px;
             text-align: center;
+        }
+
+        h3 {
+            color: #00d9ff;
+        }
+
+        h4 {
+            color: #e94560;
+        }
+
+        p, label {
+            color: #e0e0e0;
         }
 
         input, select, textarea {
             width: 100%;
             padding: 12px;
             margin: 10px 0;
-            border: 2px solid #ddd;
+            border: 2px solid #1a5490;
             border-radius: 8px;
             font-size: 16px;
             transition: border-color 0.3s;
+            background: #16213e;
+            color: #e0e0e0;
         }
 
         input:focus, select:focus, textarea:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: #00d9ff;
         }
 
         button {
             width: 100%;
             padding: 15px;
             margin: 10px 0;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #e94560 0%, #c72c48 100%);
             color: white;
             border: none;
             border-radius: 8px;
@@ -84,7 +99,7 @@
 
         button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            box-shadow: 0 5px 15px rgba(233, 69, 96, 0.5);
         }
 
         button:active {
@@ -92,47 +107,59 @@
         }
 
         .admin-btn {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            background: linear-gradient(135deg, #00d9ff 0%, #0099cc 100%);
+        }
+
+        .admin-btn:hover {
+            box-shadow: 0 5px 15px rgba(0, 217, 255, 0.5);
         }
 
         .question-card {
-            background: #f8f9fa;
+            background: #16213e;
             padding: 20px;
             margin: 20px 0;
             border-radius: 10px;
-            border-left: 4px solid #667eea;
+            border-left: 4px solid #e94560;
         }
 
         .option {
             padding: 12px;
             margin: 8px 0;
-            background: white;
-            border: 2px solid #ddd;
+            background: #0f3460;
+            border: 2px solid #1a5490;
             border-radius: 8px;
             cursor: pointer;
             transition: all 0.3s;
+            color: #e0e0e0;
         }
 
         .option:hover {
-            border-color: #667eea;
-            background: #f0f0ff;
+            border-color: #00d9ff;
+            background: #1a5490;
         }
 
         .option.selected {
-            border-color: #667eea;
-            background: #667eea;
+            border-color: #e94560;
+            background: #e94560;
             color: white;
         }
 
         .error {
-            color: #f5576c;
+            color: #ff6b6b;
+            text-align: center;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+
+        .success {
+            color: #51cf66;
             text-align: center;
             margin: 10px 0;
             font-weight: bold;
         }
 
         .info {
-            color: #666;
+            color: #00d9ff;
             text-align: center;
             margin: 10px 0;
             font-size: 14px;
@@ -143,7 +170,7 @@
         }
 
         .result-box h2 {
-            color: #667eea;
+            color: #e94560;
             font-size: 2em;
             margin: 20px 0;
         }
@@ -151,7 +178,7 @@
         .result-box p {
             font-size: 1.2em;
             margin: 15px 0;
-            color: #333;
+            color: #e0e0e0;
         }
 
         /* Admin Panel Styles */
@@ -161,7 +188,7 @@
             align-items: center;
             margin-bottom: 20px;
             padding-bottom: 15px;
-            border-bottom: 2px solid #eee;
+            border-bottom: 2px solid #1a5490;
         }
 
         .tabs {
@@ -173,17 +200,19 @@
 
         .tab {
             padding: 12px 24px;
-            background: #f0f0f0;
-            border: none;
+            background: #16213e;
+            border: 2px solid #1a5490;
             border-radius: 8px;
             cursor: pointer;
             font-weight: 600;
             transition: all 0.3s;
+            color: #e0e0e0;
         }
 
         .tab.active {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #e94560 0%, #c72c48 100%);
             color: white;
+            border-color: #e94560;
         }
 
         .tab-content {
@@ -216,37 +245,28 @@
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #00d9ff 0%, #0099cc 100%);
         }
 
         .btn-success {
-            background: linear-gradient(135deg, #56ab2f 0%, #a8e063 100%);
+            background: linear-gradient(135deg, #51cf66 0%, #37b24d 100%);
         }
 
         .btn-danger {
-            background: linear-gradient(135deg, #eb3349 0%, #f45c43 100%);
+            background: linear-gradient(135deg, #ff6b6b 0%, #fa5252 100%);
         }
 
         .btn-warning {
-            background: linear-gradient(135deg, #f2994a 0%, #f2c94c 100%);
+            background: linear-gradient(135deg, #ffd93d 0%, #f9ca24 100%);
+            color: #1a1a2e;
         }
 
         .question-item {
-            background: #f8f9fa;
+            background: #16213e;
             padding: 15px;
             margin: 10px 0;
             border-radius: 8px;
-            border-left: 4px solid #667eea;
-        }
-
-        .question-item h4 {
-            color: #333;
-            margin-bottom: 10px;
-        }
-
-        .question-item p {
-            color: #666;
-            margin: 5px 0;
+            border-left: 4px solid #e94560;
         }
 
         .question-actions {
@@ -262,7 +282,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.5);
+            background: rgba(0,0,0,0.8);
             z-index: 1000;
             overflow-y: auto;
         }
@@ -275,13 +295,14 @@
         }
 
         .modal-content {
-            background: white;
+            background: #0f3460;
             padding: 30px;
             border-radius: 15px;
             max-width: 600px;
             width: 100%;
             max-height: 90vh;
             overflow-y: auto;
+            border: 1px solid #1a5490;
         }
 
         .modal-header {
@@ -292,7 +313,7 @@
         }
 
         .close-btn {
-            background: #f5576c;
+            background: #ff6b6b;
             color: white;
             border: none;
             width: 30px;
@@ -310,7 +331,7 @@
         .form-group label {
             display: block;
             margin-bottom: 5px;
-            color: #333;
+            color: #00d9ff;
             font-weight: 600;
         }
 
@@ -322,29 +343,21 @@
         }
 
         .schedule-card {
-            background: #f8f9fa;
+            background: #16213e;
             padding: 15px;
             border-radius: 8px;
-            border-left: 4px solid #667eea;
-        }
-
-        .schedule-card h4 {
-            color: #333;
-            margin-bottom: 10px;
-        }
-
-        .schedule-card input {
-            margin: 5px 0;
+            border-left: 4px solid #e94560;
         }
 
         .trade-item {
-            background: #f8f9fa;
+            background: #16213e;
             padding: 15px;
             margin: 10px 0;
             border-radius: 8px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            color: #e0e0e0;
         }
 
         .settings-grid {
@@ -353,14 +366,10 @@
         }
 
         .setting-card {
-            background: #f8f9fa;
+            background: #16213e;
             padding: 20px;
             border-radius: 8px;
-        }
-
-        .setting-card h3 {
-            color: #333;
-            margin-bottom: 15px;
+            border: 1px solid #1a5490;
         }
 
         @media (max-width: 768px) {
@@ -405,7 +414,24 @@
                 <button type="button" onclick="studentLogin()">Start Test</button>
                 <button type="button" class="admin-btn" onclick="showAdminLogin()">Admin Panel</button>
                 <div id="loginError" class="error"></div>
-                <div class="info">Default Admin: username = admin, password = admin123</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ADMIN SETUP SCREEN (First Time) -->
+    <div id="adminSetupScreen" class="screen">
+        <div class="container">
+            <h1>🔐 Admin Setup</h1>
+            <div class="login-box">
+                <h2>Create Admin Account</h2>
+                <p class="info">Welcome! Please create your admin credentials.</p>
+                <input type="text" id="setupUsername" placeholder="Create Username" required>
+                <input type="password" id="setupPassword" placeholder="Create Password" required>
+                <input type="password" id="setupConfirmPassword" placeholder="Confirm Password" required>
+                <button type="button" onclick="setupAdmin()">Create Admin Account</button>
+                <button type="button" onclick="backToStudentLogin()">Back to Student Login</button>
+                <div id="setupError" class="error"></div>
+                <div id="setupSuccess" class="success"></div>
             </div>
         </div>
     </div>
@@ -416,12 +442,11 @@
             <h1>🔐 Admin Login</h1>
             <div class="login-box">
                 <h2>Admin Access</h2>
-                <input type="text" id="adminUsername" placeholder="Username" required onkeypress="if(event.key==='Enter') adminLogin()">
-                <input type="password" id="adminPassword" placeholder="Password" required onkeypress="if(event.key==='Enter') adminLogin()">
+                <input type="text" id="adminUsername" placeholder="Username" required>
+                <input type="password" id="adminPassword" placeholder="Password" required>
                 <button type="button" onclick="adminLogin()">Login</button>
                 <button type="button" onclick="backToStudentLogin()">Back to Student Login</button>
                 <div id="adminLoginError" class="error"></div>
-                <div class="info">Default: username = admin, password = admin123</div>
             </div>
         </div>
     </div>
@@ -432,7 +457,7 @@
             <div class="test-box">
                 <div id="testHeader"></div>
                 <div id="questionContainer"></div>
-                <button onclick="submitTest()">Submit Test</button>
+                <button type="button" onclick="submitTest()">Submit Test</button>
             </div>
         </div>
     </div>
@@ -443,7 +468,7 @@
             <div class="result-box">
                 <h2>🎉 Test Completed!</h2>
                 <div id="resultContent"></div>
-                <button onclick="backToLogin()">Back to Login</button>
+                <button type="button" onclick="backToLogin()">Back to Login</button>
             </div>
         </div>
     </div>
@@ -454,22 +479,22 @@
             <div class="admin-box">
                 <div class="admin-header">
                     <h2>Admin Panel</h2>
-                    <button class="btn-small btn-danger" onclick="adminLogout()">Logout</button>
+                    <button type="button" class="btn-small btn-danger" onclick="adminLogout()">Logout</button>
                 </div>
 
                 <div class="tabs">
-                    <button class="tab active" onclick="switchTab('questions')">Questions</button>
-                    <button class="tab" onclick="switchTab('schedule')">Schedule</button>
-                    <button class="tab" onclick="switchTab('trades')">Trades</button>
-                    <button class="tab" onclick="switchTab('results')">Results</button>
-                    <button class="tab" onclick="switchTab('settings')">Settings</button>
+                    <button type="button" class="tab active" onclick="switchTab('questions')">Questions</button>
+                    <button type="button" class="tab" onclick="switchTab('schedule')">Schedule</button>
+                    <button type="button" class="tab" onclick="switchTab('trades')">Trades</button>
+                    <button type="button" class="tab" onclick="switchTab('results')">Results</button>
+                    <button type="button" class="tab" onclick="switchTab('settings')">Settings</button>
                 </div>
 
         <!-- QUESTIONS TAB -->
         <div id="questionsTab" class="tab-content active">
             <div class="action-bar">
                 <div class="left-actions">
-                    <button class="btn-small btn-primary" onclick="openAddQuestionModal()">➕ Add Question</button>
+                    <button type="button" class="btn-small btn-primary" onclick="openAddQuestionModal()">➕ Add Question</button>
                 </div>
                 <div class="right-actions">
                     <select id="monthFilter" onchange="filterQuestions()">
@@ -488,7 +513,7 @@
         <div id="scheduleTab" class="tab-content">
             <div class="action-bar">
                 <div class="left-actions">
-                    <button class="btn-small btn-success" onclick="saveSchedule()">💾 Save Schedule</button>
+                    <button type="button" class="btn-small btn-success" onclick="saveSchedule()">💾 Save Schedule</button>
                 </div>
                 <div class="right-actions"></div>
             </div>
@@ -499,7 +524,7 @@
         <div id="tradesTab" class="tab-content">
             <div class="action-bar">
                 <div class="left-actions">
-                    <button class="btn-small btn-primary" onclick="openAddTradeModal()">➕ Add Trade</button>
+                    <button type="button" class="btn-small btn-primary" onclick="openAddTradeModal()">➕ Add Trade</button>
                 </div>
                 <div class="right-actions"></div>
             </div>
@@ -519,7 +544,7 @@
                         <label>New Password:</label>
                         <input type="password" id="newPassword" placeholder="Enter new password">
                     </div>
-                    <button class="btn-small btn-warning" onclick="updateCredentials()">Update Credentials</button>
+                    <button type="button" class="btn-small btn-warning" onclick="updateCredentials()">Update Credentials</button>
                 </div>
 
                 <div class="setting-card">
@@ -528,7 +553,7 @@
                         <label>Test Duration (minutes):</label>
                         <input type="number" id="testDuration" value="60" min="1">
                     </div>
-                    <button class="btn-small btn-success" onclick="saveTestSettings()">Save Settings</button>
+                    <button type="button" class="btn-small btn-success" onclick="saveTestSettings()">Save Settings</button>
                 </div>
             </div>
         </div>
@@ -542,8 +567,8 @@
                     </select>
                 </div>
                 <div class="right-actions">
-                    <button class="btn-small btn-success" onclick="exportToExcel()">📊 Export to Excel</button>
-                    <button class="btn-small btn-danger" onclick="clearAllResults()">🗑️ Clear All Results</button>
+                    <button type="button" class="btn-small btn-success" onclick="exportToExcel()">📊 Export to Excel</button>
+                    <button type="button" class="btn-small btn-danger" onclick="clearAllResults()">🗑️ Clear All Results</button>
                 </div>
             </div>
             <div id="resultsContainer"></div>
@@ -557,7 +582,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h2 id="modalTitle">Add Question</h2>
-                <button class="close-btn" onclick="closeQuestionModal()">×</button>
+                <button type="button" class="close-btn" onclick="closeQuestionModal()">×</button>
             </div>
             <div class="form-group">
                 <label>Month:</label>
@@ -597,7 +622,7 @@
                     <option value="D">D</option>
                 </select>
             </div>
-            <button onclick="saveQuestion()">Save Question</button>
+            <button type="button" onclick="saveQuestion()">Save Question</button>
         </div>
     </div>
 
@@ -606,27 +631,17 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h2>Add Trade</h2>
-                <button class="close-btn" onclick="closeTradeModal()">×</button>
+                <button type="button" class="close-btn" onclick="closeTradeModal()">×</button>
             </div>
             <div class="form-group">
                 <label>Trade Name:</label>
                 <input type="text" id="tradeName" placeholder="Enter trade name">
             </div>
-            <button onclick="saveTrade()">Add Trade</button>
+            <button type="button" onclick="saveTrade()">Add Trade</button>
         </div>
     </div>
 
     <script>
-        // Initialize localStorage with default credentials if not exists
-        if (!localStorage.getItem('adminCredentials')) {
-            const defaultCreds = {
-                username: 'admin',
-                password: 'admin123'
-            };
-            localStorage.setItem('adminCredentials', JSON.stringify(defaultCreds));
-            console.log('Default credentials initialized');
-        }
-
         // Data Storage
         let questions = JSON.parse(localStorage.getItem('questions')) || [];
         let trades = JSON.parse(localStorage.getItem('trades')) || ['Electrician', 'Plumber', 'Welder'];
@@ -641,6 +656,11 @@
         let currentQuestions = [];
         let studentAnswers = [];
         let editingQuestionIndex = null;
+
+        // Check if admin is set up
+        function isAdminSetup() {
+            return localStorage.getItem('adminCredentials') !== null;
+        }
 
         // Screen Management
         function showScreen(screenId) {
@@ -710,7 +730,7 @@
             header.innerHTML = `
                 <h2>Student: ${currentStudent.name} (${currentStudent.id})</h2>
                 <p>Trade: ${currentStudent.trade}</p>
-                <hr>
+                <hr style="border-color: #1a5490;">
             `;
 
             const container = document.getElementById('questionContainer');
@@ -720,8 +740,8 @@
                 const qCard = document.createElement('div');
                 qCard.className = 'question-card';
                 qCard.innerHTML = `
-                    <h3>Question ${index + 1}</h3>
-                    <p>${q.question}</p>
+                    <h3 style="color: #00d9ff;">Question ${index + 1}</h3>
+                    <p style="color: #e0e0e0;">${q.question}</p>
                     <div class="option" onclick="selectAnswer(${index}, 'A')">A) ${q.options.A}</div>
                     <div class="option" onclick="selectAnswer(${index}, 'B')">B) ${q.options.B}</div>
                     <div class="option" onclick="selectAnswer(${index}, 'C')">C) ${q.options.C}</div>
@@ -783,7 +803,7 @@
                 <p><strong>ID:</strong> ${result.id}</p>
                 <p><strong>Trade:</strong> ${result.trade}</p>
                 <p><strong>Score:</strong> ${result.score}/${result.total}</p>
-                <p><strong>Percentage:</strong> <span>${((result.score/result.total)*100).toFixed(1)}%</span></p>
+                <p><strong>Percentage:</strong> ${result.percentage}%</p>
             `;
             showScreen('resultScreen');
         }
@@ -796,27 +816,70 @@
             showScreen('loginScreen');
         }
 
+        // Admin Setup (First Time)
+        function setupAdmin() {
+            const username = document.getElementById('setupUsername').value.trim();
+            const password = document.getElementById('setupPassword').value.trim();
+            const confirmPassword = document.getElementById('setupConfirmPassword').value.trim();
+
+            if (!username || !password || !confirmPassword) {
+                document.getElementById('setupError').textContent = 'Please fill all fields!';
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                document.getElementById('setupError').textContent = 'Passwords do not match!';
+                return;
+            }
+
+            if (password.length < 6) {
+                document.getElementById('setupError').textContent = 'Password must be at least 6 characters!';
+                return;
+            }
+
+            const credentials = {
+                username: username,
+                password: password
+            };
+
+            localStorage.setItem('adminCredentials', JSON.stringify(credentials));
+            document.getElementById('setupError').textContent = '';
+            document.getElementById('setupSuccess').textContent = 'Admin account created successfully! Redirecting to login...';
+            
+            setTimeout(() => {
+                showScreen('adminLoginScreen');
+                document.getElementById('setupSuccess').textContent = '';
+            }, 2000);
+        }
+
         // Admin Functions
         function showAdminLogin() {
-            showScreen('adminLoginScreen');
+            if (!isAdminSetup()) {
+                showScreen('adminSetupScreen');
+            } else {
+                showScreen('adminLoginScreen');
+            }
         }
 
         function adminLogin() {
             const username = document.getElementById('adminUsername').value.trim();
             const password = document.getElementById('adminPassword').value.trim();
             
-            // Get credentials with fallback to default
-            let credentials = JSON.parse(localStorage.getItem('adminCredentials') || '{"username":"admin","password":"admin123"}');
-            
-            console.log('Login attempt:', username);
-            console.log('Stored credentials:', credentials);
+            if (!username || !password) {
+                document.getElementById('adminLoginError').textContent = 'Please enter username and password!';
+                return;
+            }
+
+            const credentials = JSON.parse(localStorage.getItem('adminCredentials'));
 
             if (username === credentials.username && password === credentials.password) {
                 showScreen('adminPanel');
                 loadAdminData();
                 document.getElementById('adminLoginError').textContent = '';
+                document.getElementById('adminUsername').value = '';
+                document.getElementById('adminPassword').value = '';
             } else {
-                document.getElementById('adminLoginError').textContent = 'Invalid credentials! Try: admin / admin123';
+                document.getElementById('adminLoginError').textContent = 'Invalid username or password!';
             }
         }
 
@@ -831,6 +894,10 @@
             document.getElementById('adminUsername').value = '';
             document.getElementById('adminPassword').value = '';
             document.getElementById('adminLoginError').textContent = '';
+            document.getElementById('setupUsername').value = '';
+            document.getElementById('setupPassword').value = '';
+            document.getElementById('setupConfirmPassword').value = '';
+            document.getElementById('setupError').textContent = '';
             showScreen('loginScreen');
         }
 
@@ -883,8 +950,8 @@
                     <p><strong>D:</strong> ${q.options.D}</p>
                     <p><strong>Correct:</strong> ${q.correct}</p>
                     <div class="question-actions">
-                        <button class="btn-small btn-warning" onclick="editQuestion(${questions.indexOf(q)})">Edit</button>
-                        <button class="btn-small btn-danger" onclick="deleteQuestion(${questions.indexOf(q)})">Delete</button>
+                        <button type="button" class="btn-small btn-warning" onclick="editQuestion(${questions.indexOf(q)})">Edit</button>
+                        <button type="button" class="btn-small btn-danger" onclick="deleteQuestion(${questions.indexOf(q)})">Delete</button>
                     </div>
                 `;
                 container.appendChild(qItem);
@@ -1001,7 +1068,7 @@
                 item.className = 'trade-item';
                 item.innerHTML = `
                     <span>${trade}</span>
-                    <button class="btn-small btn-danger" onclick="deleteTrade(${index})">Delete</button>
+                    <button type="button" class="btn-small btn-danger" onclick="deleteTrade(${index})">Delete</button>
                 `;
                 container.appendChild(item);
             });
@@ -1081,7 +1148,7 @@
             container.innerHTML = '';
             
             if (filteredResults.length === 0) {
-                container.innerHTML = '<p style="text-align: center; color: #666;">No results yet</p>';
+                container.innerHTML = '<p style="text-align: center; color: #00d9ff;">No results yet</p>';
                 return;
             }
 
@@ -1149,6 +1216,11 @@
 
             if (!newUsername || !newPassword) {
                 alert('Please fill both fields!');
+                return;
+            }
+
+            if (newPassword.length < 6) {
+                alert('Password must be at least 6 characters!');
                 return;
             }
 
