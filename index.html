@@ -167,7 +167,7 @@
     <div class="footer">Developed by Sir Muhammad Faris</div>
 
     <script>
-        // Question Bank - EMPTY (Admin will add questions)
+        // Question Bank
         const questionBank = {
             "Computerized Accounting": {
                 1: [],
@@ -176,10 +176,64 @@
                 4: []
             },
             "Data Analytics with AI": {
-                1: [],
-                2: [],
-                3: [],
-                4: []
+                1: [
+                    {q: "What is the correct syntax of IF() function?", options: ["=IF(logical test, value_if_true, value_if_false)", "=IF (logical test, TRUE([value_if_true]), FALSE([value_if_false]))", "None of these", "All of these"], correct: 0},
+                    {q: "Which of the following formula enter is not correctly?", options: ["=B7*C7", "-1- + 50", "10+50", "=10+B7"], correct: 1},
+                    {q: "Pivot table use for?", options: ["Analysis Data", "Find Data", "None of These", "Remove Data"], correct: 0},
+                    {q: "How many types of option use in the timeline?", options: ["Years", "Days", "Quater", "All of Above"], correct: 3},
+                    {q: "What is the purpose of $ sign in formula?", options: ["For currency Symbol", "For Fix Error", "For Fixing cell Address", "All of these"], correct: 2},
+                    {q: "Except for the ...... function, a formula with a logical function shows the word \"TRUE\" or \"FALSE\" as a result", options: ["End", "OR", "Not", "IF"], correct: 3},
+                    {q: "Which function is used to trap and handle errors?", options: ["IFERROR", "ERROR", "IFNA", "None of these"], correct: 0},
+                    {q: "What is shortcut key of sum?", options: ["Alt+ Enter", "Alt + =", "Ctrl + +", "Ctrl + ="], correct: 1},
+                    {q: "If we select 5 rows and 5 columns how many cells will be selected", options: ["25", "10", "15", "None of these"], correct: 0},
+                    {q: "Which symbol must be with all formulas?", options: ["=", "@", "%", "#"], correct: 0}
+                ],
+                2: [
+                    {q: "What is a Database in the context described?", options: ["A single table of data", "A collection of related tables", "A programming language", "A type of chart"], correct: 1},
+                    {q: "Which SQL command is primarily used to retrieve data from a database?", options: ["INSERT", "UPDATE", "DELETE", "SELECT"], correct: 3},
+                    {q: "Which SQL clause is used to filter records based on a specified condition?", options: ["LIMIT", "ORDER BY", "WHERE", "GROUP BY"], correct: 2},
+                    {q: "What is a JOIN used for in SQL?", options: ["To combine rows from two or more tables based on a related column", "To insert new rows into a table", "To delete rows from a table", "To modify the structure of a table"], correct: 0},
+                    {q: "Which command is used to add new rows of data into a table?", options: ["SELECT", "UPDATE", "INSERT", "ALTER"], correct: 2},
+                    {q: "COUNT, SUM, and AVG are examples of what type of functions in SQL?", options: ["Logical Functions", "Lookup Functions", "String Functions", "Aggregate Functions"], correct: 3},
+                    {q: "Which SQL clause is used to sort the result set in ascending or descending order?", options: ["WHERE", "LIMIT", "GROUP BY", "ORDER BY"], correct: 3},
+                    {q: "What is a Key in the context of databases and tables?", options: ["A clause used in SELECT statements", "A constraint used to establish relationships or ensure data integrity", "A type of SQL command", "An aggregate function"], correct: 1},
+                    {q: "Which command is used to modify existing records in a table?", options: ["INSERT", "UPDATE", "DELETE", "ALTER"], correct: 1},
+                    {q: "What does the ALTER command in SQL allow you to do?", options: ["Select specific columns from a table", "Modify the structure of an existing table", "Delete all records from a table", "Combine results from multiple SELECT statements"], correct: 1}
+                ],
+                3: [
+                    {q: "In Python, what are int, float, str, and bool examples of?", options: ["Operators", "Variables", "Datatypes", "Functions"], correct: 2},
+                    {q: "Which programming construct in Python is used to execute a block of code multiple times?", options: ["Conditional Statement", "Function", "Loop", "Module"], correct: 2},
+                    {q: "Lists, Tuples, Dictionaries, and Sets are examples of what in Python?", options: ["Control Flow Structures", "Built-in Functions", "Data Structures", "Operators"], correct: 2},
+                    {q: "What is a Lambda Function in Python?", options: ["A function used for looping", "A small, anonymous function", "A function for file handling", "A recursive function"], correct: 1},
+                    {q: "Which Python libraries are specifically mentioned for data manipulation and working with arrays?", options: ["Matplotlib and Seaborn", "SQLite and REST APIs", "Pandas and NumPy", "JSON and XML"], correct: 2},
+                    {q: "In the context of Python, what are Classes and Objects related to?", options: ["Data Visualization", "File Handling", "Database Operations", "Object-Oriented Programming (OOP) Basics"], correct: 3},
+                    {q: "Which module type is mentioned as containing functions and definitions already available in Python?", options: ["Creation of Modules", "Project Random Module", "In-built Modules", "Lambda Functions"], correct: 2},
+                    {q: "What operations are listed as part of SQL CRUD Operations in Python?", options: ["Charting and Plotting", "Create, Read, Update, Delete", "Sorting and Filtering", "Merging and Appending"], correct: 1},
+                    {q: "Which concept is mentioned as being used with For Loops in Python?", options: ["Recursive Statement", "Conditional Statements", "Lambda Function", "File Handling"], correct: 1},
+                    {q: "What is the term for accessing a specific part of a list or tuple in Python?", options: ["Iteration", "Function Calling", "Slicing", "Comprehension"], correct: 2}
+                ],
+                4: [
+                    {q: "To apply formatting to cells based on their values meeting a specific condition, which tool would you use?", options: ["Basic Formatting Tools", "Conditional Formatting Basics", "Data Validation", "Text to Columns"], correct: 1},
+                    {q: "Which Excel operation is used to arrange data in ascending or descending order?", options: ["Filtering Data", "Removing Duplicates", "Sorting Data", "Text to Columns"], correct: 2},
+                    {q: "Which function is used in Excel to find the smallest value in a range of cells?", options: ["MIN", "AVERAGE", "SUM", "MAX"], correct: 0},
+                    {q: "Which Excel tool allows you to summarize and analyze large amounts of data in a table format?", options: ["Pivot Tables", "Basic Charts", "Excel Tables", "Data Validation"], correct: 0},
+                    {q: "VLOOKUP and INDEX-MATCH are examples of what type of functions in Excel?", options: ["Basic Math Functions", "Lookup Functions", "Logical Functions", "Aggregate Functions"], correct: 1},
+                    {q: "What is a Database in the context described?", options: ["A single table of data", "A collection of related tables", "A programming language", "A type of chart"], correct: 1},
+                    {q: "In the context of Python, what are Classes and Objects related to?", options: ["Data Visualization", "File Handling", "Database Operations", "Object-Oriented Programming (OOP) Basics"], correct: 3},
+                    {q: "Which SQL clause is used to sort the result set in ascending or descending order?", options: ["WHERE", "LIMIT", "GROUP BY", "ORDER BY"], correct: 3},
+                    {q: "What is a Key in the context of databases and tables?", options: ["A clause used in SELECT statements", "A constraint used to establish relationships or ensure data integrity", "A type of SQL command", "An aggregate function"], correct: 1},
+                    {q: "What does the ALTER command in SQL allow you to do?", options: ["Select specific columns from a table", "Modify the structure of an existing table", "Delete all records from a table", "Combine results from multiple SELECT statements"], correct: 1},
+                    {q: "Which module type is mentioned as containing functions and definitions already available in Python?", options: ["Creation of Modules", "Project Random Module", "In-built Modules", "Lambda Functions"], correct: 2},
+                    {q: "Which concept is mentioned as being used with For Loops in Python?", options: ["Recursive Statement", "Conditional Statements", "Lambda Function", "File Handling"], correct: 1},
+                    {q: "What does DAX stand for in the context of Power BI?", options: ["Data Analysis Exchange", "Database Access XML", "Data Analysis Expressions", "Digital Analytics Extensions"], correct: 2},
+                    {q: "What is the purpose of Calculated Columns and Measures in Power BI, as described?", options: ["To connect to different data sources", "To perform data transformations", "To define calculations on data", "To format visualizations"], correct: 2},
+                    {q: "Which action is specifically listed as a basic transformation in Power BI?", options: ["Creating Measures", "Publishing Reports", "Dealing with Unwanted Columns and Null Values", "Designing for Phone Viewers"], correct: 2},
+                    {q: "What concept in Power BI relates to defining how tables are connected and filtered?", options: ["Data Visualization", "Data Model and Importance of Data Modeling", "DAX Functions", "Basic Transformations"], correct: 1},
+                    {q: "Cardinality and Cross-Filter Direction are concepts related to what in Power BI?", options: ["DAX Syntax", "Managing Data Relationships", "Visualization Charts", "Text Tools"], correct: 1},
+                    {q: "Which Power BI feature allows users to filter data interactively on a report page?", options: ["Matrix Visuals", "Slicers", "KPI Visuals", "Tool Tips"], correct: 1},
+                    {q: "What type of visual is listed for displaying a single aggregate value clearly?", options: ["TreeMap", "Map Visuals", "Number Cards and Text Cards", "Stacked Bar Chart"], correct: 2},
+                    {q: "What is the final step mentioned after creating a report in Power BI?", options: ["Creating DAX Functions", "Publishing Reports to Power BI Services", "Adding Conditional Columns", "Managing Data Relationships"], correct: 1}
+                ]
             }
         };
 
