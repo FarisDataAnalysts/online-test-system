@@ -338,6 +338,14 @@
     <div class="footer">Developed by Faris Bilal</div>
 
     <script>
+        // HARDCODED DEFAULTS (FALLBACK)
+        const DEFAULT_ADMIN = { username: 'admin', password: 'admin123' };
+        const DEFAULT_TRADES = [
+            { id: 'accounting', name: 'Computerized Accounting' },
+            { id: 'dataanalytics', name: 'Data Analytics with AI' }
+        ];
+        const DEFAULT_DURATION = 30;
+
         // Initialize system
         let currentStudent = null;
         let currentTrade = null;
@@ -349,31 +357,39 @@
         let timeLeft = 1800;
         let editingQuestionIndex = null;
 
-        // Initialize default admin credentials
+        // Initialize with guaranteed defaults
         function initializeSystem() {
+            // FORCE RESET if localStorage is corrupted
+            try {
+                const test = localStorage.getItem('adminCredentials');
+                if (!test || test === 'undefined' || test === 'null') {
+                    throw new Error('Corrupted localStorage');
+                }
+            } catch (e) {
+                console.log('Resetting localStorage...');
+                localStorage.clear();
+            }
+
+            // Set admin credentials with fallback
             if (!localStorage.getItem('adminCredentials')) {
-                localStorage.setItem('adminCredentials', JSON.stringify({
-                    username: 'admin',
-                    password: 'admin123'
-                }));
+                localStorage.setItem('adminCredentials', JSON.stringify(DEFAULT_ADMIN));
             }
             
+            // Set trades with fallback
             if (!localStorage.getItem('trades')) {
-                localStorage.setItem('trades', JSON.stringify([
-                    { id: 'accounting', name: 'Computerized Accounting' },
-                    { id: 'dataanalytics', name: 'Data Analytics with AI' }
-                ]));
+                localStorage.setItem('trades', JSON.stringify(DEFAULT_TRADES));
             }
             
+            // Set test duration with fallback
             if (!localStorage.getItem('testDuration')) {
-                localStorage.setItem('testDuration', '30');
+                localStorage.setItem('testDuration', String(DEFAULT_DURATION));
             }
             
             loadTradesIntoSelect();
         }
 
         function loadTradesIntoSelect() {
-            const trades = JSON.parse(localStorage.getItem('trades') || '[]');
+            const trades = JSON.parse(localStorage.getItem('trades') || JSON.stringify(DEFAULT_TRADES));
             const select = document.getElementById('tradeSelect');
             select.innerHTML = '<option value="">Select Trade</option>';
             trades.forEach(trade => {
@@ -443,12 +459,13 @@
             currentQuestionIndex = 0;
             userAnswers = new Array(questions.length).fill(null);
             
-            const duration = parseInt(localStorage.getItem('testDuration') || '30');
+            // GUARANTEED 30 MINUTES
+            const duration = parseInt(localStorage.getItem('testDuration') || String(DEFAULT_DURATION));
             timeLeft = duration * 60;
 
             showScreen('testScreen');
             document.getElementById('currentMonth').textContent = `Month ${month}`;
-            const trades = JSON.parse(localStorage.getItem('trades') || '[]');
+            const trades = JSON.parse(localStorage.getItem('trades') || JSON.stringify(DEFAULT_TRADES));
             const tradeName = trades.find(t => t.id === currentStudent.trade)?.name || currentStudent.trade;
             document.getElementById('currentTrade').textContent = tradeName;
             
@@ -551,7 +568,7 @@
             showScreen('resultScreen');
             document.getElementById('scoreDisplay').textContent = `${score}/${questions.length}`;
             
-            const trades = JSON.parse(localStorage.getItem('trades') || '[]');
+            const trades = JSON.parse(localStorage.getItem('trades') || JSON.stringify(DEFAULT_TRADES));
             const tradeName = trades.find(t => t.id === currentStudent.trade)?.name || currentStudent.trade;
             
             document.getElementById('resultDetails').innerHTML = `
@@ -570,13 +587,21 @@
         }
 
         function adminLogin() {
-            const username = document.getElementById('adminUsername').value;
-            const password = document.getElementById('adminPassword').value;
-            const credentials = JSON.parse(localStorage.getItem('adminCredentials'));
+            const username = document.getElementById('adminUsername').value.trim();
+            const password = document.getElementById('adminPassword').value.trim();
+            
+            // Get credentials with fallback
+            let credentials;
+            try {
+                credentials = JSON.parse(localStorage.getItem('adminCredentials') || JSON.stringify(DEFAULT_ADMIN));
+            } catch (e) {
+                credentials = DEFAULT_ADMIN;
+            }
 
             if (username === credentials.username && password === credentials.password) {
                 showScreen('adminPanel');
                 loadAdminData();
+                document.getElementById('adminLoginError').textContent = '';
             } else {
                 document.getElementById('adminLoginError').textContent = 'Invalid credentials!';
             }
@@ -585,6 +610,7 @@
         function adminLogout() {
             document.getElementById('adminUsername').value = '';
             document.getElementById('adminPassword').value = '';
+            document.getElementById('adminLoginError').textContent = '';
             showScreen('loginScreen');
         }
 
@@ -593,6 +619,10 @@
             loadTradesManagement();
             loadScheduleManagement();
             loadTradesIntoFilters();
+            
+            // Load current duration into settings
+            const duration = localStorage.getItem('testDuration') || String(DEFAULT_DURATION);
+            document.getElementById('defaultTestDuration').value = duration;
         }
 
         function switchAdminTab(tab) {
@@ -617,7 +647,7 @@
                 return;
             }
 
-            const trades = JSON.parse(localStorage.getItem('trades') || '[]');
+            const trades = JSON.parse(localStorage.getItem('trades') || JSON.stringify(DEFAULT_TRADES));
             let html = '<table><thead><tr><th>Name</th><th>ID</th><th>Trade</th><th>Month</th><th>Score</th><th>Date</th></tr></thead><tbody>';
             
             results.forEach(result => {
@@ -645,7 +675,7 @@
                 return;
             }
 
-            const trades = JSON.parse(localStorage.getItem('trades') || '[]');
+            const trades = JSON.parse(localStorage.getItem('trades') || JSON.stringify(DEFAULT_TRADES));
             const studentData = {};
 
             results.forEach(result => {
@@ -693,7 +723,7 @@
         }
 
         function loadTradesIntoFilters() {
-            const trades = JSON.parse(localStorage.getItem('trades') || '[]');
+            const trades = JSON.parse(localStorage.getItem('trades') || JSON.stringify(DEFAULT_TRADES));
             const selects = [document.getElementById('filterTrade'), document.getElementById('modalTrade')];
             
             selects.forEach(select => {
@@ -828,7 +858,7 @@
         }
 
         function loadScheduleManagement() {
-            const trades = JSON.parse(localStorage.getItem('trades') || '[]');
+            const trades = JSON.parse(localStorage.getItem('trades') || JSON.stringify(DEFAULT_TRADES));
             const schedule = JSON.parse(localStorage.getItem('testSchedule') || '{}');
             const container = document.getElementById('scheduleContainer');
 
@@ -856,7 +886,7 @@
         }
 
         function saveSchedule() {
-            const trades = JSON.parse(localStorage.getItem('trades') || '[]');
+            const trades = JSON.parse(localStorage.getItem('trades') || JSON.stringify(DEFAULT_TRADES));
             const schedule = {};
 
             trades.forEach(trade => {
@@ -874,7 +904,7 @@
         }
 
         function loadTradesManagement() {
-            const trades = JSON.parse(localStorage.getItem('trades') || '[]');
+            const trades = JSON.parse(localStorage.getItem('trades') || JSON.stringify(DEFAULT_TRADES));
             const container = document.getElementById('tradesContainer');
 
             let html = '';
@@ -907,7 +937,7 @@
                 return;
             }
 
-            const trades = JSON.parse(localStorage.getItem('trades') || '[]');
+            const trades = JSON.parse(localStorage.getItem('trades') || JSON.stringify(DEFAULT_TRADES));
             
             if (trades.some(t => t.id === id)) {
                 alert('Trade ID already exists!');
@@ -927,7 +957,7 @@
         function deleteTrade(index) {
             if (!confirm('Delete this trade? This will also delete all associated questions and results!')) return;
 
-            const trades = JSON.parse(localStorage.getItem('trades') || '[]');
+            const trades = JSON.parse(localStorage.getItem('trades') || JSON.stringify(DEFAULT_TRADES));
             trades.splice(index, 1);
             localStorage.setItem('trades', JSON.stringify(trades));
             
@@ -958,11 +988,12 @@
                 return;
             }
 
-            localStorage.setItem('testDuration', duration);
+            localStorage.setItem('testDuration', String(duration));
             alert('Default timing saved successfully!');
         }
 
         function backToStudentLogin() {
+            document.getElementById('adminLoginError').textContent = '';
             showScreen('loginScreen');
         }
 
@@ -970,6 +1001,7 @@
             currentStudent = null;
             currentTrade = null;
             currentMonth = null;
+            document.getElementById('loginError').textContent = '';
             showScreen('loginScreen');
         }
 
