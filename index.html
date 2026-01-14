@@ -130,6 +130,7 @@
                 <button onclick="studentLogin()">Start Test</button>
                 <button class="admin-btn" onclick="showAdminLogin()">Admin Panel</button>
                 <div id="loginError" class="error"></div>
+                <div class="info">Default Admin: username = admin, password = admin123</div>
             </div>
         </div>
     </div>
@@ -145,6 +146,7 @@
                 <button onclick="adminLogin()">Login</button>
                 <button onclick="backToStudentLogin()">Back to Student Login</button>
                 <div id="adminLoginError" class="error"></div>
+                <div class="info">Default: username = admin, password = admin123</div>
             </div>
         </div>
     </div>
@@ -349,15 +351,19 @@
         let timeLeft = 1800;
         let editingQuestionIndex = null;
 
-        // Initialize default admin credentials
+        // Initialize default admin credentials and system data
         function initializeSystem() {
+            // Force set default credentials if not exists
             if (!localStorage.getItem('adminCredentials')) {
-                localStorage.setItem('adminCredentials', JSON.stringify({
+                const defaultCreds = {
                     username: 'admin',
                     password: 'admin123'
-                }));
+                };
+                localStorage.setItem('adminCredentials', JSON.stringify(defaultCreds));
+                console.log('Default admin credentials set:', defaultCreds);
             }
             
+            // Initialize default trades
             if (!localStorage.getItem('trades')) {
                 localStorage.setItem('trades', JSON.stringify([
                     { id: 'accounting', name: 'Computerized Accounting' },
@@ -365,6 +371,7 @@
                 ]));
             }
             
+            // Initialize default test duration
             if (!localStorage.getItem('testDuration')) {
                 localStorage.setItem('testDuration', '30');
             }
@@ -570,21 +577,28 @@
         }
 
         function adminLogin() {
-            const username = document.getElementById('adminUsername').value;
-            const password = document.getElementById('adminPassword').value;
-            const credentials = JSON.parse(localStorage.getItem('adminCredentials'));
+            const username = document.getElementById('adminUsername').value.trim();
+            const password = document.getElementById('adminPassword').value.trim();
+            
+            // Get credentials with fallback to default
+            let credentials = JSON.parse(localStorage.getItem('adminCredentials') || '{"username":"admin","password":"admin123"}');
+            
+            console.log('Login attempt:', username);
+            console.log('Stored credentials:', credentials);
 
             if (username === credentials.username && password === credentials.password) {
                 showScreen('adminPanel');
                 loadAdminData();
+                document.getElementById('adminLoginError').textContent = '';
             } else {
-                document.getElementById('adminLoginError').textContent = 'Invalid credentials!';
+                document.getElementById('adminLoginError').textContent = 'Invalid credentials! Try: admin / admin123';
             }
         }
 
         function adminLogout() {
             document.getElementById('adminUsername').value = '';
             document.getElementById('adminPassword').value = '';
+            document.getElementById('adminLoginError').textContent = '';
             showScreen('loginScreen');
         }
 
@@ -946,7 +960,7 @@
             }
 
             localStorage.setItem('adminCredentials', JSON.stringify({ username, password }));
-            alert('Admin credentials updated successfully!');
+            alert('Admin credentials updated successfully! Please use new credentials for next login.');
             document.getElementById('newAdminUsername').value = '';
             document.getElementById('newAdminPassword').value = '';
         }
@@ -963,6 +977,7 @@
         }
 
         function backToStudentLogin() {
+            document.getElementById('adminLoginError').textContent = '';
             showScreen('loginScreen');
         }
 
@@ -984,7 +999,10 @@
         }
 
         // Initialize on load
-        initializeSystem();
+        window.addEventListener('DOMContentLoaded', function() {
+            initializeSystem();
+            console.log('System initialized. Default credentials: admin / admin123');
+        });
     </script>
 </body>
 </html>
