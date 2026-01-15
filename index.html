@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MITI - Monthly Test System</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); min-height: 100vh; color: #fff; }
@@ -23,12 +24,15 @@
         button:disabled { opacity: 0.5; cursor: not-allowed; }
         .error { color: #ff6b6b; margin-top: 10px; text-align: center; font-weight: bold; }
         .success { color: #4CAF50; margin-top: 10px; text-align: center; font-weight: bold; }
+        .warning { color: #ff9800; margin-top: 10px; text-align: center; font-weight: bold; }
         .info { color: #2196F3; margin-top: 10px; text-align: center; font-size: 14px; }
-        .test-header { background: #2d2d2d; padding: 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.5); flex-wrap: wrap; gap: 10px; border-bottom: 2px solid #4CAF50; }
+        .test-header { background: #2d2d2d; padding: 20px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,0.5); flex-wrap: wrap; gap: 10px; border-bottom: 2px solid #4CAF50; position: fixed; top: 0; left: 0; right: 0; z-index: 100; }
         .timer { font-size: 24px; font-weight: bold; color: #ff6b6b; padding: 10px 20px; background: #1a1a1a; border-radius: 8px; border: 2px solid #ff6b6b; }
+        .warning-badge { background: #ff9800; color: white; padding: 8px 15px; border-radius: 20px; font-weight: bold; animation: pulse 1s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
         .month-badge { background: #4CAF50; color: white; padding: 8px 15px; border-radius: 20px; font-weight: bold; }
         .trade-badge { background: #2196F3; color: white; padding: 8px 15px; border-radius: 20px; font-size: 12px; }
-        .test-container { max-width: 900px; margin: 30px auto; background: #2d2d2d; padding: 30px; border-radius: 15px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); border: 1px solid #444; }
+        .test-container { max-width: 900px; margin: 120px auto 30px; background: #2d2d2d; padding: 30px; border-radius: 15px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); border: 1px solid #444; }
         .progress-bar { width: 100%; height: 8px; background: #1a1a1a; border-radius: 10px; margin-bottom: 30px; border: 1px solid #444; }
         .progress { height: 100%; background: linear-gradient(90deg, #4CAF50 0%, #45a049 100%); transition: width 0.3s; border-radius: 10px; }
         .option { padding: 15px; margin: 10px 0; border: 2px solid #444; border-radius: 8px; cursor: pointer; display: flex; align-items: center; transition: all 0.3s; background: #1a1a1a; text-align: left; width: 100%; }
@@ -59,6 +63,7 @@
         .question p { color: #ddd; text-align: left; font-size: 18px; margin-bottom: 20px; }
         #questionCounter { color: #4CAF50; font-weight: bold; }
         .admin-btn { background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%) !important; margin-top: 20px; }
+        .teacher-btn { background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%) !important; margin-top: 10px; }
         
         /* ADMIN PANEL STYLES */
         .admin-header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px 30px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 5px 20px rgba(0,0,0,0.3); }
@@ -91,9 +96,6 @@
         .trade-item { background: #1a1a1a; padding: 15px; margin: 10px 0; border-radius: 8px; border: 1px solid #444; display: flex; justify-content: space-between; align-items: center; }
         .trade-item span { color: #fff; font-weight: 600; }
         
-        .timing-item { background: #1a1a1a; padding: 15px; margin: 10px 0; border-radius: 8px; border: 1px solid #444; }
-        .timing-item h5 { color: #4CAF50; margin-bottom: 10px; }
-        
         .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); }
         .modal.active { display: flex; justify-content: center; align-items: center; }
         .modal-content { background: #2d2d2d; padding: 30px; border-radius: 15px; max-width: 600px; width: 90%; max-height: 90vh; overflow-y: auto; border: 1px solid #444; }
@@ -106,6 +108,9 @@
         .question-card h4 { color: #4CAF50; margin-bottom: 10px; }
         .question-card p { margin: 5px 0; color: #ddd; }
         .question-actions { display: flex; gap: 10px; margin-top: 15px; }
+        
+        .fullscreen-warning { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: #ff6b6b; color: white; padding: 30px; border-radius: 15px; z-index: 10000; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.8); }
+        .fullscreen-warning h2 { margin-bottom: 15px; }
         
         @media (max-width: 768px) {
             .admin-header { flex-direction: column; gap: 15px; }
@@ -128,40 +133,60 @@
                     <option value="">Select Trade</option>
                 </select>
                 <button onclick="studentLogin()">Start Test</button>
-                <button class="admin-btn" onclick="showAdminLogin()">Admin Panel</button>
+                <button class="teacher-btn" onclick="showTeacherLogin()">Teacher Login</button>
                 <div id="loginError" class="error"></div>
             </div>
         </div>
     </div>
 
-    <!-- ADMIN LOGIN SCREEN -->
-    <div id="adminLoginScreen" class="screen">
+    <!-- TEACHER LOGIN SCREEN -->
+    <div id="teacherLoginScreen" class="screen">
         <div class="container">
-            <h1>🔐 Admin Login</h1>
+            <h1>👨‍🏫 Teacher Login</h1>
             <div class="login-box">
-                <h2>Admin Access</h2>
-                <input type="text" id="adminUsername" placeholder="Username" required>
-                <input type="password" id="adminPassword" placeholder="Password" required>
-                <button onclick="adminLogin()">Login</button>
+                <h2>Teacher Access</h2>
+                <input type="text" id="teacherUsername" placeholder="Username" required>
+                <input type="password" id="teacherPassword" placeholder="Password" required>
+                <button onclick="teacherLogin()">Login</button>
+                <button onclick="showTeacherRegister()">Register New Teacher</button>
                 <button onclick="backToStudentLogin()">Back to Student Login</button>
-                <div id="adminLoginError" class="error"></div>
+                <div id="teacherLoginError" class="error"></div>
             </div>
         </div>
     </div>
 
-    <!-- ADMIN PANEL -->
-    <div id="adminPanel" class="screen">
+    <!-- TEACHER REGISTRATION SCREEN -->
+    <div id="teacherRegisterScreen" class="screen">
+        <div class="container">
+            <h1>📝 Teacher Registration</h1>
+            <div class="login-box">
+                <h2>Create Teacher Account</h2>
+                <input type="text" id="regName" placeholder="Full Name" required>
+                <input type="email" id="regEmail" placeholder="Email" required>
+                <input type="text" id="regUsername" placeholder="Username" required>
+                <input type="password" id="regPassword" placeholder="Password" required>
+                <select id="regTrade" required>
+                    <option value="">Select Your Trade</option>
+                </select>
+                <button onclick="registerTeacher()">Register</button>
+                <button onclick="showTeacherLogin()">Back to Login</button>
+                <div id="registerError" class="error"></div>
+                <div id="registerSuccess" class="success"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TEACHER PANEL -->
+    <div id="teacherPanel" class="screen">
         <div class="admin-header">
-            <h1>📊 Admin Panel</h1>
-            <button class="logout-btn" onclick="adminLogout()">🚪 Logout</button>
+            <h1>👨‍🏫 Teacher Panel</h1>
+            <button class="logout-btn" onclick="teacherLogout()">🚪 Logout</button>
         </div>
         
         <div class="admin-tabs">
-            <div class="admin-tab active" onclick="switchAdminTab('results')">📈 Test Results</div>
-            <div class="admin-tab" onclick="switchAdminTab('questions')">📝 Manage Questions</div>
-            <div class="admin-tab" onclick="switchAdminTab('schedule')">📅 Test Schedule</div>
-            <div class="admin-tab" onclick="switchAdminTab('trades')">🏢 Manage Trades</div>
-            <div class="admin-tab" onclick="switchAdminTab('settings')">⚙️ Settings</div>
+            <div class="admin-tab active" onclick="switchTeacherTab('results')">📈 Test Results</div>
+            <div class="admin-tab" onclick="switchTeacherTab('questions')">📝 Manage Questions</div>
+            <div class="admin-tab" onclick="switchTeacherTab('schedule')">📅 Test Schedule</div>
         </div>
 
         <!-- RESULTS TAB -->
@@ -169,8 +194,7 @@
             <div class="action-bar">
                 <div class="left-actions"></div>
                 <div class="right-actions">
-                    <button class="btn-small btn-success" onclick="exportAllResults()">📥 Export All Results</button>
-                    <button class="btn-small btn-danger" onclick="clearAllResults()">🗑️ Clear All Data</button>
+                    <button class="btn-small btn-success" onclick="exportResults()">📥 Export Results</button>
                 </div>
             </div>
             <div id="resultsContainer"></div>
@@ -181,15 +205,11 @@
             <div class="action-bar">
                 <div class="left-actions">
                     <button class="btn-small btn-primary" onclick="openAddQuestionModal()">➕ Add Question</button>
-                    <button class="btn-small btn-success" onclick="saveAllQuestions()">💾 Save Changes</button>
                 </div>
                 <div class="right-actions"></div>
             </div>
             
             <div style="display: flex; gap: 15px; margin-bottom: 20px;">
-                <select id="filterTrade" onchange="loadQuestions()" style="width: auto;">
-                    <option value="">Select Trade</option>
-                </select>
                 <select id="filterMonth" onchange="loadQuestions()" style="width: auto;">
                     <option value="">Select Month</option>
                     <option value="1">Month 1</option>
@@ -211,36 +231,6 @@
             </div>
             <div id="scheduleContainer"></div>
         </div>
-
-        <!-- TRADES TAB -->
-        <div id="tradesTab" class="tab-content">
-            <div class="action-bar">
-                <div class="left-actions">
-                    <button class="btn-small btn-primary" onclick="openAddTradeModal()">➕ Add Trade</button>
-                </div>
-                <div class="right-actions"></div>
-            </div>
-            <div id="tradesContainer"></div>
-        </div>
-
-        <!-- SETTINGS TAB -->
-        <div id="settingsTab" class="tab-content">
-            <div class="settings-grid">
-                <div class="settings-card">
-                    <h4>🔐 Change Admin Credentials</h4>
-                    <input type="text" id="newAdminUsername" placeholder="New Username">
-                    <input type="password" id="newAdminPassword" placeholder="New Password">
-                    <button class="btn-small btn-success" onclick="updateAdminCredentials()">Update Credentials</button>
-                </div>
-                
-                <div class="settings-card">
-                    <h4>⏰ Default Test Timing</h4>
-                    <label style="color: #ddd; display: block; margin: 10px 0;">Test Duration (minutes)</label>
-                    <input type="number" id="defaultTestDuration" placeholder="30" value="30">
-                    <button class="btn-small btn-success" onclick="saveDefaultTiming()">Save Timing</button>
-                </div>
-            </div>
-        </div>
     </div>
 
     <!-- MONTH SELECTION SCREEN -->
@@ -260,6 +250,7 @@
         <div class="test-header">
             <div class="month-badge" id="currentMonth"></div>
             <div class="timer" id="timer">30:00</div>
+            <div class="warning-badge" id="warningBadge" style="display: none;">⚠️ Warnings: <span id="warningCount">0</span>/3</div>
             <div class="trade-badge" id="currentTrade"></div>
         </div>
         <div class="test-container">
@@ -282,7 +273,6 @@
             <div class="result-box">
                 <div class="score-display" id="scoreDisplay"></div>
                 <div class="result-details" id="resultDetails"></div>
-                <button onclick="backToMonthSelection()">Back to Month Selection</button>
                 <button onclick="backToLogin()">Logout</button>
             </div>
         </div>
@@ -296,9 +286,6 @@
                 <span class="close-modal" onclick="closeQuestionModal()">&times;</span>
             </div>
             <form id="questionForm" onsubmit="saveQuestion(event)">
-                <select id="modalTrade" required>
-                    <option value="">Select Trade</option>
-                </select>
                 <select id="modalMonth" required>
                     <option value="">Select Month</option>
                     <option value="1">Month 1</option>
@@ -323,31 +310,17 @@
         </div>
     </div>
 
-    <div id="tradeModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Add New Trade</h3>
-                <span class="close-modal" onclick="closeTradeModal()">&times;</span>
-            </div>
-            <input type="text" id="newTradeName" placeholder="Trade Name (e.g., Web Development)">
-            <input type="text" id="newTradeId" placeholder="Trade ID (e.g., webdev)">
-            <button class="btn-small btn-success" onclick="addNewTrade()" style="width: 100%;">Add Trade</button>
-        </div>
-    </div>
-
     <div class="footer">Developed by Faris Bilal</div>
 
     <script>
-        // HARDCODED DEFAULTS (FALLBACK)
-        const DEFAULT_ADMIN = { username: 'admin', password: 'admin123' };
-        const DEFAULT_TRADES = [
-            { id: 'accounting', name: 'Computerized Accounting' },
-            { id: 'dataanalytics', name: 'Data Analytics with AI' }
-        ];
-        const DEFAULT_DURATION = 30;
+        // SUPABASE CONFIGURATION
+        const SUPABASE_URL = 'https://ldffoyzddpfvfhteebey.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxkZmZveXpkZHBmdmZodGVlYmV5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzY4Nzk0NzAsImV4cCI6MjA1MjQ1NTQ3MH0.YsFFwQ1v2qXhnDNAJ_GAMw_0w8Rl8OP';
+        const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-        // Initialize system
+        // GLOBAL VARIABLES
         let currentStudent = null;
+        let currentTeacher = null;
         let currentTrade = null;
         let currentMonth = null;
         let currentQuestionIndex = 0;
@@ -355,50 +328,113 @@
         let questions = [];
         let timerInterval = null;
         let timeLeft = 1800;
-        let editingQuestionIndex = null;
+        let editingQuestionId = null;
+        let warningCount = 0;
+        let isFullscreen = false;
 
-        // Initialize with guaranteed defaults
-        function initializeSystem() {
-            // FORCE RESET if localStorage is corrupted
-            try {
-                const test = localStorage.getItem('adminCredentials');
-                if (!test || test === 'undefined' || test === 'null') {
-                    throw new Error('Corrupted localStorage');
+        // ANTI-CHEAT SYSTEM
+        function initAntiCheat() {
+            warningCount = 0;
+            updateWarningDisplay();
+
+            // Fullscreen detection
+            document.addEventListener('fullscreenchange', handleFullscreenChange);
+            document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+            document.addEventListener('mozfullscreenchange', handleFullscreenChange);
+
+            // Tab visibility detection
+            document.addEventListener('visibilitychange', handleVisibilityChange);
+
+            // Prevent right-click
+            document.addEventListener('contextmenu', e => e.preventDefault());
+
+            // Prevent keyboard shortcuts
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && e.key === 'I') || 
+                    (e.ctrlKey && e.shiftKey && e.key === 'C') || (e.ctrlKey && e.key === 'u')) {
+                    e.preventDefault();
                 }
-            } catch (e) {
-                console.log('Resetting localStorage...');
-                localStorage.clear();
-            }
-
-            // Set admin credentials with fallback
-            if (!localStorage.getItem('adminCredentials')) {
-                localStorage.setItem('adminCredentials', JSON.stringify(DEFAULT_ADMIN));
-            }
-            
-            // Set trades with fallback
-            if (!localStorage.getItem('trades')) {
-                localStorage.setItem('trades', JSON.stringify(DEFAULT_TRADES));
-            }
-            
-            // Set test duration with fallback
-            if (!localStorage.getItem('testDuration')) {
-                localStorage.setItem('testDuration', String(DEFAULT_DURATION));
-            }
-            
-            loadTradesIntoSelect();
-        }
-
-        function loadTradesIntoSelect() {
-            const trades = JSON.parse(localStorage.getItem('trades') || JSON.stringify(DEFAULT_TRADES));
-            const select = document.getElementById('tradeSelect');
-            select.innerHTML = '<option value="">Select Trade</option>';
-            trades.forEach(trade => {
-                select.innerHTML += `<option value="${trade.id}">${trade.name}</option>`;
             });
         }
 
-        // Student Login
-        function studentLogin() {
+        function handleFullscreenChange() {
+            isFullscreen = !!(document.fullscreenElement || document.webkitFullscreenElement || 
+                             document.mozFullScreenElement);
+            
+            if (!isFullscreen && document.getElementById('testScreen').classList.contains('active')) {
+                addWarning('You exited fullscreen mode!');
+            }
+        }
+
+        function handleVisibilityChange() {
+            if (document.hidden && document.getElementById('testScreen').classList.contains('active')) {
+                addWarning('You switched tabs!');
+            }
+        }
+
+        function addWarning(message) {
+            warningCount++;
+            updateWarningDisplay();
+            
+            if (warningCount >= 3) {
+                alert('⚠️ Too many warnings! Test will be auto-submitted.');
+                submitTest(true);
+            } else {
+                alert(`⚠️ WARNING ${warningCount}/3: ${message}\nTest will auto-submit after 3 warnings!`);
+            }
+        }
+
+        function updateWarningDisplay() {
+            const badge = document.getElementById('warningBadge');
+            const count = document.getElementById('warningCount');
+            
+            if (warningCount > 0) {
+                badge.style.display = 'block';
+                count.textContent = warningCount;
+            } else {
+                badge.style.display = 'none';
+            }
+        }
+
+        function enterFullscreen() {
+            const elem = document.documentElement;
+            if (elem.requestFullscreen) {
+                elem.requestFullscreen();
+            } else if (elem.webkitRequestFullscreen) {
+                elem.webkitRequestFullscreen();
+            } else if (elem.mozRequestFullScreen) {
+                elem.mozRequestFullScreen();
+            }
+        }
+
+        // INITIALIZE SYSTEM
+        async function initializeSystem() {
+            await loadTrades();
+        }
+
+        async function loadTrades() {
+            const { data, error } = await supabase.from('trades').select('*');
+            
+            if (error) {
+                console.error('Error loading trades:', error);
+                return;
+            }
+
+            const selects = [
+                document.getElementById('tradeSelect'),
+                document.getElementById('regTrade')
+            ];
+            
+            selects.forEach(select => {
+                select.innerHTML = '<option value="">Select Trade</option>';
+                data.forEach(trade => {
+                    select.innerHTML += `<option value="${trade.id}">${trade.name}</option>`;
+                });
+            });
+        }
+
+        // STUDENT LOGIN
+        async function studentLogin() {
             const name = document.getElementById('studentName').value.trim();
             const id = document.getElementById('studentId').value.trim();
             const trade = document.getElementById('tradeSelect').value;
@@ -411,34 +447,45 @@
             currentStudent = { name, id, trade };
             showScreen('monthScreen');
             document.getElementById('studentInfo').textContent = `Welcome, ${name}!`;
-            loadMonthSelection();
+            await loadMonthSelection();
         }
 
-        function loadMonthSelection() {
+        async function loadMonthSelection() {
             const container = document.getElementById('monthSelect');
-            const results = JSON.parse(localStorage.getItem('testResults') || '[]');
-            const schedule = JSON.parse(localStorage.getItem('testSchedule') || '{}');
+            
+            // Check completed tests
+            const { data: results } = await supabase
+                .from('test_results')
+                .select('month')
+                .eq('student_id', currentStudent.id)
+                .eq('trade_id', currentStudent.trade);
+
+            const completedMonths = results ? results.map(r => r.month) : [];
+
+            // Check schedule
+            const { data: schedules } = await supabase
+                .from('test_schedule')
+                .select('*')
+                .eq('trade_id', currentStudent.trade);
+
             const today = new Date().toISOString().split('T')[0];
 
             container.innerHTML = '';
             for (let month = 1; month <= 4; month++) {
-                const completed = results.some(r => 
-                    r.name === currentStudent.name && 
-                    r.id === currentStudent.id && 
-                    r.trade === currentStudent.trade && 
-                    r.month === month
-                );
-
-                const scheduleKey = `${currentStudent.trade}_${month}`;
-                const scheduleData = schedule[scheduleKey] || {};
-                const isLocked = scheduleData.startDate && scheduleData.endDate && 
-                    (today < scheduleData.startDate || today > scheduleData.endDate);
+                const completed = completedMonths.includes(month);
+                
+                const schedule = schedules?.find(s => s.month === month);
+                const isLocked = schedule && (today < schedule.start_date || today > schedule.end_date);
 
                 const btn = document.createElement('div');
                 btn.className = `month-btn ${completed ? 'completed' : ''} ${isLocked ? 'locked' : ''}`;
                 btn.innerHTML = `Month ${month}`;
                 
-                if (!completed && !isLocked) {
+                if (completed) {
+                    btn.onclick = () => alert('You have already completed this test!');
+                } else if (isLocked) {
+                    btn.onclick = () => alert('This test is not available yet!');
+                } else {
                     btn.onclick = () => startTest(month);
                 }
                 
@@ -446,29 +493,50 @@
             }
         }
 
-        function startTest(month) {
+        async function startTest(month) {
             currentMonth = month;
-            const key = `questions_${currentStudent.trade}_${month}`;
-            questions = JSON.parse(localStorage.getItem(key) || '[]');
+            
+            // Load questions
+            const { data, error } = await supabase
+                .from('questions')
+                .select('*')
+                .eq('trade_id', currentStudent.trade)
+                .eq('month', month);
 
-            if (questions.length === 0) {
+            if (error || !data || data.length === 0) {
                 alert('No questions available for this month!');
                 return;
             }
 
+            questions = data.map(q => ({
+                id: q.id,
+                question: q.question,
+                options: {
+                    A: q.option_a,
+                    B: q.option_b,
+                    C: q.option_c,
+                    D: q.option_d
+                },
+                correct: q.correct_answer
+            }));
+
             currentQuestionIndex = 0;
             userAnswers = new Array(questions.length).fill(null);
-            
-            // GUARANTEED 30 MINUTES
-            const duration = parseInt(localStorage.getItem('testDuration') || String(DEFAULT_DURATION));
-            timeLeft = duration * 60;
+            timeLeft = 30 * 60; // 30 minutes
 
             showScreen('testScreen');
             document.getElementById('currentMonth').textContent = `Month ${month}`;
-            const trades = JSON.parse(localStorage.getItem('trades') || JSON.stringify(DEFAULT_TRADES));
-            const tradeName = trades.find(t => t.id === currentStudent.trade)?.name || currentStudent.trade;
-            document.getElementById('currentTrade').textContent = tradeName;
             
+            const { data: tradeData } = await supabase
+                .from('trades')
+                .select('name')
+                .eq('id', currentStudent.trade)
+                .single();
+            
+            document.getElementById('currentTrade').textContent = tradeData?.name || currentStudent.trade;
+            
+            initAntiCheat();
+            enterFullscreen();
             startTimer();
             displayQuestion();
         }
@@ -516,7 +584,7 @@
                 currentQuestionIndex++;
                 displayQuestion();
             } else {
-                submitTest();
+                submitTest(false);
             }
         }
 
@@ -538,94 +606,151 @@
 
                 if (timeLeft <= 0) {
                     clearInterval(timerInterval);
-                    submitTest();
+                    submitTest(true);
                 }
             }, 1000);
         }
 
-        function submitTest() {
+        async function submitTest(autoSubmit) {
             clearInterval(timerInterval);
             
+            if (!autoSubmit && !confirm('Are you sure you want to submit the test?')) {
+                startTimer();
+                return;
+            }
+
             let score = 0;
             questions.forEach((q, i) => {
                 if (userAnswers[i] === q.correct) score++;
             });
 
-            const result = {
-                name: currentStudent.name,
-                id: currentStudent.id,
-                trade: currentStudent.trade,
+            // Save to database
+            const { error } = await supabase.from('test_results').insert({
+                student_name: currentStudent.name,
+                student_id: currentStudent.id,
+                trade_id: currentStudent.trade,
                 month: currentMonth,
                 score: score,
-                total: questions.length,
-                timestamp: new Date().toISOString()
-            };
+                total_questions: questions.length
+            });
 
-            const results = JSON.parse(localStorage.getItem('testResults') || '[]');
-            results.push(result);
-            localStorage.setItem('testResults', JSON.stringify(results));
+            if (error) {
+                console.error('Error saving result:', error);
+                alert('Error saving result. Please contact administrator.');
+                return;
+            }
+
+            // Exit fullscreen
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            }
 
             showScreen('resultScreen');
             document.getElementById('scoreDisplay').textContent = `${score}/${questions.length}`;
             
-            const trades = JSON.parse(localStorage.getItem('trades') || JSON.stringify(DEFAULT_TRADES));
-            const tradeName = trades.find(t => t.id === currentStudent.trade)?.name || currentStudent.trade;
+            const { data: tradeData } = await supabase
+                .from('trades')
+                .select('name')
+                .eq('id', currentStudent.trade)
+                .single();
             
             document.getElementById('resultDetails').innerHTML = `
                 <p><strong>Name:</strong> <span>${currentStudent.name}</span></p>
                 <p><strong>ID:</strong> <span>${currentStudent.id}</span></p>
-                <p><strong>Trade:</strong> <span>${tradeName}</span></p>
+                <p><strong>Trade:</strong> <span>${tradeData?.name || currentStudent.trade}</span></p>
                 <p><strong>Month:</strong> <span>${currentMonth}</span></p>
                 <p><strong>Score:</strong> <span>${score}/${questions.length}</span></p>
                 <p><strong>Percentage:</strong> <span>${((score/questions.length)*100).toFixed(1)}%</span></p>
+                ${autoSubmit ? '<p class="warning">⚠️ Test was auto-submitted</p>' : ''}
             `;
         }
 
-        // Admin Functions
-        function showAdminLogin() {
-            showScreen('adminLoginScreen');
+        // TEACHER FUNCTIONS
+        function showTeacherLogin() {
+            showScreen('teacherLoginScreen');
         }
 
-        function adminLogin() {
-            const username = document.getElementById('adminUsername').value.trim();
-            const password = document.getElementById('adminPassword').value.trim();
-            
-            // Get credentials with fallback
-            let credentials;
-            try {
-                credentials = JSON.parse(localStorage.getItem('adminCredentials') || JSON.stringify(DEFAULT_ADMIN));
-            } catch (e) {
-                credentials = DEFAULT_ADMIN;
-            }
-
-            if (username === credentials.username && password === credentials.password) {
-                showScreen('adminPanel');
-                loadAdminData();
-                document.getElementById('adminLoginError').textContent = '';
-            } else {
-                document.getElementById('adminLoginError').textContent = 'Invalid credentials!';
-            }
+        function showTeacherRegister() {
+            showScreen('teacherRegisterScreen');
         }
 
-        function adminLogout() {
-            document.getElementById('adminUsername').value = '';
-            document.getElementById('adminPassword').value = '';
-            document.getElementById('adminLoginError').textContent = '';
+        async function registerTeacher() {
+            const name = document.getElementById('regName').value.trim();
+            const email = document.getElementById('regEmail').value.trim();
+            const username = document.getElementById('regUsername').value.trim();
+            const password = document.getElementById('regPassword').value.trim();
+            const trade = document.getElementById('regTrade').value;
+
+            if (!name || !email || !username || !password || !trade) {
+                document.getElementById('registerError').textContent = 'Please fill all fields!';
+                return;
+            }
+
+            // Check if username exists
+            const { data: existing } = await supabase
+                .from('teachers')
+                .select('username')
+                .eq('username', username)
+                .single();
+
+            if (existing) {
+                document.getElementById('registerError').textContent = 'Username already exists!';
+                return;
+            }
+
+            // Insert teacher
+            const { error } = await supabase.from('teachers').insert({
+                name: name,
+                email: email,
+                username: username,
+                password: password, // In production, hash this!
+                trade_id: trade
+            });
+
+            if (error) {
+                document.getElementById('registerError').textContent = 'Registration failed!';
+                console.error(error);
+                return;
+            }
+
+            document.getElementById('registerSuccess').textContent = 'Registration successful! Please login.';
+            setTimeout(() => showTeacherLogin(), 2000);
+        }
+
+        async function teacherLogin() {
+            const username = document.getElementById('teacherUsername').value.trim();
+            const password = document.getElementById('teacherPassword').value.trim();
+
+            const { data, error } = await supabase
+                .from('teachers')
+                .select('*')
+                .eq('username', username)
+                .eq('password', password)
+                .single();
+
+            if (error || !data) {
+                document.getElementById('teacherLoginError').textContent = 'Invalid credentials!';
+                return;
+            }
+
+            currentTeacher = data;
+            showScreen('teacherPanel');
+            await loadTeacherData();
+        }
+
+        function teacherLogout() {
+            currentTeacher = null;
+            document.getElementById('teacherUsername').value = '';
+            document.getElementById('teacherPassword').value = '';
             showScreen('loginScreen');
         }
 
-        function loadAdminData() {
-            loadResults();
-            loadTradesManagement();
-            loadScheduleManagement();
-            loadTradesIntoFilters();
-            
-            // Load current duration into settings
-            const duration = localStorage.getItem('testDuration') || String(DEFAULT_DURATION);
-            document.getElementById('defaultTestDuration').value = duration;
+        async function loadTeacherData() {
+            await loadResults();
+            await loadScheduleManagement();
         }
 
-        function switchAdminTab(tab) {
+        function switchTeacherTab(tab) {
             document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
             
@@ -635,31 +760,38 @@
             if (tab === 'results') loadResults();
             if (tab === 'questions') loadQuestions();
             if (tab === 'schedule') loadScheduleManagement();
-            if (tab === 'trades') loadTradesManagement();
         }
 
-        function loadResults() {
-            const results = JSON.parse(localStorage.getItem('testResults') || '[]');
+        async function loadResults() {
+            const { data: results } = await supabase
+                .from('test_results')
+                .select('*')
+                .eq('trade_id', currentTeacher.trade_id)
+                .order('completed_at', { ascending: false });
+
             const container = document.getElementById('resultsContainer');
             
-            if (results.length === 0) {
+            if (!results || results.length === 0) {
                 container.innerHTML = '<p style="text-align: center; color: #999; padding: 40px;">No results yet</p>';
                 return;
             }
 
-            const trades = JSON.parse(localStorage.getItem('trades') || JSON.stringify(DEFAULT_TRADES));
-            let html = '<table><thead><tr><th>Name</th><th>ID</th><th>Trade</th><th>Month</th><th>Score</th><th>Date</th></tr></thead><tbody>';
+            const { data: tradeData } = await supabase
+                .from('trades')
+                .select('name')
+                .eq('id', currentTeacher.trade_id)
+                .single();
+
+            let html = '<table><thead><tr><th>Name</th><th>ID</th><th>Month</th><th>Score</th><th>Date</th></tr></thead><tbody>';
             
             results.forEach(result => {
-                const tradeName = trades.find(t => t.id === result.trade)?.name || result.trade;
                 html += `
                     <tr>
-                        <td>${result.name}</td>
-                        <td>${result.id}</td>
-                        <td>${tradeName}</td>
+                        <td>${result.student_name}</td>
+                        <td>${result.student_id}</td>
                         <td>Month ${result.month}</td>
-                        <td>${result.score}/${result.total}</td>
-                        <td>${new Date(result.timestamp).toLocaleString()}</td>
+                        <td>${result.score}/${result.total_questions}</td>
+                        <td>${new Date(result.completed_at).toLocaleString()}</td>
                     </tr>
                 `;
             });
@@ -668,88 +800,49 @@
             container.innerHTML = html;
         }
 
-        function exportAllResults() {
-            const results = JSON.parse(localStorage.getItem('testResults') || '[]');
-            if (results.length === 0) {
+        async function exportResults() {
+            const { data: results } = await supabase
+                .from('test_results')
+                .select('*')
+                .eq('trade_id', currentTeacher.trade_id)
+                .order('completed_at', { ascending: false });
+
+            if (!results || results.length === 0) {
                 alert('No results to export!');
                 return;
             }
 
-            const trades = JSON.parse(localStorage.getItem('trades') || JSON.stringify(DEFAULT_TRADES));
-            const studentData = {};
-
-            results.forEach(result => {
-                const key = `${result.name}_${result.id}_${result.trade}`;
-                if (!studentData[key]) {
-                    const tradeName = trades.find(t => t.id === result.trade)?.name || result.trade;
-                    studentData[key] = {
-                        name: result.name,
-                        id: result.id,
-                        trade: tradeName,
-                        months: {}
-                    };
-                }
-                studentData[key].months[result.month] = result.score;
-            });
-
-            let csv = 'Name,ID,Trade,Month 1,Month 2,Month 3,Month 4,Total\n';
+            let csv = 'Name,ID,Month,Score,Total,Percentage,Date\n';
             
-            Object.values(studentData).forEach(student => {
-                const m1 = student.months['1'] || '';
-                const m2 = student.months['2'] || '';
-                const m3 = student.months['3'] || '';
-                const m4 = student.months['4'] || '';
-                
-                const scores = [m1, m2, m3, m4].filter(s => s !== '');
-                const total = scores.length > 0 ? scores.reduce((a, b) => parseInt(a) + parseInt(b), 0) : '';
-                
-                csv += `${student.name},${student.id},${student.trade},${m1},${m2},${m3},${m4},${total}\n`;
+            results.forEach(r => {
+                const percentage = ((r.score / r.total_questions) * 100).toFixed(1);
+                csv += `${r.student_name},${r.student_id},${r.month},${r.score},${r.total_questions},${percentage}%,${new Date(r.completed_at).toLocaleString()}\n`;
             });
 
             const blob = new Blob([csv], { type: 'text/csv' });
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = 'all_test_results.csv';
+            a.download = 'test_results.csv';
             a.click();
         }
 
-        function clearAllResults() {
-            if (confirm('Are you sure? This will delete all test results!')) {
-                localStorage.removeItem('testResults');
-                loadResults();
-                alert('All results cleared!');
-            }
-        }
-
-        function loadTradesIntoFilters() {
-            const trades = JSON.parse(localStorage.getItem('trades') || JSON.stringify(DEFAULT_TRADES));
-            const selects = [document.getElementById('filterTrade'), document.getElementById('modalTrade')];
-            
-            selects.forEach(select => {
-                const currentValue = select.value;
-                select.innerHTML = '<option value="">Select Trade</option>';
-                trades.forEach(trade => {
-                    select.innerHTML += `<option value="${trade.id}">${trade.name}</option>`;
-                });
-                select.value = currentValue;
-            });
-        }
-
-        function loadQuestions() {
-            const trade = document.getElementById('filterTrade').value;
+        async function loadQuestions() {
             const month = document.getElementById('filterMonth').value;
             const container = document.getElementById('questionsContainer');
 
-            if (!trade || !month) {
-                container.innerHTML = '<p style="text-align: center; color: #999; padding: 40px;">Please select trade and month</p>';
+            if (!month) {
+                container.innerHTML = '<p style="text-align: center; color: #999; padding: 40px;">Please select month</p>';
                 return;
             }
 
-            const key = `questions_${trade}_${month}`;
-            const questions = JSON.parse(localStorage.getItem(key) || '[]');
+            const { data: questions } = await supabase
+                .from('questions')
+                .select('*')
+                .eq('trade_id', currentTeacher.trade_id)
+                .eq('month', month);
 
-            if (questions.length === 0) {
+            if (!questions || questions.length === 0) {
                 container.innerHTML = '<p style="text-align: center; color: #999; padding: 40px;">No questions found</p>';
                 return;
             }
@@ -759,13 +852,13 @@
                 html += `
                     <div class="question-card">
                         <h4>Q${index + 1}: ${q.question}</h4>
-                        <p>A) ${q.options.A} ${q.correct === 'A' ? '✅' : ''}</p>
-                        <p>B) ${q.options.B} ${q.correct === 'B' ? '✅' : ''}</p>
-                        <p>C) ${q.options.C} ${q.correct === 'C' ? '✅' : ''}</p>
-                        <p>D) ${q.options.D} ${q.correct === 'D' ? '✅' : ''}</p>
+                        <p>A) ${q.option_a} ${q.correct_answer === 'A' ? '✅' : ''}</p>
+                        <p>B) ${q.option_b} ${q.correct_answer === 'B' ? '✅' : ''}</p>
+                        <p>C) ${q.option_c} ${q.correct_answer === 'C' ? '✅' : ''}</p>
+                        <p>D) ${q.option_d} ${q.correct_answer === 'D' ? '✅' : ''}</p>
                         <div class="question-actions">
-                            <button class="btn-small btn-warning" onclick="editQuestion(${index})">✏️ Edit</button>
-                            <button class="btn-small btn-danger" onclick="deleteQuestion(${index})">🗑️ Delete</button>
+                            <button class="btn-small btn-warning" onclick="editQuestion('${q.id}')">✏️ Edit</button>
+                            <button class="btn-small btn-danger" onclick="deleteQuestion('${q.id}')">🗑️ Delete</button>
                         </div>
                     </div>
                 `;
@@ -775,77 +868,84 @@
         }
 
         function openAddQuestionModal() {
-            editingQuestionIndex = null;
+            editingQuestionId = null;
             document.getElementById('modalTitle').textContent = 'Add Question';
             document.getElementById('questionForm').reset();
             document.getElementById('questionModal').classList.add('active');
         }
 
-        function editQuestion(index) {
-            const trade = document.getElementById('filterTrade').value;
-            const month = document.getElementById('filterMonth').value;
-            const key = `questions_${trade}_${month}`;
-            const questions = JSON.parse(localStorage.getItem(key) || '[]');
-            const q = questions[index];
+        async function editQuestion(id) {
+            const { data: q } = await supabase
+                .from('questions')
+                .select('*')
+                .eq('id', id)
+                .single();
 
-            editingQuestionIndex = index;
+            if (!q) return;
+
+            editingQuestionId = id;
             document.getElementById('modalTitle').textContent = 'Edit Question';
-            document.getElementById('modalTrade').value = trade;
-            document.getElementById('modalMonth').value = month;
+            document.getElementById('modalMonth').value = q.month;
             document.getElementById('modalQuestion').value = q.question;
-            document.getElementById('modalOptionA').value = q.options.A;
-            document.getElementById('modalOptionB').value = q.options.B;
-            document.getElementById('modalOptionC').value = q.options.C;
-            document.getElementById('modalOptionD').value = q.options.D;
-            document.getElementById('modalCorrect').value = q.correct;
+            document.getElementById('modalOptionA').value = q.option_a;
+            document.getElementById('modalOptionB').value = q.option_b;
+            document.getElementById('modalOptionC').value = q.option_c;
+            document.getElementById('modalOptionD').value = q.option_d;
+            document.getElementById('modalCorrect').value = q.correct_answer;
             
             document.getElementById('questionModal').classList.add('active');
         }
 
-        function deleteQuestion(index) {
+        async function deleteQuestion(id) {
             if (!confirm('Delete this question?')) return;
 
-            const trade = document.getElementById('filterTrade').value;
-            const month = document.getElementById('filterMonth').value;
-            const key = `questions_${trade}_${month}`;
-            const questions = JSON.parse(localStorage.getItem(key) || '[]');
-            
-            questions.splice(index, 1);
-            localStorage.setItem(key, JSON.stringify(questions));
+            const { error } = await supabase
+                .from('questions')
+                .delete()
+                .eq('id', id);
+
+            if (error) {
+                alert('Error deleting question!');
+                return;
+            }
+
             loadQuestions();
         }
 
-        function saveQuestion(e) {
+        async function saveQuestion(e) {
             e.preventDefault();
 
-            const trade = document.getElementById('modalTrade').value;
-            const month = document.getElementById('modalMonth').value;
-            const key = `questions_${trade}_${month}`;
-            
             const questionData = {
+                trade_id: currentTeacher.trade_id,
+                month: parseInt(document.getElementById('modalMonth').value),
                 question: document.getElementById('modalQuestion').value,
-                options: {
-                    A: document.getElementById('modalOptionA').value,
-                    B: document.getElementById('modalOptionB').value,
-                    C: document.getElementById('modalOptionC').value,
-                    D: document.getElementById('modalOptionD').value
-                },
-                correct: document.getElementById('modalCorrect').value
+                option_a: document.getElementById('modalOptionA').value,
+                option_b: document.getElementById('modalOptionB').value,
+                option_c: document.getElementById('modalOptionC').value,
+                option_d: document.getElementById('modalOptionD').value,
+                correct_answer: document.getElementById('modalCorrect').value,
+                teacher_id: currentTeacher.id
             };
 
-            const questions = JSON.parse(localStorage.getItem(key) || '[]');
-
-            if (editingQuestionIndex !== null) {
-                questions[editingQuestionIndex] = questionData;
+            let error;
+            if (editingQuestionId) {
+                ({ error } = await supabase
+                    .from('questions')
+                    .update(questionData)
+                    .eq('id', editingQuestionId));
             } else {
-                questions.push(questionData);
+                ({ error } = await supabase
+                    .from('questions')
+                    .insert(questionData));
             }
 
-            localStorage.setItem(key, JSON.stringify(questions));
+            if (error) {
+                alert('Error saving question!');
+                console.error(error);
+                return;
+            }
+
             closeQuestionModal();
-            
-            document.getElementById('filterTrade').value = trade;
-            document.getElementById('filterMonth').value = month;
             loadQuestions();
         }
 
@@ -853,147 +953,61 @@
             document.getElementById('questionModal').classList.remove('active');
         }
 
-        function saveAllQuestions() {
-            alert('All changes saved successfully!');
-        }
+        async function loadScheduleManagement() {
+            const { data: schedules } = await supabase
+                .from('test_schedule')
+                .select('*')
+                .eq('trade_id', currentTeacher.trade_id);
 
-        function loadScheduleManagement() {
-            const trades = JSON.parse(localStorage.getItem('trades') || JSON.stringify(DEFAULT_TRADES));
-            const schedule = JSON.parse(localStorage.getItem('testSchedule') || '{}');
             const container = document.getElementById('scheduleContainer');
-
             let html = '<div class="settings-grid">';
 
-            trades.forEach(trade => {
-                for (let month = 1; month <= 4; month++) {
-                    const key = `${trade.id}_${month}`;
-                    const data = schedule[key] || { startDate: '', endDate: '' };
+            for (let month = 1; month <= 4; month++) {
+                const schedule = schedules?.find(s => s.month === month);
 
-                    html += `
-                        <div class="settings-card">
-                            <h4>${trade.name} - Month ${month}</h4>
-                            <label style="color: #ddd; display: block; margin: 10px 0;">Start Date</label>
-                            <input type="date" id="start_${key}" value="${data.startDate}">
-                            <label style="color: #ddd; display: block; margin: 10px 0;">End Date</label>
-                            <input type="date" id="end_${key}" value="${data.endDate}">
-                        </div>
-                    `;
-                }
-            });
+                html += `
+                    <div class="settings-card">
+                        <h4>Month ${month}</h4>
+                        <label style="color: #ddd; display: block; margin: 10px 0;">Start Date</label>
+                        <input type="date" id="start_${month}" value="${schedule?.start_date || ''}">
+                        <label style="color: #ddd; display: block; margin: 10px 0;">End Date</label>
+                        <input type="date" id="end_${month}" value="${schedule?.end_date || ''}">
+                    </div>
+                `;
+            }
 
             html += '</div>';
             container.innerHTML = html;
         }
 
-        function saveSchedule() {
-            const trades = JSON.parse(localStorage.getItem('trades') || JSON.stringify(DEFAULT_TRADES));
-            const schedule = {};
+        async function saveSchedule() {
+            for (let month = 1; month <= 4; month++) {
+                const startDate = document.getElementById(`start_${month}`).value;
+                const endDate = document.getElementById(`end_${month}`).value;
 
-            trades.forEach(trade => {
-                for (let month = 1; month <= 4; month++) {
-                    const key = `${trade.id}_${month}`;
-                    schedule[key] = {
-                        startDate: document.getElementById(`start_${key}`).value,
-                        endDate: document.getElementById(`end_${key}`).value
-                    };
+                if (!startDate || !endDate) continue;
+
+                const { error } = await supabase
+                    .from('test_schedule')
+                    .upsert({
+                        trade_id: currentTeacher.trade_id,
+                        month: month,
+                        start_date: startDate,
+                        end_date: endDate,
+                        teacher_id: currentTeacher.id
+                    }, {
+                        onConflict: 'trade_id,month'
+                    });
+
+                if (error) {
+                    console.error('Error saving schedule:', error);
                 }
-            });
+            }
 
-            localStorage.setItem('testSchedule', JSON.stringify(schedule));
             alert('Schedule saved successfully!');
         }
 
-        function loadTradesManagement() {
-            const trades = JSON.parse(localStorage.getItem('trades') || JSON.stringify(DEFAULT_TRADES));
-            const container = document.getElementById('tradesContainer');
-
-            let html = '';
-            trades.forEach((trade, index) => {
-                html += `
-                    <div class="trade-item">
-                        <span>${trade.name} (${trade.id})</span>
-                        <button class="btn-small btn-danger" onclick="deleteTrade(${index})">🗑️ Delete</button>
-                    </div>
-                `;
-            });
-
-            container.innerHTML = html;
-        }
-
-        function openAddTradeModal() {
-            document.getElementById('tradeModal').classList.add('active');
-        }
-
-        function closeTradeModal() {
-            document.getElementById('tradeModal').classList.remove('active');
-        }
-
-        function addNewTrade() {
-            const name = document.getElementById('newTradeName').value.trim();
-            const id = document.getElementById('newTradeId').value.trim().toLowerCase();
-
-            if (!name || !id) {
-                alert('Please fill all fields!');
-                return;
-            }
-
-            const trades = JSON.parse(localStorage.getItem('trades') || JSON.stringify(DEFAULT_TRADES));
-            
-            if (trades.some(t => t.id === id)) {
-                alert('Trade ID already exists!');
-                return;
-            }
-
-            trades.push({ id, name });
-            localStorage.setItem('trades', JSON.stringify(trades));
-            
-            closeTradeModal();
-            loadTradesManagement();
-            loadTradesIntoSelect();
-            loadTradesIntoFilters();
-            alert('Trade added successfully!');
-        }
-
-        function deleteTrade(index) {
-            if (!confirm('Delete this trade? This will also delete all associated questions and results!')) return;
-
-            const trades = JSON.parse(localStorage.getItem('trades') || JSON.stringify(DEFAULT_TRADES));
-            trades.splice(index, 1);
-            localStorage.setItem('trades', JSON.stringify(trades));
-            
-            loadTradesManagement();
-            loadTradesIntoSelect();
-            loadTradesIntoFilters();
-        }
-
-        function updateAdminCredentials() {
-            const username = document.getElementById('newAdminUsername').value.trim();
-            const password = document.getElementById('newAdminPassword').value.trim();
-
-            if (!username || !password) {
-                alert('Please fill both fields!');
-                return;
-            }
-
-            localStorage.setItem('adminCredentials', JSON.stringify({ username, password }));
-            alert('Admin credentials updated successfully!');
-            document.getElementById('newAdminUsername').value = '';
-            document.getElementById('newAdminPassword').value = '';
-        }
-
-        function saveDefaultTiming() {
-            const duration = document.getElementById('defaultTestDuration').value;
-            if (!duration || duration < 1) {
-                alert('Please enter a valid duration!');
-                return;
-            }
-
-            localStorage.setItem('testDuration', String(duration));
-            alert('Default timing saved successfully!');
-        }
-
         function backToStudentLogin() {
-            document.getElementById('adminLoginError').textContent = '';
             showScreen('loginScreen');
         }
 
@@ -1001,13 +1015,7 @@
             currentStudent = null;
             currentTrade = null;
             currentMonth = null;
-            document.getElementById('loginError').textContent = '';
             showScreen('loginScreen');
-        }
-
-        function backToMonthSelection() {
-            showScreen('monthScreen');
-            loadMonthSelection();
         }
 
         function showScreen(screenId) {
